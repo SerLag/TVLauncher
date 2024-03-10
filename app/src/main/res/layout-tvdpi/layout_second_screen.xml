@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/image_icon" android:layout_width="75dp" android:layout_height="52.6dp" android:layout_marginLeft="75dp" android:layout_marginTop="3dp" android:src="@drawable/app"/>
+    <TextView android:textSize="25dp" android:id="@+id/tx_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="156dp" android:layout_marginTop="19dp" android:text="@string/str_app"/>
+    <com.droidlogic.xlauncher.MyScrollView android:scrollbarStyle="outsideInset" android:descendantFocusability="afterDescendants" android:layout_width="859.5dp" android:layout_height="385dp" android:layout_marginLeft="88.5dp" android:layout_marginTop="64dp">
+        <com.droidlogic.xlauncher.MyGridLayout android:orientation="horizontal" android:id="@+id/gl_shortcut" android:fadingEdgeLength="48dp" android:descendantFocusability="afterDescendants" android:layout_width="wrap_content" android:layout_height="wrap_content" android:listSelector="@drawable/frame" android:drawSelectorOnTop="false" android:cacheColorHint="#00000000" android:horizontalSpacing="5dp" android:layout_centerHorizontal="true" android:rowCount="20" android:columnCount="6"/>
+    </com.droidlogic.xlauncher.MyScrollView>
+    <View android:background="@drawable/line" android:layout_width="match_parent" android:layout_height="4dp" android:layout_marginTop="465dp"/>
+    <ImageView android:id="@+id/image_prompt" android:layout_width="310.5dp" android:layout_height="78dp" android:layout_marginTop="462dp" android:layout_centerHorizontal="true"/>
+</RelativeLayout>

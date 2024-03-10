@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_led">[/šýš/ðéVîçéš/þļåţƒöŕḿ/šöç/šöç@03000000:ḿéšöñ-Vƒð/åţţŕ/åþþļéð one two three four five six seven]</string>
+    <string name="app_name">[Ḿéðîåβöх ļåûñçĥéŕ one two three]</string>
+    <string name="card_led">[/šýš/ðéVîçéš/þļåţƒöŕḿ/šöç/šöç@03000000:ḿéšöñ-Vƒð/åţţŕ/çåŕðļéð one two three four five six seven]</string>
+    <string name="hello">[Ĥéļļö Ŵöŕļð one two]</string>
+    <string name="img_desc">[îḿåĝé one]</string>
+    <string name="str_add">[Åðð one]</string>
+    <string name="str_app">[Ḿý Åþþš one two]</string>
+    <string name="str_blocked">[Þŕöĝŕåḿ îš ɓļöçķéð one two three]</string>
+    <string name="str_day">[日 one]</string>
+    <string name="str_eu_temp">[°F one]</string>
+    <string name="str_exit">[Éхîţ one]</string>
+    <string name="str_local">[Ļöçåļ one]</string>
+    <string name="str_music">[Ḿûšîç one]</string>
+    <string name="str_no_channel">[Ñö çĥåññéļ one two]</string>
+    <string name="str_no_signal">[Ñö šîĝñåļ one two]</string>
+    <string name="str_nospace">[Šĥöŕţçûţš ñö šþåçé¡ one two three]</string>
+    <string name="str_recommend">[Ŕéçöḿḿéñð one two]</string>
+    <string name="str_scrambeled">[Šçŕåḿɓļéð one two]</string>
+    <string name="str_setting">[Šéţţîñĝš one two]</string>
+    <string name="str_temp">[℃ one]</string>
+    <string name="str_test">[FåVöŕîţé one two]</string>
+    <string name="str_tvapp">[ĻîVéŢV one two]</string>
+    <string name="str_video">[Öñļîñé νîðéö one two]</string>
+    <string name="toast_livetv_warn">[ĻîVéŢV îš ŕéļéåšîñĝ, þļéåšé ŵåîţ one two three four]</string>
+    <string name="usb_led">[/šýš/ðéVîçéš/þļåţƒöŕḿ/šöç/šöç@03000000:ḿéšöñ-Vƒð/åţţŕ/ûšɓļéð one two three four five six seven]</string>
+</resources>
