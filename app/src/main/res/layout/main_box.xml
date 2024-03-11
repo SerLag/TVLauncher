@@ -6,8 +6,8 @@
             <include layout="@layout/layout_rect_group"/>
             <include layout="@layout/layout_shortcut"/>
         </RelativeLayout>
-        <com.droidlogic.xlauncher.AppLayout android:id="@+id/second_screen" android:visibility="gone" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent"/>
-        <com.droidlogic.xlauncher.HoverView android:id="@+id/hover_view" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <com.droidlogic.tvlauncher.AppLayout android:id="@+id/second_screen" android:visibility="gone" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent"/>
+        <com.droidlogic.tvlauncher.HoverView android:id="@+id/hover_view" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         <android.media.tv.TvView android:id="@+id/tv_view" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         <TextView android:textSize="30sp" android:textStyle="bold" android:gravity="center" android:id="@+id/tx_tv_prompt" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         <include layout="@layout/layout_memory"/>

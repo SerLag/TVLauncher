@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/layout_rect_group" android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_netflix" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="211dp" android:layout_height="331dp" android:layout_marginLeft="49dp" android:layout_marginTop="85dp">
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_netflix" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="211dp" android:layout_height="331dp" android:layout_marginLeft="49dp" android:layout_marginTop="85dp">
         <ImageView android:id="@+id/img_netflix" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginLeft="5dp" android:layout_marginTop="0.5dp" android:layout_marginRight="5dp" android:layout_marginBottom="0.5dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_kodi" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="266dp" android:layout_marginTop="85dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_kodi" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="266dp" android:layout_marginTop="85dp">
         <ImageView android:id="@+id/img_kodi" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_youtube" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="480dp" android:layout_marginTop="85dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_youtube" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="480dp" android:layout_marginTop="85dp">
         <ImageView android:id="@+id/img_youtube" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_browser" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="697dp" android:layout_marginTop="85dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_browser" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="697dp" android:layout_marginTop="85dp">
         <ImageView android:id="@+id/img_browser" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_googleplay" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="320dp" android:layout_height="107dp" android:layout_marginLeft="267dp" android:layout_marginTop="197dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_googleplay" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="320dp" android:layout_height="107dp" android:layout_marginLeft="267dp" android:layout_marginTop="197dp">
         <ImageView android:id="@+id/img_googleplay" android:padding="4dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginLeft="0.5dp" android:layout_marginTop="3dp" android:layout_marginRight="0.5dp" android:layout_marginBottom="3dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_miracast" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="320dp" android:layout_height="107dp" android:layout_marginLeft="589dp" android:layout_marginTop="197dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_miracast" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="320dp" android:layout_height="107dp" android:layout_marginLeft="589dp" android:layout_marginTop="197dp">
         <ImageView android:id="@+id/img_miracast" android:padding="4dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginLeft="0.5dp" android:layout_marginTop="3dp" android:layout_marginRight="0.5dp" android:layout_marginBottom="3dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_video" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="152.25dp" android:layout_height="131.25dp" android:layout_marginLeft="451.5dp" android:layout_marginTop="112.5dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_video" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="152.25dp" android:layout_height="131.25dp" android:layout_marginLeft="451.5dp" android:layout_marginTop="112.5dp">
         <ImageView android:id="@+id/img_video" android:paddingLeft="2dp" android:paddingTop="3dp" android:paddingRight="2dp" android:paddingBottom="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_app" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="266dp" android:layout_marginTop="309dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_app" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="266dp" android:layout_marginTop="309dp">
         <ImageView android:id="@+id/img_app" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_setting" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="480dp" android:layout_marginTop="309dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_setting" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="480dp" android:layout_marginTop="309dp">
         <ImageView android:id="@+id/img_setting" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_music" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="152.25dp" android:layout_height="131.25dp" android:layout_marginLeft="605.5dp" android:layout_marginTop="245.5dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_music" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="152.25dp" android:layout_height="131.25dp" android:layout_marginLeft="605.5dp" android:layout_marginTop="245.5dp">
         <ImageView android:id="@+id/img_music" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_memory" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="695dp" android:layout_marginTop="309dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_memory" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="695dp" android:layout_marginTop="309dp">
         <ImageView android:id="@+id/img_memory" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_filemanager" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="697dp" android:layout_marginTop="309dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_filemanager" android:focusable="true" android:focusableInTouchMode="true" android:descendantFocusability="beforeDescendants" android:layout_width="212dp" android:layout_height="107dp" android:layout_marginLeft="697dp" android:layout_marginTop="309dp">
         <ImageView android:id="@+id/img_filemanager" android:padding="3dp" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="2dp" android:scaleType="centerCrop" android:layout_centerInParent="true"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_recommend" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="454dp" android:layout_height="229dp" android:layout_marginLeft="434dp" android:layout_marginTop="87dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_recommend" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="454dp" android:layout_height="229dp" android:layout_marginLeft="434dp" android:layout_marginTop="87dp">
         <ImageView android:id="@+id/img_recommend" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_centerInParent="true"/>
         <TextView android:textSize="25dp" android:textColor="@color/btn_text_color" android:id="@+id/tx_recommend" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15dp" android:layout_marginTop="9dp" android:text="@string/str_recommend"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
-    <com.droidlogic.xlauncher.MyRelativeLayout android:id="@+id/layout_local" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="227dp" android:layout_height="228dp" android:layout_marginLeft="719dp" android:layout_marginTop="320dp">
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+    <com.droidlogic.tvlauncher.MyRelativeLayout android:id="@+id/layout_local" android:focusable="true" android:focusableInTouchMode="true" android:visibility="gone" android:descendantFocusability="beforeDescendants" android:layout_width="227dp" android:layout_height="228dp" android:layout_marginLeft="719dp" android:layout_marginTop="320dp">
         <ImageView android:id="@+id/img_local" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_centerInParent="true"/>
         <TextView android:textSize="25dp" android:textColor="@color/btn_text_color" android:id="@+id/tx_local" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15dp" android:layout_marginTop="9dp" android:text="@string/str_local"/>
-    </com.droidlogic.xlauncher.MyRelativeLayout>
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
 </RelativeLayout>

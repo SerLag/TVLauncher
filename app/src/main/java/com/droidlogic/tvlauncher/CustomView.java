@@ -79,7 +79,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
     }
 
     private void setCustomView() {
-        ((Launcher) this.mContext).getMainView().setDescendantFocusability(393216);
+        ((Launcher) this.mContext).getMainView().setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         ((Launcher) this.mContext).getMainView().animate().translationY(this.transY).setDuration(300L).alpha(0.5f).start();
         this.gv.getGlobalVisibleRect(new Rect());
         this.gv.requestFocus();
@@ -92,7 +92,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
     public void recoverMainView() {
         Launcher launcher = (Launcher) this.mContext;
         ViewGroup mainView = launcher.getMainView();
-        setVisibility(0);
+        setVisibility(VISIBLE);
         if (allowAnimation) {
             allowAnimation = false;
             TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -this.transY);
@@ -183,7 +183,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         synchronized (mLock) {
             if (arrayMap.get("item_selection").equals(Integer.valueOf((int) R.drawable.item_img_unsel))) {
                 if (this.mMode == 0 && this.homeShortcutCount >= Launcher.HOME_SHORTCUT_COUNT) {
-                    Toast.makeText(this.mContext, this.mContext.getResources().getString(R.string.str_nospace), 0).show();
+                    Toast.makeText(this.mContext, this.mContext.getResources().getString(R.string.str_nospace), Toast.LENGTH_LONG).show();
                     return;
                 }
                 this.str_custom_apps += ((ComponentName) arrayMap.get("component name")).getPackageName() + ";";

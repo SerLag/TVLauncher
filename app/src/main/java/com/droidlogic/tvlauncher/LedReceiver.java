@@ -35,24 +35,24 @@ public class LedReceiver extends BroadcastReceiver {
     }
 
     private boolean isSdcardExist() {
-        List<VolumeInfo> volumes = this.mStorageManager.getVolumes();
+/*        List<VolumeInfo> volumes = this.mStorageManager.getVolumes();
         Collections.sort(volumes, VolumeInfo.getDescriptionComparator());
         for (VolumeInfo volumeInfo : volumes) {
             if (volumeInfo != null && volumeInfo.isMountedReadable() && volumeInfo.getType() == 0 && volumeInfo.getDisk().isSd()) {
                 return true;
             }
-        }
+        }*/
         return false;
     }
 
     private boolean isUdiskExist() {
-        List<VolumeInfo> volumes = this.mStorageManager.getVolumes();
+/*        List<VolumeInfo> volumes = this.mStorageManager.getVolumes();
         Collections.sort(volumes, VolumeInfo.getDescriptionComparator());
         for (VolumeInfo volumeInfo : volumes) {
             if (volumeInfo != null && volumeInfo.isMountedReadable() && volumeInfo.getType() == 0 && volumeInfo.getDisk().isUsb()) {
                 return true;
             }
-        }
+        }*/
         return false;
     }
 }

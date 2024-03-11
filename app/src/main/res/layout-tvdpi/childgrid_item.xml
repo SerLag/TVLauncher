@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.droidlogic.xlauncher.MyRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:focusable="true" android:descendantFocusability="beforeDescendants" android:layout_width="wrap_content" android:layout_height="wrap_content">
+<com.droidlogic.tvlauncher.MyRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:focusable="true" android:descendantFocusability="beforeDescendants" android:layout_width="wrap_content" android:layout_height="wrap_content">
     <ImageView android:id="@+id/item_bg" android:paddingLeft="15dp" android:paddingTop="3dp" android:paddingRight="15dp" android:paddingBottom="26dp" android:layout_width="128dp" android:layout_height="128dp"/>
     <TextView android:textSize="15dp" android:textColor="@color/btn_text_color" android:gravity="center" android:id="@+id/item_name" android:layout_width="112.5dp" android:layout_height="wrap_content" android:layout_marginTop="103.5dp" android:singleLine="true" android:layout_centerHorizontal="true"/>
-</com.droidlogic.xlauncher.MyRelativeLayout>
+</com.droidlogic.tvlauncher.MyRelativeLayout>

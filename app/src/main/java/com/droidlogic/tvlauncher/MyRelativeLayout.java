@@ -51,7 +51,7 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
         this.mContext = context;
         setFocusable(true);
         setFocusableInTouchMode(true);
-        setDescendantFocusability(131072);
+        setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
@@ -292,10 +292,11 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
     }
 
     @Override // android.view.View
-    protected void onFocusChanged(boolean z, int i, Rect rect) {
+    protected void onFocusChanged (boolean gainFocus, int direction, Rect previouslyFocusedRect){
         if (this.layoutCompleted) {
-            setFocusViewBg(z, this);
+            setFocusViewBg(gainFocus, this);
         }
+        super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
     }
 
     public void setType(int i) {
@@ -347,7 +348,7 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
 
     private void setFocusViewBg(boolean z, View view) {
         if (z) {
-            view.setBackgroundColor(-256);
+            view.setBackgroundColor(0xFFFFFF00);
         } else {
             view.setBackground(null);
         }

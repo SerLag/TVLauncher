@@ -1,437 +1,469 @@
 package com.droidlogic.tvlauncher;
 
 import android.app.ActivityManager;
-import android.content.ComponentName;
+import android.os.Handler;
+import android.os.Message;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.graphics.drawable.Drawable;
-import android.os.Process;
 import android.util.ArrayMap;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.text.Collator;
 
-/* loaded from: classes.dex */
+
 public class AppDataLoader {
-    private String[] list_homeShortcut;
-    private String[] list_localShortcut;
-    private String[] list_musicShortcut;
-    private String[] list_recommendShortcut;
-    private String[] list_videoShortcut;
-    private ActivityManager mActivityManager;
+    private final static String TAG = "AppDataLoader";
+    public final static String NAME = "name";
+    public final static String INTENT = "intent";
+    public final static String ICON = "icon";
+    public final static String COMPONENT_NAME = "component name";
+
+    public final static String SHORTCUT_PATH = "/data/data/com.droidlogic.tvlauncher/shortcut.cfg";
+    public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
+    public final static String HOME_SHORTCUT_HEAD = "Home_Shortcut:";
+    public final static String VIDEO_SHORTCUT_HEAD = "Video_Shortcut:";
+    public final static String RECOMMEND_SHORTCUT_HEAD = "Recommend_Shortcut:";
+    public final static String MUSIC_SHORTCUT_HEAD = "Music_shortcut:";
+    public final static String LOCAL_SHORTCUT_HEAD = "Local_Shortcut:";
+
     private Context mContext;
     private LauncherApps mLauncherApps;
-    private Object mLock;
+    private ActivityManager mActivityManager;
     private String str_homeShortcut;
-    private String str_localShortcut;
-    private String str_musicShortcut;
-    private String str_recommendShortcut;
     private String str_videoShortcut;
-    List<ArrayMap<String, Object>> homeShortCuts = new ArrayList();
-    List<ArrayMap<String, Object>> videoShortCuts = new ArrayList();
-    List<ArrayMap<String, Object>> recommendShorts = new ArrayList();
-    List<ArrayMap<String, Object>> appShortCuts = new ArrayList();
-    List<ArrayMap<String, Object>> musicShortCuts = new ArrayList();
-    List<ArrayMap<String, Object>> localShortCuts = new ArrayList();
+    private String str_recommendShortcut;
+    private String str_musicShortcut;
+    private String str_localShortcut;
+
+    private String[] list_homeShortcut;
+    private String[] list_videoShortcut;
+    private String[] list_recommendShortcut;
+    private String[] list_musicShortcut;
+    private String[] list_localShortcut;
+
+    List<ArrayMap<String, Object>> homeShortCuts = new ArrayList<ArrayMap<String, Object>>();
+    List<ArrayMap<String, Object>> videoShortCuts= new ArrayList<ArrayMap<String, Object>>();
+    List<ArrayMap<String, Object>> recommendShorts = new ArrayList<ArrayMap<String, Object>>();
+    List<ArrayMap<String, Object>> appShortCuts = new ArrayList<ArrayMap<String, Object>>();
+    List<ArrayMap<String, Object>> musicShortCuts = new ArrayList<ArrayMap<String, Object>>();
+    List<ArrayMap<String, Object>> localShortCuts = new ArrayList<ArrayMap<String, Object>>();
+
     private boolean isLoaded = false;
+    private Object mLock;
 
-    private String parseShortcutHead(int i) {
-        if (i != 0) {
-            if (i != 1) {
-                if (i != 2) {
-                    if (i != 3) {
-                        if (i != 5) {
-                            return null;
-                        }
-                        return "Local_Shortcut:";
-                    }
-                    return "Music_shortcut:";
-                }
-                return "Recommend_Shortcut:";
-            }
-            return "Video_Shortcut:";
-        }
-        return "Home_Shortcut:";
-    }
-
-    public AppDataLoader(Context context) {
-        this.mContext = context;
-        this.mLauncherApps = (LauncherApps) this.mContext.getSystemService("launcherapps");
-        this.mActivityManager = (ActivityManager) this.mContext.getSystemService("activity");
-        this.mLock = ((Launcher) this.mContext).getLock();
+    public AppDataLoader (Context context) {
+        mContext = context;
+        mLauncherApps = (LauncherApps)mContext.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        mActivityManager = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        mLock = ((Launcher)mContext).getLock();
     }
 
     public void update() {
-        this.isLoaded = false;
-        new Thread(new Runnable() { // from class: com.droidlogic.tvlauncher.AppDataLoader.1
-            @Override // java.lang.Runnable
+        isLoaded = false;
+        new Thread(new Runnable() {
             public void run() {
-                synchronized (AppDataLoader.this.mLock) {
-                    AppDataLoader.this.loadCustomApps();
-                    AppDataLoader.this.loadShortcutList();
-                    AppDataLoader.this.isLoaded = true;
+                synchronized (mLock) {
+                    loadCustomApps();
+                    loadShortcutList();
+                    isLoaded = true;
                 }
             }
         }).start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Code restructure failed: missing block: B:43:0x00f9, code lost:
-        if (r6 == null) goto L45;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:55:0x0100 A[EXC_TOP_SPLITTER, SYNTHETIC] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public java.lang.String[] loadCustomApps() {
-        /*
-            Method dump skipped, instructions count: 260
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.droidlogic.tvlauncher.AppDataLoader.loadCustomApps():java.lang.String[]");
+    private String[] loadCustomApps(){
+        String[] list = null;
+        File mFile = new File(SHORTCUT_PATH);
+        if (!mFile.exists()) {
+            getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
+            mFile = new File(SHORTCUT_PATH);
+        } else{
+            try {
+                BufferedReader b = new BufferedReader(new FileReader(mFile));
+                if (b.read() == -1) {
+                    getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
+                }
+                if (b != null)
+                    b.close();
+            } catch (IOException e) {
+            }
+        }
+
+        BufferedReader br = null;
+        try {
+            if (mFile.length() > 10) {
+                br = new BufferedReader(new FileReader(mFile));
+            } else {
+                //copying file error, avoid this error
+                br = new BufferedReader(new InputStreamReader(mContext.getResources().openRawResource(R.raw.default_shortcut)));
+                getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
+            }
+
+            String str = null;
+            while ((str=br.readLine()) != null ) {
+                if (str.startsWith(HOME_SHORTCUT_HEAD)) {
+                    str_homeShortcut = str.replaceAll(HOME_SHORTCUT_HEAD, "");
+                    list_homeShortcut = str_homeShortcut.split(";");
+                } else if (str.startsWith(VIDEO_SHORTCUT_HEAD)) {
+                    str_videoShortcut = str.replaceAll(VIDEO_SHORTCUT_HEAD, "");
+                    list_videoShortcut = str_videoShortcut.split(";");
+                }  else if (str.startsWith(RECOMMEND_SHORTCUT_HEAD)) {
+                    str_recommendShortcut = str.replaceAll(RECOMMEND_SHORTCUT_HEAD, "");
+                    list_recommendShortcut = str_recommendShortcut.split(";");
+                }  else if (str.startsWith(MUSIC_SHORTCUT_HEAD)) {
+                    str_musicShortcut = str.replaceAll(MUSIC_SHORTCUT_HEAD, "");
+                    list_musicShortcut = str_musicShortcut.split(";");
+                }  else if (str.startsWith(LOCAL_SHORTCUT_HEAD)) {
+                    str_localShortcut = str.replaceAll(LOCAL_SHORTCUT_HEAD, "");
+                    list_localShortcut= str_localShortcut.split(";");
+                }
+            }
+
+        }
+        catch (Exception e) {
+            Log.d(TAG,""+e);
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+            } catch (IOException e) {
+            }
+        }
+        return list;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:48:0x00df, code lost:
-        if (r5 == null) goto L50;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:71:0x00ed A[EXC_TOP_SPLITTER, SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:75:0x00e8 A[EXC_TOP_SPLITTER, SYNTHETIC] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public void saveShortcut(int r8, java.lang.String r9) {
-        /*
-            Method dump skipped, instructions count: 244
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.droidlogic.tvlauncher.AppDataLoader.saveShortcut(int, java.lang.String):void");
+    public void saveShortcut(int mode, String str_apps){
+        synchronized (mLock) {
+            File mFile = new File(SHORTCUT_PATH);
+            if (!mFile.exists()) {
+                try {
+                    mFile.createNewFile();
+                }
+                catch (Exception e) {
+                    Log.e(TAG, e.getMessage().toString());
+                }
+            }
+
+            BufferedReader br = null;
+            BufferedWriter bw = null;
+            try {
+                br = new BufferedReader(new FileReader(mFile));
+                String str = null;
+                List list = new ArrayList();
+
+                while ( (str=br.readLine()) != null ) {
+                    list.add(str);
+                }
+
+                if (list.size() == 0) {
+                    list.add(HOME_SHORTCUT_HEAD);
+                    list.add(VIDEO_SHORTCUT_HEAD);
+                    list.add(RECOMMEND_SHORTCUT_HEAD);
+                    list.add(MUSIC_SHORTCUT_HEAD);
+                    list.add(LOCAL_SHORTCUT_HEAD);
+                }
+                bw = new BufferedWriter(new FileWriter(mFile));
+                for ( int i = 0;i < list.size(); i++ ) {
+                    if (list.get(i).toString().startsWith(parseShortcutHead(mode))) {
+                        str_apps =  parseShortcutHead(mode) + str_apps;
+                        bw.write(str_apps);
+                    } else {
+                        bw.write(list.get(i).toString());
+                    }
+                    bw.newLine();
+                }
+                bw.flush();
+                bw.close();
+            }
+            catch (Exception e) {
+                Log.d(TAG, "   " + e);
+            } finally {
+                try {
+                    if (br != null)
+                        br.close();
+                } catch (IOException e) {
+                }
+                try {
+                    if (bw != null)
+                        bw.close();
+                } catch (IOException e) {
+                }
+            }
+        }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:55:0x00a6 A[EXC_TOP_SPLITTER, SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:59:0x00a1 A[EXC_TOP_SPLITTER, SYNTHETIC] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public void getShortcutFromDefault(int r5, java.lang.String r6) {
-        /*
-            r4 = this;
-            java.io.File r0 = new java.io.File
-            r0.<init>(r6)
-            boolean r6 = r0.exists()
-            java.lang.String r1 = "AppDataLoader"
-            if (r6 != 0) goto L1d
-            r0.createNewFile()     // Catch: java.lang.Exception -> L11
-            goto L1d
-        L11:
-            r6 = move-exception
-            java.lang.String r6 = r6.getMessage()
-            java.lang.String r6 = r6.toString()
-            android.util.Log.e(r1, r6)
-        L1d:
-            r6 = 0
-            java.io.BufferedReader r2 = new java.io.BufferedReader     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            java.io.InputStreamReader r3 = new java.io.InputStreamReader     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            android.content.Context r4 = r4.mContext     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            android.content.res.Resources r4 = r4.getResources()     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            java.io.InputStream r4 = r4.openRawResource(r5)     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            r3.<init>(r4)     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            r2.<init>(r3)     // Catch: java.lang.Throwable -> L7a java.lang.Exception -> L7d
-            java.util.ArrayList r4 = new java.util.ArrayList     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            r4.<init>()     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-        L37:
-            java.lang.String r5 = r2.readLine()     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            if (r5 == 0) goto L41
-            r4.add(r5)     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            goto L37
-        L41:
-            java.io.BufferedWriter r5 = new java.io.BufferedWriter     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            java.io.FileWriter r3 = new java.io.FileWriter     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            r3.<init>(r0)     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            r5.<init>(r3)     // Catch: java.lang.Throwable -> L74 java.lang.Exception -> L76
-            r6 = 0
-        L4c:
-            int r0 = r4.size()     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            if (r6 >= r0) goto L63
-            java.lang.Object r0 = r4.get(r6)     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            java.lang.String r0 = r0.toString()     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            r5.write(r0)     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            r5.newLine()     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            int r6 = r6 + 1
-            goto L4c
-        L63:
-            r5.flush()     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            r5.close()     // Catch: java.lang.Throwable -> L70 java.lang.Exception -> L72
-            r2.close()     // Catch: java.io.IOException -> L6c
-        L6c:
-            r5.close()     // Catch: java.io.IOException -> L9b
-            goto L9b
-        L70:
-            r4 = move-exception
-            goto L9e
-        L72:
-            r4 = move-exception
-            goto L78
-        L74:
-            r4 = move-exception
-            goto L9f
-        L76:
-            r4 = move-exception
-            r5 = r6
-        L78:
-            r6 = r2
-            goto L7f
-        L7a:
-            r4 = move-exception
-            r2 = r6
-            goto L9f
-        L7d:
-            r4 = move-exception
-            r5 = r6
-        L7f:
-            java.lang.StringBuilder r0 = new java.lang.StringBuilder     // Catch: java.lang.Throwable -> L9c
-            r0.<init>()     // Catch: java.lang.Throwable -> L9c
-            java.lang.String r2 = "   "
-            r0.append(r2)     // Catch: java.lang.Throwable -> L9c
-            r0.append(r4)     // Catch: java.lang.Throwable -> L9c
-            java.lang.String r4 = r0.toString()     // Catch: java.lang.Throwable -> L9c
-            android.util.Log.d(r1, r4)     // Catch: java.lang.Throwable -> L9c
-            if (r6 == 0) goto L98
-            r6.close()     // Catch: java.io.IOException -> L98
-        L98:
-            if (r5 == 0) goto L9b
-            goto L6c
-        L9b:
-            return
-        L9c:
-            r4 = move-exception
-            r2 = r6
-        L9e:
-            r6 = r5
-        L9f:
-            if (r2 == 0) goto La4
-            r2.close()     // Catch: java.io.IOException -> La4
-        La4:
-            if (r6 == 0) goto La9
-            r6.close()     // Catch: java.io.IOException -> La9
-        La9:
-            throw r4
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.droidlogic.tvlauncher.AppDataLoader.getShortcutFromDefault(int, java.lang.String):void");
+    public  void getShortcutFromDefault(int srcPath, String desPath){
+        File desFile = new File(desPath);
+        if (!desFile.exists()) {
+            try {
+                desFile.createNewFile();
+            }
+            catch (Exception e) {
+                Log.e(TAG, e.getMessage().toString());
+            }
+        }
+
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(mContext.getResources().openRawResource(srcPath)));
+            String str = null;
+            List list = new ArrayList();
+
+            while ((str=br.readLine()) != null ) {
+                list.add(str);
+            }
+            bw = new BufferedWriter(new FileWriter(desFile));
+            for ( int i = 0;i < list.size(); i++ ) {
+                bw.write(list.get(i).toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (Exception e) {
+            Log.d(TAG, "   " + e);
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+            } catch (IOException e) {
+            }
+            try {
+                if (bw != null)
+                    bw.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
     private static final Comparator<LauncherActivityInfo> getAppNameComparator() {
         final Collator collator = Collator.getInstance();
-        return new Comparator<LauncherActivityInfo>() { // from class: com.droidlogic.tvlauncher.AppDataLoader.2
-            @Override // java.util.Comparator
-            public final int compare(LauncherActivityInfo launcherActivityInfo, LauncherActivityInfo launcherActivityInfo2) {
-                if (launcherActivityInfo.getUser().equals(launcherActivityInfo2.getUser())) {
-                    int compare = collator.compare(launcherActivityInfo.getLabel().toString(), launcherActivityInfo2.getLabel().toString());
-                    return compare == 0 ? launcherActivityInfo.getName().compareTo(launcherActivityInfo2.getName()) : compare;
+        return new Comparator<LauncherActivityInfo>() {
+            public final int compare(LauncherActivityInfo a, LauncherActivityInfo b) {
+                if (a.getUser().equals(b.getUser())) {
+                    int result = collator.compare(a.getLabel().toString(), b.getLabel().toString());
+                    if (result == 0) {
+                        result = a.getName().compareTo(b.getName());
+                    }
+                    return result;
+                } else {
+                    // TODO: Order this based on profile type rather than string compares.
+                    return a.getUser().toString().compareTo(b.getUser().toString());
                 }
-                return launcherActivityInfo.getUser().toString().compareTo(launcherActivityInfo2.getUser().toString());
             }
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void loadShortcutList() {
-        this.homeShortCuts.clear();
-        this.videoShortCuts.clear();
-        this.recommendShorts.clear();
-        this.musicShortCuts.clear();
-        this.appShortCuts.clear();
-        this.localShortCuts.clear();
-        List<LauncherActivityInfo> activityList = this.mLauncherApps.getActivityList(null, Process.myUserHandle());
-        Collections.sort(activityList, getAppNameComparator());
-        int launcherLargeIconDensity = this.mActivityManager.getLauncherLargeIconDensity();
-        if (activityList != null) {
-            for (int i = 0; i < activityList.size(); i++) {
-                ApplicationInfo applicationInfo = new ApplicationInfo();
-                LauncherActivityInfo launcherActivityInfo = activityList.get(i);
-                applicationInfo.title = launcherActivityInfo.getLabel().toString();
-                applicationInfo.setActivity(launcherActivityInfo.getComponentName(), 270532608);
-                applicationInfo.icon = launcherActivityInfo.getBadgedIcon(launcherLargeIconDensity);
-                if (!launcherActivityInfo.getComponentName().getPackageName().equals("com.android.gallery3d") || !applicationInfo.intent.toString().contains("camera")) {
-                    if (this.list_homeShortcut != null) {
-                        int i2 = 0;
-                        while (true) {
-                            if (i2 >= this.list_homeShortcut.length) {
-                                break;
-                            } else if (launcherActivityInfo.getComponentName().getPackageName().equals(this.list_homeShortcut[i2])) {
-                                this.homeShortCuts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                                break;
-                            } else {
-                                i2++;
-                            }
-                        }
-                    }
-                    if (this.list_videoShortcut != null) {
-                        int i3 = 0;
-                        while (true) {
-                            if (i3 >= this.list_videoShortcut.length) {
-                                break;
-                            } else if (launcherActivityInfo.getComponentName().getPackageName().equals(this.list_videoShortcut[i3])) {
-                                this.videoShortCuts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                                break;
-                            } else {
-                                i3++;
-                            }
-                        }
-                    }
-                    if (this.list_recommendShortcut != null) {
-                        int i4 = 0;
-                        while (true) {
-                            if (i4 >= this.list_recommendShortcut.length) {
-                                break;
-                            } else if (launcherActivityInfo.getComponentName().getPackageName().equals(this.list_recommendShortcut[i4])) {
-                                this.recommendShorts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                                break;
-                            } else {
-                                i4++;
-                            }
-                        }
-                    }
-                    if (this.list_musicShortcut != null) {
-                        int i5 = 0;
-                        while (true) {
-                            if (i5 >= this.list_musicShortcut.length) {
-                                break;
-                            } else if (launcherActivityInfo.getComponentName().getPackageName().equals(this.list_musicShortcut[i5])) {
-                                this.musicShortCuts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                                break;
-                            } else {
-                                i5++;
-                            }
-                        }
-                    }
-                    if (this.list_localShortcut != null) {
-                        int i6 = 0;
-                        while (true) {
-                            if (i6 >= this.list_localShortcut.length) {
-                                break;
-                            } else if (launcherActivityInfo.getComponentName().getPackageName().equals(this.list_localShortcut[i6])) {
-                                this.localShortCuts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                                break;
-                            } else {
-                                i6++;
-                            }
-                        }
-                    }
-                    this.appShortCuts.add(buildShortcutMap(applicationInfo.title.toString(), applicationInfo.intent, applicationInfo.icon, applicationInfo.componentName));
-                    applicationInfo.icon.setCallback(null);
+    private void loadShortcutList() {
+        homeShortCuts.clear();
+        videoShortCuts.clear();
+        recommendShorts.clear();
+        musicShortCuts.clear();
+        appShortCuts.clear();
+        localShortCuts.clear();
+
+        final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, android.os.Process.myUserHandle());
+        Collections.sort(apps, getAppNameComparator());
+        final int iconDpi = mActivityManager.getLauncherLargeIconDensity();
+
+        if (apps != null) {
+            for (int i = 0; i < apps.size(); i++) {
+                ApplicationInfo application = new ApplicationInfo();
+                LauncherActivityInfo info = apps.get(i);
+
+                application.title = info.getLabel().toString();
+                application.setActivity(info.getComponentName(),
+                        Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                application.icon = info.getBadgedIcon(iconDpi);
+                if (info.getComponentName().getPackageName().equals("com.android.gallery3d")
+                        && application.intent.toString().contains("camera")) {
+                    continue;
                 }
+
+                if (list_homeShortcut != null) {
+                    for (int j = 0; j < list_homeShortcut.length; j++) {
+                        if (info.getComponentName().getPackageName().equals(list_homeShortcut[j])) {
+                            homeShortCuts.add(buildShortcutMap(application.title.toString(),
+                                    application.intent,application.icon, application.componentName));
+                            break;
+                        }
+                    }
+                }
+
+                if (list_videoShortcut != null) {
+                    for (int j = 0; j < list_videoShortcut.length; j++) {
+                        if (info.getComponentName().getPackageName().equals(list_videoShortcut[j])) {
+                            videoShortCuts.add(buildShortcutMap(application.title.toString(),
+                                    application.intent, application.icon, application.componentName));
+                            break;
+                        }
+                    }
+                }
+
+                if (list_recommendShortcut != null) {
+                    for (int j = 0; j < list_recommendShortcut.length; j++) {
+                        if (info.getComponentName().getPackageName().equals(list_recommendShortcut[j])) {
+                            recommendShorts.add(buildShortcutMap(application.title.toString(),
+                                    application.intent, application.icon, application.componentName));
+                            break;
+                        }
+                    }
+                }
+
+                if (list_musicShortcut != null) {
+                    for (int j = 0; j < list_musicShortcut.length; j++) {
+                        if (info.getComponentName().getPackageName().equals(list_musicShortcut[j])) {
+                            musicShortCuts.add(buildShortcutMap(application.title.toString(),
+                                    application.intent, application.icon, application.componentName));
+                            break;
+                        }
+                    }
+                }
+
+                if (list_localShortcut != null) {
+                    for (int j = 0; j < list_localShortcut.length; j++) {
+                        if (info.getComponentName().getPackageName().equals(list_localShortcut[j])) {
+                            localShortCuts.add(buildShortcutMap(application.title.toString(),
+                                    application.intent, application.icon, application.componentName));
+                            break;
+                        }
+                    }
+                }
+
+                appShortCuts.add(buildShortcutMap(application.title.toString(),
+                        application.intent,application.icon, application.componentName));
+                application.icon.setCallback(null);
             }
         }
-        this.homeShortCuts.add(buildAddMap());
-        this.videoShortCuts.add(buildAddMap());
-        this.recommendShorts.add(buildAddMap());
-        this.musicShortCuts.add(buildAddMap());
-        this.localShortCuts.add(buildAddMap());
+        homeShortCuts.add(buildAddMap());
+        videoShortCuts.add(buildAddMap());
+        musicShortCuts.add(buildAddMap());
+        localShortCuts.add(buildAddMap());
     }
 
-    private ArrayMap<String, Object> buildShortcutMap(String str, Intent intent, Drawable drawable, ComponentName componentName) {
-        ArrayMap<String, Object> arrayMap = new ArrayMap<>();
-        arrayMap.put("name", str);
-        arrayMap.put("intent", intent);
-        int parsePackageIcon = parsePackageIcon(componentName.getPackageName());
-        if (parsePackageIcon == -1) {
-            arrayMap.put("icon", drawable);
+    private ArrayMap<String, Object> buildShortcutMap(String name, Intent i, Drawable icon, ComponentName c) {
+        ArrayMap<String, Object> map = new ArrayMap<String, Object>();
+        map.put(NAME, name);
+        map.put(INTENT, i);
+        int resId = parsePackageIcon(c.getPackageName());
+        if (resId == -1) {
+            map.put(ICON, icon);
         } else {
-            arrayMap.put("icon", this.mContext.getResources().getDrawable(parsePackageIcon));
+            map.put(ICON, mContext.getResources().getDrawable(resId));
         }
-        arrayMap.put("component name", componentName);
-        return arrayMap;
+        map.put(COMPONENT_NAME, c);
+        return map;
     }
 
-    private ArrayMap<String, Object> buildAddMap() {
-        ArrayMap<String, Object> arrayMap = new ArrayMap<>();
-        arrayMap.put("name", this.mContext.getResources().getString(R.string.str_add));
-        arrayMap.put("intent", null);
-        arrayMap.put("icon", Integer.valueOf((int) R.drawable.item_img_add));
-        return arrayMap;
+    private ArrayMap<String, Object> buildAddMap(){
+        ArrayMap<String, Object> map = new ArrayMap<String, Object>();
+        map.put(NAME, mContext.getResources().getString(R.string.str_add));
+        map.put(INTENT, null);
+        map.put(ICON, R.drawable.item_img_add);
+
+        return map;
     }
 
-    public List<ArrayMap<String, Object>> getShortcutList(int i) {
-        synchronized (this.mLock) {
-            try {
-                if (i == 0) {
-                    return this.homeShortCuts;
-                } else if (i == 1) {
-                    return this.videoShortCuts;
-                } else if (i == 2) {
-                    return this.recommendShorts;
-                } else if (i == 3) {
-                    return this.musicShortCuts;
-                } else if (i == 4) {
-                    return this.appShortCuts;
-                } else if (i != 5) {
-                    return null;
-                } else {
-                    return this.localShortCuts;
-                }
-            } catch (Throwable th) {
-                throw th;
+    public List<ArrayMap<String, Object>> getShortcutList(int mode) {
+        synchronized (mLock) {
+            switch (mode) {
+                case Launcher.MODE_HOME:
+                    return homeShortCuts;
+                case Launcher.MODE_VIDEO:
+                    return videoShortCuts;
+                case Launcher.MODE_RECOMMEND:
+                    return recommendShorts;
+                case Launcher.MODE_MUSIC:
+                    return musicShortCuts;
+                case Launcher.MODE_APP:
+                    return appShortCuts;
+                case Launcher.MODE_LOCAL:
+                    return localShortCuts;
             }
         }
+        return null;
     }
 
-    public String getShortcutString(int i) {
-        synchronized (this.mLock) {
-            try {
-                if (i == 0) {
-                    return this.str_homeShortcut;
-                } else if (i == 1) {
-                    return this.str_videoShortcut;
-                } else if (i == 2) {
-                    return this.str_recommendShortcut;
-                } else if (i == 3) {
-                    return this.str_musicShortcut;
-                } else if (i != 5) {
-                    return null;
-                } else {
-                    return this.str_localShortcut;
-                }
-            } catch (Throwable th) {
-                throw th;
+    public String getShortcutString(int mode) {
+        synchronized (mLock) {
+            switch (mode) {
+                case Launcher.MODE_HOME:
+                    return str_homeShortcut;
+                case Launcher.MODE_VIDEO:
+                    return str_videoShortcut;
+                case Launcher.MODE_RECOMMEND:
+                    return str_recommendShortcut;
+                case Launcher.MODE_MUSIC:
+                    return str_musicShortcut;
+                case Launcher.MODE_LOCAL:
+                    return str_localShortcut;
             }
         }
+        return null;
     }
-
     public boolean isDataLoaded() {
-        return this.isLoaded;
+        return isLoaded;
     }
 
-    private int parsePackageIcon(String str) {
-        if (str.equals("com.droidlogic.FileBrower")) {
+    private String parseShortcutHead (int mode) {
+        switch (mode) {
+            case Launcher.MODE_HOME:
+                return HOME_SHORTCUT_HEAD;
+            case Launcher.MODE_VIDEO:
+                return VIDEO_SHORTCUT_HEAD;
+            case Launcher.MODE_RECOMMEND:
+                return RECOMMEND_SHORTCUT_HEAD;
+            case Launcher.MODE_MUSIC:
+                return MUSIC_SHORTCUT_HEAD;
+            case Launcher.MODE_LOCAL:
+                return LOCAL_SHORTCUT_HEAD;
+        }
+        return null;
+    }
+
+    private int parsePackageIcon(String packageName){
+        if (packageName.equals("com.droidlogic.FileBrower")) {
             return R.drawable.icon_filebrowser;
-        }
-        if (str.equals("org.chromium.webview_shell")) {
+        } else if (packageName.equals("com.android.browser")) {
             return R.drawable.icon_browser;
-        }
-        if (str.equals("com.droidlogic.appinstall")) {
+        } else if (packageName.equals("com.droidlogic.appinstall")) {
             return R.drawable.icon_appinstaller;
-        }
-        if (str.equals("com.android.tv.settings")) {
+        } else if (packageName.equals("com.android.tv.settings")) {
             return R.drawable.icon_setting;
-        }
-        if (str.equals("com.droidlogic.mediacenter")) {
+        } else if (packageName.equals("com.droidlogic.mediacenter")){
             return R.drawable.icon_mediacenter;
-        }
-        if (str.equals("com.droidlogic.otaupgrade")) {
+        } else if (packageName.equals("com.droidlogic.otaupgrade")) {
             return R.drawable.icon_backupandupgrade;
-        }
-        if (str.equals("com.droidlogic.miracast")) {
+        } else if (packageName.equals("com.android.gallery3d")) {
+            return R.drawable.icon_pictureplayer;
+        } else if (packageName.equals("com.droidlogic.miracast")) {
             return R.drawable.icon_miracast;
-        }
-        if (str.equals("com.droidlogic.PPPoE")) {
+        } else if (packageName.equals("com.droidlogic.PPPoE")) {
             return R.drawable.icon_pppoe;
+        } else if (packageName.equals("com.android.music")) {
+            return R.drawable.icon_music;
+        } else if (packageName.equals("com.android.camera2")) {
+            return R.drawable.icon_camera;
         }
         return -1;
     }

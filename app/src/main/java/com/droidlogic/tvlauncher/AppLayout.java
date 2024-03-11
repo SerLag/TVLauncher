@@ -114,14 +114,14 @@ public class AppLayout extends RelativeLayout {
 
         @Override // android.view.animation.Animation.AnimationListener
         public void onAnimationStart(Animation animation) {
-            ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(4);
+            ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(INVISIBLE);
             AppLayout.this.currenPassword = this.mPassword;
         }
 
         @Override // android.view.animation.Animation.AnimationListener
         public void onAnimationEnd(Animation animation) {
             if (this.mType == 0 && AppLayout.this.currenPassword == this.mPassword) {
-                ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(0);
+                ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(VISIBLE);
             }
         }
     }

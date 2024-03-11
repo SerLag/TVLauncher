@@ -57,7 +57,7 @@ public class StatusLoader {
             arrayList.add(arrayMap2);
         }
         if (!isSdcardExist()) {
-            control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/cardled", 0);
+         //   control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/cardled", 0);
         }
         if (isUdiskExist()) {
             ArrayMap arrayMap3 = new ArrayMap();
@@ -65,7 +65,7 @@ public class StatusLoader {
             arrayList.add(arrayMap3);
         }
         if (!isUdiskExist()) {
-            control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/usbled", 0);
+         //   control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/usbled", 0);
         }
         if (isEthernetOn()) {
             ArrayMap arrayMap4 = new ArrayMap();
@@ -76,26 +76,30 @@ public class StatusLoader {
     }
 
     private boolean isSdcardExist() {
-        List<VolumeInfo> volumes = this.mStorageManager.getStorageVolumes();
-        Collections.sort(volumes, VolumeInfo.getDescriptionComparator());
+/*        List<StorageVolume> volumes = this.mStorageManager.getStorageVolumes();
+        Collections.sort(volumes, StorageVolume.);
         for (VolumeInfo volumeInfo : volumes) {
             if (volumeInfo != null && volumeInfo.isMountedReadable() && volumeInfo.getType() == 0 && volumeInfo.getDisk().isSd()) {
-                control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/cardled", 1);
+            //    control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/cardled", 1);
                 return true;
             }
-        }
+        }*/
+/*        List<StorageVolume> volumes = this.mStorageManager.getStorageVolumes();
+        for (StorageVolume volume : volumes) {
+            if (volume.isRemovable() && volume.) == )
+        }*/
         return false;
     }
 
     private boolean isUdiskExist() {
-        List<StorageVolume> volumes = this.mStorageManager.getStorageVolumes();
-        Collections.sort(volumes, VolumeInfo.getDescriptionComparator());
+/*        List<StorageVolume> volumes = this.mStorageManager.getStorageVolumes();
+        Collections.sort(volumes, StorageVolume.getDescriptionComparator());
         for (StorageVolume volumeInfo : volumes) {
             if (volumeInfo != null && volumeInfo.isMountedReadable() && volumeInfo.getType() == 0 && volumeInfo.getDisk().isUsb()) {
-                control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/usbled", 1);
+            //    control_led("/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/usbled", 1);
                 return true;
             }
-        }
+        }*/
         return false;
     }
 
@@ -110,7 +114,7 @@ public class StatusLoader {
         NetworkInfo networkInfo = this.mConnectivityManager.getNetworkInfo(9);
         return networkInfo != null && networkInfo.isConnected();
     }
-
+/*
     public static boolean control_led(String str, int i) {
         Process process;
         DataOutputStream dataOutputStream = null;
@@ -133,9 +137,9 @@ public class StatusLoader {
                         }
                         return true;
                     } catch (Exception e2) {
-                        e = e2;
+                        //    e = e2;
                         dataOutputStream = dataOutputStream2;
-                        Log.d("runtime_exception:", e.getMessage());
+                        Log.d("runtime_exception:", e2.getMessage());
                         if (dataOutputStream != null) {
                             try {
                                 dataOutputStream.close();
@@ -161,50 +165,62 @@ public class StatusLoader {
                         throw th;
                     }
                 } catch (Throwable th2) {
-                    th = th2;
+                    //  th = th2;
                 }
             } catch (Exception e5) {
-                e = e5;
+                // e = e5;
             }
         } catch (Exception e6) {
-            e = e6;
+            // e = e6;
             process = null;
         } catch (Throwable th3) {
-            th = th3;
+            //th = th3;
             process = null;
         }
     }
+*/
 
-    public String getTime() {
-        String str;
-        Calendar calendar = Calendar.getInstance();
-        int i = calendar.get(11);
-        int i2 = calendar.get(12);
-        if (!DateFormat.is24HourFormat(this.mContext) && i > 12) {
-            i -= 12;
+    public  String getTime(){
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+
+        if (!DateFormat.is24HourFormat(mContext) && hour > 12) {
+            hour = hour - 12;
         }
-        if (i >= 10) {
-            str = "" + Integer.toString(i);
-        } else {
-            str = "0" + Integer.toString(i);
+
+        String time = "";
+        if (hour >= 10) {
+            time +=  Integer.toString(hour);
+        }else {
+            time += "0" + Integer.toString(hour);
         }
-        String str2 = str + ":";
-        if (i2 >= 10) {
-            return str2 + Integer.toString(i2);
+        time += ":";
+
+        if (minute >= 10) {
+            time +=  Integer.toString(minute);
+        }else {
+            time += "0" +  Integer.toString(minute);
         }
-        return str2 + "0" + Integer.toString(i2);
+
+        return time;
     }
 
-    public String getDate() {
-        Calendar calendar = Calendar.getInstance();
-        int i = calendar.get(2);
-        String num = Integer.toString(calendar.get(1));
-        String num2 = Integer.toString(calendar.get(5));
-        String str = this.mContext.getResources().getStringArray(R.array.week)[calendar.get(7) - 1];
-        String str2 = this.mContext.getResources().getStringArray(R.array.month)[i];
+    public String getDate(){
+        final Calendar c = Calendar.getInstance();
+        int int_Month = c.get(Calendar.MONTH);
+        String mDay = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
+        int int_Week = c.get(Calendar.DAY_OF_WEEK) -1;
+        String str_week =  mContext.getResources().getStringArray(R.array.week)[int_Week];
+        String mMonth =  mContext.getResources().getStringArray(R.array.month)[int_Month];
+
+        String date;
         if (Locale.getDefault().getLanguage().equals("zh")) {
-            return str + ", " + str2 + " " + num2 + this.mContext.getResources().getString(R.string.str_day);
+            date = str_week + ", " + mMonth + " " + mDay + mContext.getResources().getString(R.string.str_day);
+        }else {
+            date = str_week + ", " + mMonth + " " + mDay;
         }
-        return num + "." + str2 + "." + num2 + " " + str;
+
+        return date;
     }
 }

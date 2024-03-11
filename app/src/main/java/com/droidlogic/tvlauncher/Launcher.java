@@ -108,6 +108,14 @@ public class Launcher extends Activity {
     private final String DROIDVOLD_MEDIA_UNMOUNTED_ACTION = "com.droidvold.action.MEDIA_UNMOUNTED";
     private final String DROIDVOLD_MEDIA_EJECT_ACTION = "com.droidvold.action.MEDIA_EJECT";
     private final String DROIDVOLD_MEDIA_MOUNTED_ACTION = "com.droidvold.action.MEDIA_MOUNTED";
+
+    public static final int MODE_HOME                            = 0;
+    public static final int MODE_VIDEO                           = 1;
+    public static final int MODE_RECOMMEND                       = 2;
+    public static final int MODE_MUSIC                           = 3;
+    public static final int MODE_APP                             = 4;
+    public static final int MODE_LOCAL                           = 5;
+
     private int current_screen_mode = 0;
     private int saveModeBeforeCustom = 0;
     private int[] mChildScreens = childScreens;
@@ -130,8 +138,8 @@ public class Launcher extends Activity {
     private long totalMemory = 0;
     private long availMemory = 0;
     private Handler handler = new Handler();
-    private Handler mHandler = new Handler() { // from class: com.droidlogic.tvlauncher.Launcher.10
-        @Override // android.os.Handler
+    private Handler mHandler = new Handler() {
+        @Override
         public void handleMessage(Message message) {
             int i = message.what;
             if (i == 0) {
