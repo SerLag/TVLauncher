@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import java.util.List;
 
-/* loaded from: classes.dex */
 public class AppLayout extends RelativeLayout {
     Animation animLeftIn;
     Animation animLeftOut;

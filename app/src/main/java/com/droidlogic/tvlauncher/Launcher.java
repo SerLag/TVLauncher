@@ -271,26 +271,26 @@ public class Launcher extends Activity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         skipUserSetup();
-        this.mTvInputManager = (TvInputManager) getSystemService(TV_INPUT_SERVICE);
-        if (this.mTvInputManager == null) {
-            setContentView(R.layout.main_box);
-        } else {
+//        this.mTvInputManager = (TvInputManager) getSystemService(TV_INPUT_SERVICE);
+//        if (this.mTvInputManager == null) {
+//            setContentView(R.layout.main_box);
+//        } else {
             setContentView(R.layout.main);
-        }
+//        }
         Log.d("MediaBoxLauncher", "------onCreate");
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
         this.mBlackFrameLayout = (FrameLayout) findViewById(R.id.layout_black);
-        if (!checkNeedStartTvApp(false)) {
+//        if (!checkNeedStartTvApp(false)) {
             this.mBlackFrameLayout.setVisibility(View.GONE);
             this.mMainFrameLayout.setVisibility(View.VISIBLE);
-        }
-        if (Build.VERSION.SDK_INT >= 25) {
-            COMPONENT_TV_APP = COMPONENT_LIVE_TV;
-        }
+ //       }
+ //       if (Build.VERSION.SDK_INT >= 25) {
+//            COMPONENT_TV_APP = COMPONENT_LIVE_TV;
+//        }
         this.mAppDataLoader = new AppDataLoader(this);
         this.mStatusLoader = new StatusLoader(this);
         initChildViews();
-        initWeather();
+//        initWeather();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.MEDIA_EJECT");
         intentFilter.addAction("android.intent.action.MEDIA_UNMOUNTED");
@@ -320,7 +320,7 @@ public class Launcher extends Activity {
         IntentFilter intentFilter4 = new IntentFilter();
         intentFilter4.addAction("com.droidlogic.instaboot.RELOAD_APP_COMPLETED");
         registerReceiver(this.instabootReceiver, intentFilter4);
-        initMemory();
+//        initMemory();
         new Thread(new Runnable() { // from class: com.droidlogic.tvlauncher.Launcher.1
             @Override // java.lang.Runnable
             public void run() {
@@ -732,14 +732,14 @@ public class Launcher extends Activity {
         this.mMiracast = (MyRelativeLayout) findViewById(R.id.layout_miracast);
         this.mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
         setHomeRectType();
-        this.tvView = (TvView) findViewById(R.id.tv_view);
-        this.tvPrompt = (TextView) findViewById(R.id.tx_tv_prompt);
+ //       this.tvView = (TvView) findViewById(R.id.tv_view);
+ //       this.tvPrompt = (TextView) findViewById(R.id.tx_tv_prompt);
         this.mChildScreens = childScreens;
-        this.tvPrompt.setVisibility(View.GONE);
-        TvView tvView = this.tvView;
-        if (tvView != null) {
-            tvView.setVisibility(View.GONE);
-        }
+ //       this.tvPrompt.setVisibility(View.GONE);
+    //    TvView tvView = this.tvView;
+ //       if (tvView != null) {
+  //          tvView.setVisibility(View.GONE);
+ //       }
     }
 
     private void setBigBackgroundDrawable() {
@@ -929,14 +929,14 @@ public class Launcher extends Activity {
             this.current_screen_mode = 0;
             this.mSecondScreen.setVisibility(View.GONE);
             this.mHomeView.setVisibility(View.VISIBLE);
-            memory_circle.setVisibility(View.VISIBLE);
-            memory_used.setVisibility(View.VISIBLE);
-            setTvViewPosition(0);
+//            memory_circle.setVisibility(View.VISIBLE);
+//            memory_used.setVisibility(View.VISIBLE);
+            //setTvViewPosition(0);
             return;
         }
         this.mHomeView.setVisibility(View.GONE);
-        memory_circle.setVisibility(View.GONE);
-        memory_used.setVisibility(View.GONE);
+//        memory_circle.setVisibility(View.GONE);
+//        memory_used.setVisibility(View.GONE);
         this.mSecondScreen.setVisibility(View.VISIBLE);
     }
 
@@ -1059,24 +1059,24 @@ public class Launcher extends Activity {
             dipToPx3 = dipToPx(this, 310.0f) + dipToPx;
             dipToPx4 = dipToPx(this, 174.0f) + dipToPx2;
             i2 = 0;
-            HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-            HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
+//            HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
+//            HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
             float f = i3;
             long j = i2;
-            this.tvView.animate().translationY(f).setDuration(j).start();
-            this.tvPrompt.animate().translationY(f).setDuration(j).start();
+//            this.tvView.animate().translationY(f).setDuration(j).start();
+//            this.tvPrompt.animate().translationY(f).setDuration(j).start();
         }
         dipToPx = dipToPx(this, 969.0f);
         dipToPx2 = dipToPx(this, 545.0f);
         dipToPx3 = dipToPx(this, 310.0f) + dipToPx;
         dipToPx4 = dipToPx(this, 174.0f) + dipToPx2;
         i2 = 500;
-        HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-        HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
+//        HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
+//        HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
         float f2 = i3;
         long j2 = i2;
-        this.tvView.animate().translationY(f2).setDuration(j2).start();
-        this.tvPrompt.animate().translationY(f2).setDuration(j2).start();
+//        this.tvView.animate().translationY(f2).setDuration(j2).start();
+//        this.tvPrompt.animate().translationY(f2).setDuration(j2).start();
     }
 
     /* JADX INFO: Access modifiers changed from: private */
