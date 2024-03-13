@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
+import static android.view.KeyEvent.KEYCODE_DPAD_LEFT;
+import static android.view.KeyEvent.KEYCODE_DPAD_RIGHT;
+
 /* loaded from: classes.dex */
 public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver.OnGlobalLayoutListener {
     private boolean isSwitchAnimRunning;
@@ -72,40 +75,40 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
     }
 
     @Override // android.widget.RelativeLayout, android.view.ViewGroup, android.view.View
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        super.onLayout(z, i, i2, i3, i4);
+    protected void onLayout (boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout (changed, left, top, right, bottom);
     }
 
-    @Override // android.view.ViewGroup, android.view.View
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
     }
 
-    @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
+    @Override
     public void onGlobalLayout() {
         this.layoutCompleted = true;
         if (isFocused()) {
             setHoverView();
             setFocusViewBg(true, this);
         }
-        getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
-    @Override // android.view.ViewGroup, android.view.View
+    @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
         try {
             if (keyEvent.getAction() == 0) {
                 int keyCode = keyEvent.getKeyCode();
-                if (keyCode != 66) {
+                if (keyCode != KeyEvent.KEYCODE_ENTER) {
                     switch (keyCode) {
-                        case 21:
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
                             if (this.mNumber != -1 && this.mNumber % 6 == 0) {
                                 this.isSwitchAnimRunning = true;
                                 ((Launcher) this.mContext).switchSecondScren(0);
                                 break;
                             }
                             break;
-                        case 22:
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
                             if (this.mNumber != -1 && (this.mNumber % 6 == 5 || this.mNumber == ((ViewGroup) getParent()).getChildCount() - 1)) {
                                 this.isSwitchAnimRunning = true;
                                 ((Launcher) this.mContext).switchSecondScren(1);
@@ -114,26 +117,31 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
                             break;
                     }
                 }
-                if (this.mType != 7) {
+                if (this.mType != Launcher.TYPE_APP_SHORTCUT) {
                     ((Launcher) this.mContext).saveHomeFocus(this);
                 }
-                switch (this.mType) {
-                    case 0:
-                        showSecondScreen(1);
+                switch (mType) {
+                    case Launcher.TYPE_VIDEO:
+/*                        if (((Launcher)mContext).isTvFeture()) {
+                            ((Launcher)mContext).startTvApp();
+                        } else {
+                            showSecondScreen(Launcher.MODE_VIDEO);
+                            return true;
+                        }*/
                         break;
-                    case 1:
-                        showSecondScreen(2);
+                    case Launcher.TYPE_RECOMMEND:
+                        showSecondScreen(Launcher.MODE_RECOMMEND);
                         break;
-                    case 2:
-                        showSecondScreen(3);
+                    case Launcher.TYPE_MUSIC:
+                        showSecondScreen(Launcher.MODE_MUSIC);
                         break;
-                    case 3:
-                        showSecondScreen(4);
+                    case Launcher.TYPE_APP:
+                        showSecondScreen(Launcher.MODE_APP);
                         break;
-                    case 4:
-                        showSecondScreen(5);
+                    case Launcher.TYPE_LOCAL:
+                        showSecondScreen(Launcher.MODE_LOCAL);
                         break;
-                    case 5:
+                    case Launcher.TYPE_SETTINGS:
                         if (this.mIntent != null) {
                             this.mContext.startActivity(this.mIntent);
                             if (this.mIntent.getComponent().flattenToString().equals("com.android.tv.settings/com.android.tv.settings.MainSettings")) {
@@ -142,8 +150,8 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
                             }
                         }
                         break;
-                    case 6:
-                    case 7:
+                    case Launcher.TYPE_APP_SHORTCUT:
+                    case Launcher.TYPE_HOME_SHORTCUT:
                         ComponentName componentName = new ComponentName("com.android.camera2", "com.android.camera.CameraLauncher");
                         if (this.mIntent != null) {
                             if (this.mIntent.getComponent().flattenToString().equals(Launcher.COMPONENT_TV_APP)) {
@@ -354,8 +362,8 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
         }
     }
 
-    public void setNumber(int i) {
-        this.mNumber = i;
+    public void setNumber(int number) {
+        mNumber = number;
     }
 
     public void setAddButton(boolean z) {

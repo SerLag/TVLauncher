@@ -94,8 +94,7 @@ public class AppLayout extends RelativeLayout {
         this.password++;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
+
     public class MyAnimationListener implements Animation.AnimationListener {
         private int mPassword;
         private int mType;
@@ -125,3 +124,4 @@ public class AppLayout extends RelativeLayout {
         }
     }
 }
+

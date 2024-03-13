@@ -109,6 +109,15 @@ public class Launcher extends Activity {
     private final String DROIDVOLD_MEDIA_EJECT_ACTION = "com.droidvold.action.MEDIA_EJECT";
     private final String DROIDVOLD_MEDIA_MOUNTED_ACTION = "com.droidvold.action.MEDIA_MOUNTED";
 
+    public static final int TYPE_VIDEO                           = 0;
+    public static final int TYPE_RECOMMEND                       = 1;
+    public static final int TYPE_MUSIC                           = 2;
+    public static final int TYPE_APP                             = 3;
+    public static final int TYPE_LOCAL                           = 4;
+    public static final int TYPE_SETTINGS                        = 5;
+    public static final int TYPE_HOME_SHORTCUT                   = 6;
+    public static final int TYPE_APP_SHORTCUT                    = 7;
+
     public static final int MODE_HOME                            = 0;
     public static final int MODE_VIDEO                           = 1;
     public static final int MODE_RECOMMEND                       = 2;

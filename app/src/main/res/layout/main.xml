@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/layout_root" android:layout_width="match_parent" android:layout_height="match_parent">
-    <FrameLayout android:id="@+id/layout_main" android:layout_width="match_parent" android:layout_height="match_parent">
-        <RelativeLayout android:id="@+id/layout_homepage" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/layout_homepage"
+            android:descendantFocusability="afterDescendants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <include layout="@layout/layout_statusbar"/>
             <include layout="@layout/layout_rect_group"/>
             <include layout="@layout/layout_shortcut"/>
         </RelativeLayout>
-        <com.droidlogic.tvlauncher.AppLayout android:id="@+id/second_screen" android:visibility="gone" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent"/>
-        <com.droidlogic.tvlauncher.HoverView android:id="@+id/hover_view" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <com.droidlogic.tvlauncher.AppLayout
+            android:id="@+id/second_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="afterDescendants"
+            android:visibility="gone" />
+        <com.droidlogic.tvlauncher.HoverView
+            android:id="@+id/hover_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
-    <FrameLayout android:id="@+id/layout_black" android:background="@color/black_ground" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <FrameLayout
+        android:id="@+id/layout_black"
+        android:background="@color/black_ground"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

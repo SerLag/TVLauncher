@@ -16,6 +16,7 @@ import java.util.List;
 
 /* loaded from: classes.dex */
 public class MyGridLayout extends GridLayout {
+    private final static String TAG="MyGridLayout";
     private Context mContext;
     private Object mLock;
 
@@ -26,19 +27,22 @@ public class MyGridLayout extends GridLayout {
     public MyGridLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mContext = context;
-        this.mLock = ((Launcher) this.mContext).getLock();
+        if(!isInEditMode()) {
+            this.mLock = ((Launcher) this.mContext).getLock();
+        }
     }
 
-    public MyGridLayout(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public MyGridLayout(Context context, AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
     }
 
-    @Override // android.view.View
+    @Override
     public void onDraw(Canvas canvas) {
+        // TODO Auto-generated method stub
         super.onDraw(canvas);
     }
 
-    @Override // android.view.View
+    @Override //!!!!
     public boolean onGenericMotionEvent(MotionEvent motionEvent) {
         if ((motionEvent.getSource() & 2) != 0 && motionEvent.getAction() == 8) {
             ((Launcher) this.mContext).getHoverView().clear();
@@ -46,33 +50,33 @@ public class MyGridLayout extends GridLayout {
         return super.onGenericMotionEvent(motionEvent);
     }
 
-    @Override // android.widget.GridLayout, android.view.ViewGroup, android.view.View
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        super.onLayout(z, i, i2, i3, i4);
+    @Override
+    protected void onLayout (boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout (changed, left, top, right, bottom);
     }
 
-    public void setLayoutView(int i, List<ArrayMap<String, Object>> list) {
+    public void setLayoutView(int mode, List<ArrayMap<String, Object>> list) {
         MyRelativeLayout myRelativeLayout;
         synchronized (this.mLock) {
             if (getChildCount() > 0) {
                 removeAllViews();
             }
-            for (int i2 = 0; i2 < list.size(); i2++) {
-                if (i == 0) {
+            for (int i = 0; i < list.size(); i++) {
+                if (mode == Launcher.MODE_HOME) {
                     myRelativeLayout = (MyRelativeLayout) View.inflate(this.mContext, R.layout.homegrid_item, null);
-                    myRelativeLayout.setType(6);
+                    myRelativeLayout.setType(Launcher.TYPE_HOME_SHORTCUT);
                 } else {
                     myRelativeLayout = (MyRelativeLayout) View.inflate(this.mContext, R.layout.childgrid_item, null);
                     myRelativeLayout.setPadding(5, 5, 5, 5);
-                    ((TextView) myRelativeLayout.getChildAt(1)).setText((String) list.get(i2).get("name"));
-                    myRelativeLayout.setType(7);
-                    myRelativeLayout.setNumber(i2);
+                    ((TextView) myRelativeLayout.getChildAt(1)).setText((String) list.get(i).get(AppDataLoader.NAME));
+                    myRelativeLayout.setType(Launcher.TYPE_APP_SHORTCUT);
+                    myRelativeLayout.setNumber(i);
                 }
                 ImageView imageView = (ImageView) myRelativeLayout.getChildAt(0);
-                imageView.setBackgroundDrawable((Drawable) new SoftReference(this.mContext.getResources().getDrawable(parseItemBackground(i2, i))).get());
-                if (list.get(i2).get("icon") instanceof Drawable) {
-                    imageView.setImageDrawable((Drawable) new SoftReference((Drawable) list.get(i2).get("icon")).get());
-                    myRelativeLayout.setIntent((Intent) list.get(i2).get("intent"));
+                imageView.setBackgroundDrawable((Drawable) new SoftReference(this.mContext.getResources().getDrawable(parseItemBackground(i, i))).get());
+                if (list.get(i).get("icon") instanceof Drawable) {
+                    imageView.setImageDrawable((Drawable) new SoftReference((Drawable) list.get(i).get("icon")).get());
+                    myRelativeLayout.setIntent((Intent) list.get(i).get("intent"));
                 } else {
                     imageView.setImageDrawable((Drawable) new SoftReference(this.mContext.getResources().getDrawable(R.drawable.item_img_add)).get());
                     imageView.setContentDescription("img_add");
@@ -83,9 +87,9 @@ public class MyGridLayout extends GridLayout {
         }
     }
 
-    private int parseItemBackground(int i, int i2) {
-        if (i2 == 0) {
-            switch (i % 11) {
+    private int parseItemBackground(int num, int mode) {
+        if (mode == Launcher.MODE_HOME) {
+            switch (num % 11) {
                 case 0:
                 case 1:
                 case 2:
@@ -101,7 +105,7 @@ public class MyGridLayout extends GridLayout {
                     return R.drawable.item_child_6;
             }
         }
-        switch (i % 18) {
+        switch (num % 18) {
             case 0:
             case 1:
             case 2:
