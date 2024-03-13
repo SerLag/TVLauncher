@@ -34,36 +34,25 @@ public class AppDataLoader {
     public final static String NAME = "name";
     public final static String INTENT = "intent";
     public final static String ICON = "icon";
+    public final static String BANNER = "banner";
     public final static String COMPONENT_NAME = "component name";
 
     public final static String SHORTCUT_PATH = "/data/data/com.droidlogic.tvlauncher/shortcut.cfg";
     public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
     public final static String HOME_SHORTCUT_HEAD = "Home_Shortcut:";
-    public final static String VIDEO_SHORTCUT_HEAD = "Video_Shortcut:";
-    public final static String RECOMMEND_SHORTCUT_HEAD = "Recommend_Shortcut:";
-    public final static String MUSIC_SHORTCUT_HEAD = "Music_shortcut:";
     public final static String LOCAL_SHORTCUT_HEAD = "Local_Shortcut:";
 
     private Context mContext;
     private LauncherApps mLauncherApps;
     private ActivityManager mActivityManager;
     private String str_homeShortcut;
-    private String str_videoShortcut;
-    private String str_recommendShortcut;
-    private String str_musicShortcut;
     private String str_localShortcut;
 
     private String[] list_homeShortcut;
-    private String[] list_videoShortcut;
-    private String[] list_recommendShortcut;
-    private String[] list_musicShortcut;
     private String[] list_localShortcut;
 
     List<ArrayMap<String, Object>> homeShortCuts = new ArrayList<ArrayMap<String, Object>>();
-    List<ArrayMap<String, Object>> videoShortCuts= new ArrayList<ArrayMap<String, Object>>();
-    List<ArrayMap<String, Object>> recommendShorts = new ArrayList<ArrayMap<String, Object>>();
     List<ArrayMap<String, Object>> appShortCuts = new ArrayList<ArrayMap<String, Object>>();
-    List<ArrayMap<String, Object>> musicShortCuts = new ArrayList<ArrayMap<String, Object>>();
     List<ArrayMap<String, Object>> localShortCuts = new ArrayList<ArrayMap<String, Object>>();
 
     private boolean isLoaded = false;
@@ -122,15 +111,6 @@ public class AppDataLoader {
                 if (str.startsWith(HOME_SHORTCUT_HEAD)) {
                     str_homeShortcut = str.replaceAll(HOME_SHORTCUT_HEAD, "");
                     list_homeShortcut = str_homeShortcut.split(";");
-                } else if (str.startsWith(VIDEO_SHORTCUT_HEAD)) {
-                    str_videoShortcut = str.replaceAll(VIDEO_SHORTCUT_HEAD, "");
-                    list_videoShortcut = str_videoShortcut.split(";");
-                }  else if (str.startsWith(RECOMMEND_SHORTCUT_HEAD)) {
-                    str_recommendShortcut = str.replaceAll(RECOMMEND_SHORTCUT_HEAD, "");
-                    list_recommendShortcut = str_recommendShortcut.split(";");
-                }  else if (str.startsWith(MUSIC_SHORTCUT_HEAD)) {
-                    str_musicShortcut = str.replaceAll(MUSIC_SHORTCUT_HEAD, "");
-                    list_musicShortcut = str_musicShortcut.split(";");
                 }  else if (str.startsWith(LOCAL_SHORTCUT_HEAD)) {
                     str_localShortcut = str.replaceAll(LOCAL_SHORTCUT_HEAD, "");
                     list_localShortcut= str_localShortcut.split(";");
@@ -175,9 +155,6 @@ public class AppDataLoader {
 
                 if (list.size() == 0) {
                     list.add(HOME_SHORTCUT_HEAD);
-                    list.add(VIDEO_SHORTCUT_HEAD);
-                    list.add(RECOMMEND_SHORTCUT_HEAD);
-                    list.add(MUSIC_SHORTCUT_HEAD);
                     list.add(LOCAL_SHORTCUT_HEAD);
                 }
                 bw = new BufferedWriter(new FileWriter(mFile));
@@ -275,11 +252,9 @@ public class AppDataLoader {
 
     private void loadShortcutList() {
         homeShortCuts.clear();
-        videoShortCuts.clear();
-        recommendShorts.clear();
-        musicShortCuts.clear();
         appShortCuts.clear();
         localShortCuts.clear();
+/// переделать !
 
         final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, android.os.Process.myUserHandle());
         Collections.sort(apps, getAppNameComparator());
@@ -295,6 +270,7 @@ public class AppDataLoader {
                         Intent.FLAG_ACTIVITY_NEW_TASK
                                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                 application.icon = info.getBadgedIcon(iconDpi);
+
                 if (info.getComponentName().getPackageName().equals("com.android.gallery3d")
                         && application.intent.toString().contains("camera")) {
                     continue;
@@ -305,36 +281,6 @@ public class AppDataLoader {
                         if (info.getComponentName().getPackageName().equals(list_homeShortcut[j])) {
                             homeShortCuts.add(buildShortcutMap(application.title.toString(),
                                     application.intent,application.icon, application.componentName));
-                            break;
-                        }
-                    }
-                }
-
-                if (list_videoShortcut != null) {
-                    for (int j = 0; j < list_videoShortcut.length; j++) {
-                        if (info.getComponentName().getPackageName().equals(list_videoShortcut[j])) {
-                            videoShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.intent, application.icon, application.componentName));
-                            break;
-                        }
-                    }
-                }
-
-                if (list_recommendShortcut != null) {
-                    for (int j = 0; j < list_recommendShortcut.length; j++) {
-                        if (info.getComponentName().getPackageName().equals(list_recommendShortcut[j])) {
-                            recommendShorts.add(buildShortcutMap(application.title.toString(),
-                                    application.intent, application.icon, application.componentName));
-                            break;
-                        }
-                    }
-                }
-
-                if (list_musicShortcut != null) {
-                    for (int j = 0; j < list_musicShortcut.length; j++) {
-                        if (info.getComponentName().getPackageName().equals(list_musicShortcut[j])) {
-                            musicShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.intent, application.icon, application.componentName));
                             break;
                         }
                     }
@@ -356,8 +302,6 @@ public class AppDataLoader {
             }
         }
         homeShortCuts.add(buildAddMap());
-        videoShortCuts.add(buildAddMap());
-        musicShortCuts.add(buildAddMap());
         localShortCuts.add(buildAddMap());
     }
 
@@ -389,12 +333,6 @@ public class AppDataLoader {
             switch (mode) {
                 case Launcher.MODE_HOME:
                     return homeShortCuts;
-                case Launcher.MODE_VIDEO:
-                    return videoShortCuts;
-                case Launcher.MODE_RECOMMEND:
-                    return recommendShorts;
-                case Launcher.MODE_MUSIC:
-                    return musicShortCuts;
                 case Launcher.MODE_APP:
                     return appShortCuts;
                 case Launcher.MODE_LOCAL:
@@ -409,12 +347,6 @@ public class AppDataLoader {
             switch (mode) {
                 case Launcher.MODE_HOME:
                     return str_homeShortcut;
-                case Launcher.MODE_VIDEO:
-                    return str_videoShortcut;
-                case Launcher.MODE_RECOMMEND:
-                    return str_recommendShortcut;
-                case Launcher.MODE_MUSIC:
-                    return str_musicShortcut;
                 case Launcher.MODE_LOCAL:
                     return str_localShortcut;
             }
@@ -429,12 +361,6 @@ public class AppDataLoader {
         switch (mode) {
             case Launcher.MODE_HOME:
                 return HOME_SHORTCUT_HEAD;
-            case Launcher.MODE_VIDEO:
-                return VIDEO_SHORTCUT_HEAD;
-            case Launcher.MODE_RECOMMEND:
-                return RECOMMEND_SHORTCUT_HEAD;
-            case Launcher.MODE_MUSIC:
-                return MUSIC_SHORTCUT_HEAD;
             case Launcher.MODE_LOCAL:
                 return LOCAL_SHORTCUT_HEAD;
         }
