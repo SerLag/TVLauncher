@@ -158,7 +158,7 @@ public class Launcher extends Activity {
                 launcher.resetShortcutScreen(launcher.current_screen_mode);
             } else if (i != 2) {
             } else {
-                Launcher.this.CustomScreen((View) message.obj);
+ //               Launcher.this.CustomScreen((View) message.obj);
             }
         }
     };
@@ -1015,13 +1015,13 @@ public class Launcher extends Activity {
     }
 
     public void startCustomScreen(View view) {
-        Message message = new Message();
+/*        Message message = new Message();
         message.what = 2;
         message.obj = view;
         this.mHandler.sendMessageDelayed(message, 500L);
     }
 
-    public void CustomScreen(View view) {
+    public void CustomScreen(View view) {*/
         if (this.current_screen_mode == 6) {
             return;
         }

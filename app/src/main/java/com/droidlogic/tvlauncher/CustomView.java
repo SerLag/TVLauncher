@@ -24,6 +24,8 @@ import java.util.List;
 
 /* loaded from: classes.dex */
 public class CustomView extends FrameLayout implements AdapterView.OnItemClickListener, ViewTreeObserver.OnGlobalLayoutListener {
+
+
     private static boolean allowAnimation = true;
     static final Object mLock = new Object[0];
     private GridView gv;
@@ -55,10 +57,10 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
     }
 
     private void initLayout() {
-        FrameLayout.inflate(this.mContext, R.layout.layout_custom, this);
+        inflate(this.mContext, R.layout.layout_custom, this);
         this.thisView = this;
         this.gv = (GridView) findViewById(R.id.grid_add_apps);
-        this.gv.setBackgroundDrawable(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps));
+        this.gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps));
         this.gv.setOnItemClickListener(this);
         displayView();
         this.str_custom_apps = ((Launcher) this.mContext).getAppDataLoader().getShortcutString(this.mMode);
@@ -105,33 +107,32 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
     }
 
     private List<ArrayMap<String, Object>> getAppList() {
-        ArrayList arrayList = new ArrayList();
-        List<ArrayMap<String, Object>> shortcutList = ((Launcher) this.mContext).getAppDataLoader().getShortcutList(4);
-        List<ArrayMap<String, Object>> shortcutList2 = ((Launcher) this.mContext).getAppDataLoader().getShortcutList(this.mMode);
-        this.homeShortcutCount = 0;
-        for (int i = 0; i < shortcutList.size(); i++) {
-            ArrayMap arrayMap = new ArrayMap();
-            arrayMap.put("item_selection", Integer.valueOf((int) R.drawable.item_img_unsel));
-            int i2 = 0;
-            while (true) {
-                if (i2 >= shortcutList2.size() - 1) {
-                    break;
-                } else if (TextUtils.equals(shortcutList.get(i).get("component name").toString(), shortcutList2.get(i2).get("component name").toString())) {
-                    arrayMap.put("item_selection", Integer.valueOf((int) R.drawable.item_img_sel));
-                    if (this.mMode == 0) {
-                        this.homeShortcutCount++;
+        List<ArrayMap<String, Object>> list = new ArrayList<ArrayMap<String, Object>>();
+        List<ArrayMap<String, Object>> list_all = ((Launcher)mContext).getAppDataLoader().getShortcutList(Launcher.MODE_APP);
+        List<ArrayMap<String, Object>> list_current = ((Launcher)mContext).getAppDataLoader().getShortcutList(mMode);
+        homeShortcutCount = 0;
+
+        for (int i = 0; i < list_all.size(); i++) {
+            ArrayMap<String, Object> map = new ArrayMap<String, Object>();
+            map.put("item_selection", R.drawable.item_img_unsel);
+            for (int j = 0; j < list_current.size() - 1; j++) {
+                if (TextUtils.equals(list_all.get(i).get("intent").toString(),
+                        list_current.get(j).get("intent").toString())) {
+                    map.put("item_selection", R.drawable.item_img_sel);
+                    if (mMode == Launcher.MODE_HOME) {
+                        homeShortcutCount++;
                     }
-                } else {
-                    i2++;
+                    break;
                 }
             }
-            arrayMap.put("item_name", shortcutList.get(i).get("name"));
-            arrayMap.put("item_icon", shortcutList.get(i).get("icon"));
-            arrayMap.put("item_background", Integer.valueOf(parseItemBackground(i)));
-            arrayMap.put("component name", shortcutList.get(i).get("component name"));
-            arrayList.add(arrayMap);
+            map.put("item_name", list_all.get(i).get(AppDataLoader.NAME));
+            map.put("item_icon", list_all.get(i).get(AppDataLoader.ICON));
+            map.put("item_background", parseItemBackground(i));
+            map.put("intent", list_all.get(i).get("intent"));
+            list.add(map);
         }
-        return arrayList;
+
+        return list;
     }
 
     private void displayView() {
@@ -144,7 +145,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
 
     @Override // android.view.ViewGroup, android.view.View
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getAction() == 0 && keyEvent.getKeyCode() == 4) {
+        if (keyEvent.getAction() == 0 && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             recoverMainView();
         }
         return super.dispatchKeyEvent(keyEvent);
@@ -186,14 +187,14 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     Toast.makeText(this.mContext, this.mContext.getResources().getString(R.string.str_nospace), Toast.LENGTH_LONG).show();
                     return;
                 }
-                this.str_custom_apps += ((ComponentName) arrayMap.get("component name")).getPackageName() + ";";
+                this.str_custom_apps += ((ComponentName) arrayMap.get("intent")).getPackageName() + ";";
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", Integer.valueOf((int) R.drawable.item_img_sel));
                 updateView();
                 if (this.mMode == 0) {
                     this.homeShortcutCount++;
                 }
             } else {
-                String packageName = ((ComponentName) arrayMap.get("component name")).getPackageName();
+                String packageName = ((ComponentName) arrayMap.get("intent")).getPackageName();
                 this.str_custom_apps = this.str_custom_apps.replaceAll(packageName + ";", "");
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", Integer.valueOf((int) R.drawable.item_img_unsel));
                 updateView();

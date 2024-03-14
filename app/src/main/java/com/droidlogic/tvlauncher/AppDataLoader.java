@@ -1,6 +1,8 @@
 package com.droidlogic.tvlauncher;
 
 import android.app.ActivityManager;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
@@ -32,10 +34,9 @@ import java.text.Collator;
 public class AppDataLoader {
     private final static String TAG = "AppDataLoader";
     public final static String NAME = "name";
-    public final static String INTENT = "intent";
     public final static String ICON = "icon";
     public final static String BANNER = "banner";
-    public final static String COMPONENT_NAME = "component name";
+    public final static String INTENT = "intent";
 
     public final static String SHORTCUT_PATH = "/data/data/com.droidlogic.tvlauncher/shortcut.cfg";
     public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
@@ -47,6 +48,9 @@ public class AppDataLoader {
     private ActivityManager mActivityManager;
     private String str_homeShortcut;
     private String str_localShortcut;
+
+    ///////////////
+    private PackageManager mPackageManager;
 
     private String[] list_homeShortcut;
     private String[] list_localShortcut;
@@ -254,33 +258,28 @@ public class AppDataLoader {
         homeShortCuts.clear();
         appShortCuts.clear();
         localShortCuts.clear();
-/// переделать !
 
-        final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, android.os.Process.myUserHandle());
-        Collections.sort(apps, getAppNameComparator());
-        final int iconDpi = mActivityManager.getLauncherLargeIconDensity();
+        mPackageManager = mContext.getPackageManager();
+        Intent AppsIntent = new Intent(Intent.ACTION_MAIN, null);
+        AppsIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> apps = mPackageManager.queryIntentActivities(AppsIntent, 0);
 
         if (apps != null) {
-            for (int i = 0; i < apps.size(); i++) {
+            for (ResolveInfo app : apps) {
                 ApplicationInfo application = new ApplicationInfo();
-                LauncherActivityInfo info = apps.get(i);
-
-                application.title = info.getLabel().toString();
-                application.setActivity(info.getComponentName(),
-                        Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                application.icon = info.getBadgedIcon(iconDpi);
-
-                if (info.getComponentName().getPackageName().equals("com.android.gallery3d")
-                        && application.intent.toString().contains("camera")) {
-                    continue;
+                application.title = app.loadLabel(mPackageManager);
+                application.icon = app.loadIcon(mPackageManager);
+                application.banner = app.activityInfo.loadBanner(mPackageManager);
+                if (application.banner == null) {
+                    application.banner = app.activityInfo.applicationInfo.loadBanner(mPackageManager);
                 }
-
+                application.label = app.activityInfo.packageName;
                 if (list_homeShortcut != null) {
                     for (int j = 0; j < list_homeShortcut.length; j++) {
-                        if (info.getComponentName().getPackageName().equals(list_homeShortcut[j])) {
+                        if (app.activityInfo.packageName.equals(list_homeShortcut[j])) {
                             homeShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.intent,application.icon, application.componentName));
+                                    application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                                            application.label.toString())));
                             break;
                         }
                     }
@@ -288,16 +287,18 @@ public class AppDataLoader {
 
                 if (list_localShortcut != null) {
                     for (int j = 0; j < list_localShortcut.length; j++) {
-                        if (info.getComponentName().getPackageName().equals(list_localShortcut[j])) {
+                        if (app.activityInfo.packageName.equals(list_localShortcut[j])) {
                             localShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.intent, application.icon, application.componentName));
+                                    application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                                            application.label.toString())));
                             break;
                         }
                     }
                 }
 
                 appShortCuts.add(buildShortcutMap(application.title.toString(),
-                        application.intent,application.icon, application.componentName));
+                        application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                                application.label.toString())));
                 application.icon.setCallback(null);
             }
         }
@@ -305,24 +306,19 @@ public class AppDataLoader {
         localShortCuts.add(buildAddMap());
     }
 
-    private ArrayMap<String, Object> buildShortcutMap(String name, Intent i, Drawable icon, ComponentName c) {
+    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, Drawable banner, Intent c) {
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put(NAME, name);
-        map.put(INTENT, i);
-        int resId = parsePackageIcon(c.getPackageName());
-        if (resId == -1) {
-            map.put(ICON, icon);
-        } else {
-            map.put(ICON, mContext.getResources().getDrawable(resId));
-        }
-        map.put(COMPONENT_NAME, c);
+        map.put(ICON, icon);
+        map.put(BANNER, banner);
+        map.put(INTENT, c);
+
         return map;
     }
 
     private ArrayMap<String, Object> buildAddMap(){
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put(NAME, mContext.getResources().getString(R.string.str_add));
-        map.put(INTENT, null);
         map.put(ICON, R.drawable.item_img_add);
 
         return map;
