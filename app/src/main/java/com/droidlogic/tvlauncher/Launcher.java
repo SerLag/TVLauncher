@@ -15,7 +15,6 @@ import android.media.tv.TvView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,9 +50,7 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/* loaded from: classes.dex */
 public class Launcher extends Activity {
-    public static String COMPONENT_LIVE_TV = "com.android.tv/com.android.tv.TvActivity";
     public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
     public static String COMPONENT_TV_FILEMANAGER = "com.softwinner.TvdFileManager/.MainUI";
     public static String COMPONENT_TV_MIRACAST = "com.softwinner.miracastReceiver/.Miracast";
@@ -102,12 +99,6 @@ public class Launcher extends Activity {
     public static int HOME_SHORTCUT_COUNT = 11;
     public static TextView memory_used = null;
     public static ImageView memory_circle = null;
-    private final String net_change_action = "android.net.conn.CONNECTIVITY_CHANGE";
-    private final String wifi_signal_action = "android.net.wifi.RSSI_CHANGED";
-    private final String outputmode_change_action = "android.amlogic.settings.CHANGE_OUTPUT_MODE";
-    private final String DROIDVOLD_MEDIA_UNMOUNTED_ACTION = "com.droidvold.action.MEDIA_UNMOUNTED";
-    private final String DROIDVOLD_MEDIA_EJECT_ACTION = "com.droidvold.action.MEDIA_EJECT";
-    private final String DROIDVOLD_MEDIA_MOUNTED_ACTION = "com.droidvold.action.MEDIA_MOUNTED";
 
     public static final int TYPE_VIDEO                           = 0;
     public static final int TYPE_RECOMMEND                       = 1;
@@ -142,7 +133,6 @@ public class Launcher extends Activity {
     private boolean isAvNoSignal = false;
     private Object mlock = new Object();
     private boolean mTvStartPlaying = false;
-    private final String weather_receive_action = "com.example.perference.shared_id";
     private LinearInterpolator lin = null;
     private long totalMemory = 0;
     private long availMemory = 0;
@@ -162,17 +152,11 @@ public class Launcher extends Activity {
             }
         }
     };
-    private BroadcastReceiver mediaReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.11
-        @Override // android.content.BroadcastReceiver
+    private BroadcastReceiver mediaReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
-            if ("android.intent.action.MEDIA_EJECT".equals(action) || "android.intent.action.MEDIA_UNMOUNTED".equals(action) || "android.intent.action.MEDIA_MOUNTED".equals(action) || action.equals("com.droidvold.action.MEDIA_UNMOUNTED") || action.equals("com.droidvold.action.MEDIA_EJECT") || action.equals("com.droidvold.action.MEDIA_MOUNTED")) {
-                Launcher.this.displayStatus();
-                Launcher.this.updateStatus();
-            }
+            Launcher.this.displayStatus();
+            Launcher.this.updateStatus();
         }
     };
     private BroadcastReceiver netReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.12
@@ -231,7 +215,7 @@ public class Launcher extends Activity {
             }
         }
     };
-    private BroadcastReceiver instabootReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.14
+/*    private BroadcastReceiver instabootReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.14
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             if ("com.droidlogic.instaboot.RELOAD_APP_COMPLETED".equals(intent.getAction())) {
@@ -239,8 +223,8 @@ public class Launcher extends Activity {
                 Launcher.this.displayShortcuts();
             }
         }
-    };
-    private Handler mTvHandler = new Handler() { // from class: com.droidlogic.tvlauncher.Launcher.15
+    };*/
+/*    private Handler mTvHandler = new Handler() { // from class: com.droidlogic.tvlauncher.Launcher.15
         @Override // android.os.Handler
         public void handleMessage(Message message) {
             int i = message.what;
@@ -263,7 +247,7 @@ public class Launcher extends Activity {
                 Launcher.this.mTvHandler.sendEmptyMessageDelayed(1, 50L);
             }
         }
-    };
+    };*/
     private final String ENGLISH = "en";
     private final String FRENCH = "fr";
     private final String ESPANOL = "es";
@@ -276,64 +260,24 @@ public class Launcher extends Activity {
         return false;
     }
 
-    @Override // android.app.Activity
+    @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        skipUserSetup();
-//        this.mTvInputManager = (TvInputManager) getSystemService(TV_INPUT_SERVICE);
-//        if (this.mTvInputManager == null) {
-//            setContentView(R.layout.main_box);
-//        } else {
-            setContentView(R.layout.main);
-//        }
+
+        setContentView(R.layout.main);
         Log.d("MediaBoxLauncher", "------onCreate");
+
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
-        this.mBlackFrameLayout = (FrameLayout) findViewById(R.id.layout_black);
-//        if (!checkNeedStartTvApp(false)) {
-            this.mBlackFrameLayout.setVisibility(View.GONE);
-            this.mMainFrameLayout.setVisibility(View.VISIBLE);
- //       }
- //       if (Build.VERSION.SDK_INT >= 25) {
-//            COMPONENT_TV_APP = COMPONENT_LIVE_TV;
-//        }
+        this.mMainFrameLayout.setVisibility(View.VISIBLE);
         this.mAppDataLoader = new AppDataLoader(this);
         this.mStatusLoader = new StatusLoader(this);
         initChildViews();
 //        initWeather();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.MEDIA_EJECT");
-        intentFilter.addAction("android.intent.action.MEDIA_UNMOUNTED");
-        intentFilter.addAction("android.intent.action.MEDIA_MOUNTED");
-        intentFilter.addAction("com.droidvold.action.MEDIA_UNMOUNTED");
-        intentFilter.addAction("com.droidvold.action.MEDIA_MOUNTED");
-        intentFilter.addAction("com.droidvold.action.MEDIA_EJECT");
-        intentFilter.addDataScheme("file");
-        registerReceiver(this.mediaReceiver, intentFilter);
-        IntentFilter intentFilter2 = new IntentFilter();
-        intentFilter2.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter2.addAction("android.net.wifi.RSSI_CHANGED");
-        intentFilter2.addAction("com.example.perference.shared_id");
-        intentFilter2.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter2.addAction("android.intent.action.TIME_TICK");
-        intentFilter2.addAction("android.intent.action.TIME_SET");
-        intentFilter2.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter2.addAction("android.amlogic.settings.CHANGE_OUTPUT_MODE");
-        intentFilter2.addAction("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE");
-        intentFilter2.addAction("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE");
-        registerReceiver(this.netReceiver, intentFilter2);
-        IntentFilter intentFilter3 = new IntentFilter("android.intent.action.PACKAGE_ADDED");
-        intentFilter3.addAction("android.intent.action.PACKAGE_REMOVED");
-        intentFilter3.addAction("android.intent.action.PACKAGE_CHANGED");
-        intentFilter3.addDataScheme("package");
-        registerReceiver(this.appReceiver, intentFilter3);
-        IntentFilter intentFilter4 = new IntentFilter();
-        intentFilter4.addAction("com.droidlogic.instaboot.RELOAD_APP_COMPLETED");
-        registerReceiver(this.instabootReceiver, intentFilter4);
 //        initMemory();
-        new Thread(new Runnable() { // from class: com.droidlogic.tvlauncher.Launcher.1
-            @Override // java.lang.Runnable
+        new Thread(new Runnable() {
+            @Override
             public void run() {
-                if (!new File("/data/data/com.droidlogic.tvlauncher").canWrite()) {
+                if (!getFilesDir().canWrite()) {
                     Launcher.this.handler.postDelayed(this, 500L);
                     return;
                 }
@@ -566,6 +510,7 @@ public class Launcher extends Activity {
         return ("01n".equals(str) || "01d".equals(str)) ? R.drawable.sunny : "04n".equals(str) ? R.drawable.partly_cloudy : ("04d".equals(str) || "02n".equals(str) || "02d".equals(str) || "03n".equals(str) || "03d".equals(str)) ? R.drawable.overcast : ("09n".equals(str) || "09d".equals(str)) ? R.drawable.thunder : ("10n".equals(str) || "10d".equals(str)) ? R.drawable.light_rain : ("11n".equals(str) || "11d".equals(str) || "13n".equals(str) || "13d".equals(str)) ? R.drawable.snow : (!"50n".equals(str) && "50d".equals(str)) ? R.drawable.smoke : R.drawable.sunny;
     }
 
+/*
     private void releasePlayingTv() {
         Log.d("MediaBoxLauncher", "------releasePlayingTv");
         this.isChannelBlocked = false;
@@ -574,54 +519,48 @@ public class Launcher extends Activity {
         releaseTvView();
         this.mTvStartPlaying = false;
     }
-
-    @Override // android.app.Activity
-    protected void onStart() {
-        super.onStart();
-    }
+*/
 
     @Override // android.app.Activity
     protected void onResume() {
         super.onResume();
         Log.d("MediaBoxLauncher", "------onResume");
-        if (checkNeedStartTvApp(true)) {
-            this.mTvHandler.sendEmptyMessage(1);
-            return;
-        }
-        if (this.mMainFrameLayout.getVisibility() != View.VISIBLE) {
-            this.mBlackFrameLayout.setVisibility(View.GONE);
-            this.mMainFrameLayout.setVisibility(View.VISIBLE);
-        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.MEDIA_EJECT");
+        filter.addAction("android.intent.action.MEDIA_UNMOUNTED");
+        filter.addAction("android.intent.action.MEDIA_MOUNTED");
+        filter.addDataScheme("file");
+        registerReceiver(this.mediaReceiver, filter);
+
+        filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        filter.addAction("android.net.wifi.RSSI_CHANGED");
+        filter.addAction("android.intent.action.TIME_TICK");
+        filter.addAction("android.intent.action.TIME_SET");
+        filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE");
+        filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE");
+        registerReceiver(this.netReceiver, filter);
+
+        filter = new IntentFilter();
+        filter.addAction("android.intent.action.PACKAGE_ADDED");
+        filter.addAction("android.intent.action.PACKAGE_REMOVED");
+        filter.addAction("android.intent.action.PACKAGE_CHANGED");
+        filter.addDataScheme("package");
+        registerReceiver(this.appReceiver, filter);
+
         setBigBackgroundDrawable();
         displayShortcuts();
         displayStatus();
         displayDate();
-        TvView tvView = this.tvView;
-        if (tvView != null) {
-            tvView.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override // android.app.Activity
     protected void onPause() {
         super.onPause();
-        this.mHandler.removeMessages(2);
         Log.d("MediaBoxLauncher", "------onPause");
-    }
-
-    @Override // android.app.Activity
-    protected void onStop() {
-        super.onStop();
-        Log.d("MediaBoxLauncher", "------onStop");
-    }
-
-    @Override // android.app.Activity
-    protected void onDestroy() {
         unregisterReceiver(this.mediaReceiver);
         unregisterReceiver(this.netReceiver);
         unregisterReceiver(this.appReceiver);
-        unregisterReceiver(this.instabootReceiver);
-        super.onDestroy();
     }
 
     @Override // android.app.Activity
@@ -993,7 +932,7 @@ public class Launcher extends Activity {
         Log.d("MediaBoxLauncher", "onActivityResult requestCode = " + i + ", resultCode = " + i2);
         if (i == 3 && i2 == -1 && intent != null) {
             if (this.mTvStartPlaying) {
-                releasePlayingTv();
+     //           releasePlayingTv();
             }
             try {
                 startActivity(intent);
@@ -1004,6 +943,7 @@ public class Launcher extends Activity {
         }
     }
 
+/*
     public void startTvApp() {
         try {
             Intent intent = new Intent();
@@ -1013,15 +953,9 @@ public class Launcher extends Activity {
             Log.e("MediaBoxLauncher", " can't start TvSettings:" + e);
         }
     }
+*/
 
     public void startCustomScreen(View view) {
-/*        Message message = new Message();
-        message.what = 2;
-        message.obj = view;
-        this.mHandler.sendMessageDelayed(message, 500L);
-    }
-
-    public void CustomScreen(View view) {*/
         if (this.current_screen_mode == 6) {
             return;
         }
@@ -1088,22 +1022,19 @@ public class Launcher extends Activity {
 //        this.tvPrompt.animate().translationY(f2).setDuration(j2).start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
+/*
+    */
+/* JADX INFO: Access modifiers changed from: private *//*
+
     public boolean isBootvideoStopped() {
         return TextUtils.equals(SystemProperties.get("init.svc.bootanim", "running"), "stopped") && TextUtils.equals(SystemProperties.get("dev.bootcomplete", "0"), "1") && getContentResolver().acquireContentProviderClient("android.media.tv") != null;
     }
+*/
 
     private void releaseTvView() {
         this.tvView.setVisibility(View.GONE);
         this.tvView.reset();
     }
 
-    private void skipUserSetup() {
-        if (Settings.Secure.getInt(getContentResolver(), "tv_user_setup_complete", 0) == 0) {
-            Log.d("MediaBoxLauncher", "force skip user setup, or we can't use home key");
-            Settings.Global.putInt(getContentResolver(), "device_provisioned", 1);
-            Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
-            Settings.Secure.putInt(getContentResolver(), "tv_user_setup_complete", 1);
-        }
-    }
+
 }

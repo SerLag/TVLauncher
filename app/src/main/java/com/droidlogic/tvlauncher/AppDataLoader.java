@@ -3,10 +3,10 @@ package com.droidlogic.tvlauncher;
 import android.app.ActivityManager;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Handler;
-import android.os.Message;
+/*import android.os.Handler;
+import android.os.Message;*/
 import android.content.Context;
-import android.content.ComponentName;
+/*import android.content.ComponentName;*/
 import android.content.Intent;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
@@ -19,15 +19,15 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.io.InputStream;
+/*import java.io.InputStream;*/
 import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+/*import java.io.FileInputStream;
+import java.io.FileOutputStream;*/
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
+/*import java.util.Collections;*/
 import java.text.Collator;
 
 
@@ -44,8 +44,8 @@ public class AppDataLoader {
     public final static String LOCAL_SHORTCUT_HEAD = "Local_Shortcut:";
 
     private Context mContext;
-    private LauncherApps mLauncherApps;
-    private ActivityManager mActivityManager;
+/*    private LauncherApps mLauncherApps;
+    private ActivityManager mActivityManager;*/
     private String str_homeShortcut;
     private String str_localShortcut;
 
@@ -64,8 +64,11 @@ public class AppDataLoader {
 
     public AppDataLoader (Context context) {
         mContext = context;
-        mLauncherApps = (LauncherApps)mContext.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-        mActivityManager = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        File myDir = mContext.getDataDir();
+      //  boolean i = myDir.
+        Log.i("MediaBoxLauncher", myDir.toString());
+/*        mLauncherApps = (LauncherApps)mContext.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        mActivityManager = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);*/
         mLock = ((Launcher)mContext).getLock();
     }
 
@@ -349,6 +352,7 @@ public class AppDataLoader {
         }
         return null;
     }
+
     public boolean isDataLoaded() {
         return isLoaded;
     }

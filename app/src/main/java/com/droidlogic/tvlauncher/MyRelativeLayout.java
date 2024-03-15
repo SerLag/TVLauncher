@@ -124,7 +124,7 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
                         }
                         switch (mType) {
                             case Launcher.TYPE_VIDEO:
-                                ((Launcher) mContext).startTvApp();
+      //                          ((Launcher) mContext).startTvApp();
                                 break;
                             case Launcher.TYPE_RECOMMEND:
                                 showSecondScreen(Launcher.MODE_RECOMMEND);
@@ -152,7 +152,7 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
                                 ComponentName componentName = new ComponentName("com.android.camera2", "com.android.camera.CameraLauncher");
                                 if (this.mIntent != null) {
                                     if (this.mIntent.getComponent().flattenToString().equals(Launcher.COMPONENT_TV_APP)) {
-                                        ((Launcher) this.mContext).startTvApp();
+     //                                   ((Launcher) this.mContext).startTvApp();
                                         break;
                                     } else if (this.mIntent.getComponent().equals(componentName)) {
                                         if (this.mContext.getPackageManager().getComponentEnabledSetting(componentName) != 2) {
@@ -242,7 +242,7 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
                         ComponentName componentName = new ComponentName("com.android.camera2", "com.android.camera.CameraLauncher");
                         if (this.mIntent != null) {
                             if (this.mIntent.getComponent().flattenToString().equals(Launcher.COMPONENT_TV_APP)) {
-                                ((Launcher) this.mContext).startTvApp();
+     //                           ((Launcher) this.mContext).startTvApp();
                                 return false;
                             } else if (this.mIntent.getComponent().equals(componentName)) {
                                 if (this.mContext.getPackageManager().getComponentEnabledSetting(componentName) != 2) {

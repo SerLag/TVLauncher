@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.droidlogic.tvlauncher">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
-  <!--  <uses-permission android:name="droidlogic.permission.SYSTEM_CONTROL"/> -->
+    <!-- <uses-permission android:name="droidlogic.permission.SYSTEM_CONTROL"/> -->
     <application
         android:allowBackup="true"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher"
-        android:extractNativeLibs="false"
         android:defaultToDeviceProtectedStorage="true"
-        android:directBootAware="true">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        android:directBootAware="true"
+        android:extractNativeLibs="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <activity
-            android:label="@string/app_name"
             android:name=".Launcher"
             android:clearTaskOnLaunch="true"
-            android:stateNotNeeded="true"
-            android:launchMode="singleTask">
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-       <!--         <category android:name="android.intent.category.HOME"/>
+                <action android:name="android.intent.action.MAIN" />
+                <!--
+                    <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.MONKEY"/> -->
+                <category android:name="android.intent.category.MONKEY"/>
+                -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
- <!--   <activity-alias
+        <!--
+    <activity-alias
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
         android:name="allapps"
@@ -47,7 +54,8 @@
             <action android:name="android.intent.action.ALLAPPS"/>
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
-    </activity-alias> -->
+    </activity-alias>
+        -->
     </application>
 
 </manifest>
