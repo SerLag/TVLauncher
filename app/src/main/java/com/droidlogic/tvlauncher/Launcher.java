@@ -18,9 +18,9 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemProperties;
+/*import android.os.SystemProperties;
 import android.provider.Settings;
-import android.text.TextUtils;
+import android.text.TextUtils;*/
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -39,16 +39,24 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.res.AssetManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 public class Launcher extends Activity {
     public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
@@ -116,6 +124,11 @@ public class Launcher extends Activity {
     public static final int MODE_APP                             = 4;
     public static final int MODE_LOCAL                           = 5;
 
+    private static final int MSG_REFRESH_SHORTCUT                = 0;
+    private static final int MSG_RECOVER_HOME                    = 1;
+    private static final int animDuration                        = 70;
+    private static final int animDelay                           = 0;
+
     private int current_screen_mode = 0;
     private int saveModeBeforeCustom = 0;
     private int[] mChildScreens = childScreens;
@@ -137,24 +150,26 @@ public class Launcher extends Activity {
     private long totalMemory = 0;
     private long availMemory = 0;
     private Handler handler = new Handler();
+
     private Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message message) {
-            int i = message.what;
-            if (i == 0) {
-                Launcher.this.resetShortcutScreen(message.arg1);
-            } else if (i == 1) {
-                Launcher launcher = Launcher.this;
-                launcher.resetShortcutScreen(launcher.current_screen_mode);
-            } else if (i != 2) {
-            } else {
- //               Launcher.this.CustomScreen((View) message.obj);
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_REFRESH_SHORTCUT:
+                    resetShortcutScreen(msg.arg1);
+                    break;
+                case MSG_RECOVER_HOME:
+                    resetShortcutScreen(current_screen_mode);
+                    break;
+                default:
+                    break;
             }
         }
     };
     private BroadcastReceiver mediaReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i("MediaBoxlauncher",intent.getAction().toString());
             Launcher.this.displayStatus();
             Launcher.this.updateStatus();
         }
@@ -164,6 +179,7 @@ public class Launcher extends Activity {
         public void onReceive(Context context, Intent intent) {
             NetworkInfo networkInfo;
             String action = intent.getAction();
+            Log.i("MediaBoxlauncher","netReceiver" + action.toString());
             if (action == null) {
                 return;
             }
@@ -210,6 +226,7 @@ public class Launcher extends Activity {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Log.i("MediaBoxlauncher","appReceiver" + intent.getAction().toString());
             if ("android.intent.action.PACKAGE_CHANGED".equals(action) || "android.intent.action.PACKAGE_REMOVED".equals(action) || "android.intent.action.PACKAGE_ADDED".equals(action)) {
                 Launcher.this.updateAppList(intent);
             }
@@ -266,7 +283,10 @@ public class Launcher extends Activity {
 
         setContentView(R.layout.main);
         Log.d("MediaBoxLauncher", "------onCreate");
-
+        String[] d = getFilesDir().list();
+        if(getFilesDir().list().length == 0) {
+            copyAssets();
+        }
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
         this.mMainFrameLayout.setVisibility(View.VISIBLE);
         this.mAppDataLoader = new AppDataLoader(this);
@@ -521,7 +541,7 @@ public class Launcher extends Activity {
     }
 */
 
-    @Override // android.app.Activity
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d("MediaBoxLauncher", "------onResume");
@@ -537,8 +557,6 @@ public class Launcher extends Activity {
         filter.addAction("android.net.wifi.RSSI_CHANGED");
         filter.addAction("android.intent.action.TIME_TICK");
         filter.addAction("android.intent.action.TIME_SET");
-        filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE");
-        filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE");
         registerReceiver(this.netReceiver, filter);
 
         filter = new IntentFilter();
@@ -554,7 +572,7 @@ public class Launcher extends Activity {
         displayDate();
     }
 
-    @Override // android.app.Activity
+    @Override
     protected void onPause() {
         super.onPause();
         Log.d("MediaBoxLauncher", "------onPause");
@@ -1031,10 +1049,33 @@ public class Launcher extends Activity {
     }
 */
 
-    private void releaseTvView() {
-        this.tvView.setVisibility(View.GONE);
-        this.tvView.reset();
+    private void copyAssets() {
+        AssetManager assetManager = getAssets();
+        String[] files = null;
+        try {
+            files = assetManager.list("");
+            if (files != null) {
+                for (String filename : files) {
+                    InputStream in = null;
+                    OutputStream out = null;
+                    in = assetManager.open(filename);
+                    File outFile = new File(getFilesDir(),filename);
+                    out = new FileOutputStream(outFile);
+                    copyFile(in, out);
+                    in.close();
+                    out.close();
+                }
+            }
+        } catch (IOException e) {
+            Log.e("MediaBoxLauncher", "Failed to copy assets" + e);
+        }
     }
 
-
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
+    }
 }

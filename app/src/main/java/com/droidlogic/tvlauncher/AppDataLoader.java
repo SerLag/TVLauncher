@@ -19,11 +19,13 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 /*import java.io.InputStream;*/
 import java.io.InputStreamReader;
 /*import java.io.FileInputStream;
 import java.io.FileOutputStream;*/
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
@@ -35,19 +37,18 @@ public class AppDataLoader {
     private final static String TAG = "AppDataLoader";
     public final static String NAME = "name";
     public final static String ICON = "icon";
-    public final static String BANNER = "banner";
     public final static String INTENT = "intent";
 
     public final static String SHORTCUT_PATH = "/data/data/com.droidlogic.tvlauncher/shortcut.cfg";
-    public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
+  //  public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
     public final static String HOME_SHORTCUT_HEAD = "Home_Shortcut:";
     public final static String LOCAL_SHORTCUT_HEAD = "Local_Shortcut:";
 
     private Context mContext;
 /*    private LauncherApps mLauncherApps;
     private ActivityManager mActivityManager;*/
-    private String str_homeShortcut;
-    private String str_localShortcut;
+  //    private String str_homeShortcut;
+  //  private String str_localShortcut;
 
     ///////////////
     private PackageManager mPackageManager;
@@ -62,14 +63,13 @@ public class AppDataLoader {
     private boolean isLoaded = false;
     private Object mLock;
 
-    public AppDataLoader (Context context) {
+    public AppDataLoader(Context context) {
         mContext = context;
-        File myDir = mContext.getDataDir();
-      //  boolean i = myDir.
-        Log.i("MediaBoxLauncher", myDir.toString());
+        mPackageManager = mContext.getPackageManager();
+        getShortcuts();
 /*        mLauncherApps = (LauncherApps)mContext.getSystemService(Context.LAUNCHER_APPS_SERVICE);
         mActivityManager = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);*/
-        mLock = ((Launcher)mContext).getLock();
+        mLock = ((Launcher) mContext).getLock();
     }
 
     public void update() {
@@ -77,7 +77,7 @@ public class AppDataLoader {
         new Thread(new Runnable() {
             public void run() {
                 synchronized (mLock) {
-                    loadCustomApps();
+  //                  loadCustomApps();
                     loadShortcutList();
                     isLoaded = true;
                 }
@@ -85,57 +85,58 @@ public class AppDataLoader {
         }).start();
     }
 
-    private String[] loadCustomApps(){
+
+/*
+    private void loadCustomApps() {
         String[] list = null;
-        File mFile = new File(SHORTCUT_PATH);
-        if (!mFile.exists()) {
-            getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
-            mFile = new File(SHORTCUT_PATH);
-        } else{
-            try {
-                BufferedReader b = new BufferedReader(new FileReader(mFile));
-                if (b.read() == -1) {
-                    getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
-                }
-                if (b != null)
-                    b.close();
-            } catch (IOException e) {
+        File mFile = new File(mContext.getFilesDir(),"local_shortcuts");
+        try {
+            BufferedReader b = new BufferedReader(new FileReader(mFile));
+            if (b.read() == -1) {
+                getShortcuts();
             }
+            if (b != null)
+                b.close();
+        } catch (IOException e) {
         }
 
+
+
+
+        ////////////
+        char[] str = new char[1024];
         BufferedReader br = null;
+        File mFile = new File("home_shortcuts");
         try {
-            if (mFile.length() > 10) {
+            if (mFile.exists()) {
                 br = new BufferedReader(new FileReader(mFile));
             } else {
-                //copying file error, avoid this error
-                br = new BufferedReader(new InputStreamReader(mContext.getResources().openRawResource(R.raw.default_shortcut)));
-                getShortcutFromDefault(DEFAULT_SHORTCUR_PATH, SHORTCUT_PATH);
+                br = new BufferedReader(new InputStreamReader(mContext.getResources().getIdentifier().openRawResource(R.raw.home_shortcuts)));
             }
-
-            String str = null;
-            while ((str=br.readLine()) != null ) {
-                if (str.startsWith(HOME_SHORTCUT_HEAD)) {
-                    str_homeShortcut = str.replaceAll(HOME_SHORTCUT_HEAD, "");
-                    list_homeShortcut = str_homeShortcut.split(";");
-                }  else if (str.startsWith(LOCAL_SHORTCUT_HEAD)) {
-                    str_localShortcut = str.replaceAll(LOCAL_SHORTCUT_HEAD, "");
-                    list_localShortcut= str_localShortcut.split(";");
-                }
-            }
-
+            int i = br.read(str);
+            list_homeShortcut = str.toString().split("\n");
+            br.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (Exception e) {
-            Log.d(TAG,""+e);
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException e) {
+        mFile = new File("local_shortcuts");
+        try {
+            if (mFile.exists()) {
+                br = new BufferedReader(new FileReader(mFile));
+            } else {
+                br = new BufferedReader(new InputStreamReader(mContext.getResources().openRawResource(R.raw.local_shortcuts)));
             }
+            int i = br.read(str);
+            list_localShortcut = str.toString().split("\n");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return list;
     }
+*/
 
     public void saveShortcut(int mode, String str_apps){
         synchronized (mLock) {
@@ -194,48 +195,24 @@ public class AppDataLoader {
         }
     }
 
-    public  void getShortcutFromDefault(int srcPath, String desPath){
-        File desFile = new File(desPath);
-        if (!desFile.exists()) {
-            try {
-                desFile.createNewFile();
-            }
-            catch (Exception e) {
-                Log.e(TAG, e.getMessage().toString());
-            }
-        }
-
-        BufferedReader br = null;
-        BufferedWriter bw = null;
+    private void getShortcuts() {
+        String str;
+        File mFile;
+        mFile = new File(mContext.getFilesDir(),"home_shortcuts");
         try {
-            br = new BufferedReader(new InputStreamReader(mContext.getResources().openRawResource(srcPath)));
-            String str = null;
-            List list = new ArrayList();
-
-            while ((str=br.readLine()) != null ) {
-                list.add(str);
-            }
-            bw = new BufferedWriter(new FileWriter(desFile));
-            for ( int i = 0;i < list.size(); i++ ) {
-                bw.write(list.get(i).toString());
-                bw.newLine();
-            }
-            bw.flush();
-            bw.close();
+            BufferedReader br = new BufferedReader(new FileReader(mFile));
+            str = br.readLine();
+            list_homeShortcut = str.split(";");
+        } catch (IOException e) {
+            Log.e("MediaBoxLauncher", "Failed read home_shortcuts:" + e);
         }
-        catch (Exception e) {
-            Log.d(TAG, "   " + e);
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException e) {
-            }
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException e) {
-            }
+        mFile = new File(mContext.getFilesDir(),"local_shortcuts");
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(mFile));
+            str = br.readLine();
+            list_localShortcut = str.split(";");
+        } catch (IOException e) {
+            Log.e("MediaBoxLauncher", "Failed read local_shortcuts:" + e);
         }
     }
 
@@ -262,7 +239,6 @@ public class AppDataLoader {
         appShortCuts.clear();
         localShortCuts.clear();
 
-        mPackageManager = mContext.getPackageManager();
         Intent AppsIntent = new Intent(Intent.ACTION_MAIN, null);
         AppsIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> apps = mPackageManager.queryIntentActivities(AppsIntent, 0);
@@ -272,16 +248,12 @@ public class AppDataLoader {
                 ApplicationInfo application = new ApplicationInfo();
                 application.title = app.loadLabel(mPackageManager);
                 application.icon = app.loadIcon(mPackageManager);
-                application.banner = app.activityInfo.loadBanner(mPackageManager);
-                if (application.banner == null) {
-                    application.banner = app.activityInfo.applicationInfo.loadBanner(mPackageManager);
-                }
                 application.label = app.activityInfo.packageName;
                 if (list_homeShortcut != null) {
                     for (int j = 0; j < list_homeShortcut.length; j++) {
                         if (app.activityInfo.packageName.equals(list_homeShortcut[j])) {
                             homeShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                                    application.icon,  mPackageManager.getLaunchIntentForPackage(
                                             application.label.toString())));
                             break;
                         }
@@ -292,7 +264,7 @@ public class AppDataLoader {
                     for (int j = 0; j < list_localShortcut.length; j++) {
                         if (app.activityInfo.packageName.equals(list_localShortcut[j])) {
                             localShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                                    application.icon, mPackageManager.getLaunchIntentForPackage(
                                             application.label.toString())));
                             break;
                         }
@@ -300,7 +272,7 @@ public class AppDataLoader {
                 }
 
                 appShortCuts.add(buildShortcutMap(application.title.toString(),
-                        application.icon, application.banner, mPackageManager.getLaunchIntentForPackage(
+                        application.icon, mPackageManager.getLaunchIntentForPackage(
                                 application.label.toString())));
                 application.icon.setCallback(null);
             }
@@ -309,12 +281,11 @@ public class AppDataLoader {
         localShortCuts.add(buildAddMap());
     }
 
-    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, Drawable banner, Intent c) {
+    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, Intent intent) {
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put(NAME, name);
         map.put(ICON, icon);
-        map.put(BANNER, banner);
-        map.put(INTENT, c);
+        map.put(INTENT, intent);
 
         return map;
     }
@@ -341,6 +312,7 @@ public class AppDataLoader {
         return null;
     }
 
+/*
     public String getShortcutString(int mode) {
         synchronized (mLock) {
             switch (mode) {
@@ -352,6 +324,7 @@ public class AppDataLoader {
         }
         return null;
     }
+*/
 
     public boolean isDataLoaded() {
         return isLoaded;
@@ -367,7 +340,7 @@ public class AppDataLoader {
         return null;
     }
 
-    private int parsePackageIcon(String packageName){
+/*    private int parsePackageIcon(String packageName){
         if (packageName.equals("com.droidlogic.FileBrower")) {
             return R.drawable.icon_filebrowser;
         } else if (packageName.equals("com.android.browser")) {
@@ -392,5 +365,5 @@ public class AppDataLoader {
             return R.drawable.icon_camera;
         }
         return -1;
-    }
+    }*/
 }

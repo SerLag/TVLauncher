@@ -5,8 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
-import android.os.storage.VolumeInfo;
+/*import android.os.storage.StorageVolume;
+import android.os.storage.VolumeInfo;*/
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
 import android.util.Log;
