@@ -11,6 +11,12 @@ import android.widget.TextView;
 import java.util.List;
 
 public class AppLayout extends RelativeLayout {
+
+    public final static int ANIM_LEFT = 0;
+    public final static int ANIM_RIGHT = 1;
+    private final static int TYPE_ANIM_IN = 0;
+    private final static int TYPE_ANIM_OUT = 1;
+
     Animation animLeftIn;
     Animation animLeftOut;
     Animation animRightIn;
@@ -38,8 +44,8 @@ public class AppLayout extends RelativeLayout {
         initlayout();
     }
 
-    public AppLayout(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public AppLayout(Context context, AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
         this.password = 0;
         this.currenPassword = 0;
     }
@@ -49,6 +55,7 @@ public class AppLayout extends RelativeLayout {
         this.icon = (ImageView) findViewById(R.id.image_icon);
         this.prompt = (ImageView) findViewById(R.id.image_prompt);
         this.title = (TextView) findViewById(R.id.tx_title);
+
         this.grid_layout = (MyGridLayout) findViewById(R.id.gl_shortcut);
         this.animLeftIn = AnimationUtils.loadAnimation(this.mContext, R.anim.push_left_in);
         this.animLeftOut = AnimationUtils.loadAnimation(this.mContext, R.anim.push_left_out);
@@ -76,49 +83,45 @@ public class AppLayout extends RelativeLayout {
         ((MyRelativeLayout) this.grid_layout.getChildAt(0)).requestFocus();
     }
 
-    public void setImageAndText(int i, int i2, int i3) {
-        this.icon.setImageDrawable(this.mContext.getResources().getDrawable(i));
-        this.prompt.setImageDrawable(this.mContext.getResources().getDrawable(i2));
-        this.title.setText(i3);
+    public void setImageAndText(int resIcon, int resPrompt, int resTitle) {
+        icon.setImageDrawable(mContext.getResources().getDrawable(resIcon, null));
+        prompt.setImageDrawable(mContext.getResources().getDrawable(resPrompt, null));
+        title.setText(resTitle);
     }
 
-    public void setLayoutWithAnim(int i, int i2, List<ArrayMap<String, Object>> list) {
-        setLayout(i2, list);
-        if (i == 0) {
-            this.animLeftIn.setAnimationListener(new MyAnimationListener(0, this.password));
-            startAnimation(this.animLeftIn);
+    public void setLayoutWithAnim(int animType, int mode, List<ArrayMap<String, Object>> list) {
+        setLayout(mode, list);
+        if (animType == ANIM_LEFT) {
+            animLeftIn.setAnimationListener(new MyAnimationListener(TYPE_ANIM_IN, password));
+            startAnimation(animLeftIn);
         } else {
-            this.animRightIn.setAnimationListener(new MyAnimationListener(0, this.password));
-            startAnimation(this.animRightIn);
+            animRightIn.setAnimationListener(new MyAnimationListener(TYPE_ANIM_IN, password));
+            startAnimation(animRightIn);
         }
-        this.password++;
+        password++;
     }
-
 
     public class MyAnimationListener implements Animation.AnimationListener {
-        private int mPassword;
-        private int mType;
+        private int mPassword = -1;
+        private int mType = -1;
 
-        @Override // android.view.animation.Animation.AnimationListener
+        @Override
         public void onAnimationRepeat(Animation animation) {
         }
-
-        public MyAnimationListener(int i, int i2) {
-            this.mType = -1;
-            this.mPassword = -1;
-            this.mType = i;
-            this.mPassword = i2;
+        public MyAnimationListener(int type, int password) {
+            mType = type;
+            mPassword = password;
         }
 
-        @Override // android.view.animation.Animation.AnimationListener
+        @Override
         public void onAnimationStart(Animation animation) {
             ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(INVISIBLE);
             AppLayout.this.currenPassword = this.mPassword;
         }
 
-        @Override // android.view.animation.Animation.AnimationListener
+        @Override
         public void onAnimationEnd(Animation animation) {
-            if (this.mType == 0 && AppLayout.this.currenPassword == this.mPassword) {
+            if (this.mType == TYPE_ANIM_IN && AppLayout.this.currenPassword == this.mPassword) {
                 ((Launcher) AppLayout.this.mContext).getHoverView().setVisibility(VISIBLE);
             }
         }

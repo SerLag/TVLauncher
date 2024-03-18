@@ -158,6 +158,7 @@ public class AppDataLoader {
                     list.add(LOCAL_SHORTCUT_HEAD);
                 }
                 bw = new BufferedWriter(new FileWriter(mFile));
+/*
                 for ( int i = 0;i < list.size(); i++ ) {
                     if (list.get(i).toString().startsWith(parseShortcutHead(mode))) {
                         str_apps =  parseShortcutHead(mode) + str_apps;
@@ -167,6 +168,7 @@ public class AppDataLoader {
                     }
                     bw.newLine();
                 }
+*/
                 bw.flush();
                 bw.close();
             }
@@ -269,7 +271,7 @@ public class AppDataLoader {
                 application.icon.setCallback(null);
             }
         }
-        homeShortCuts.add(buildAddMap());
+     //   homeShortCuts.add(buildAddMap());
         localShortCuts.add(buildAddMap());
     }
 
@@ -306,6 +308,7 @@ public class AppDataLoader {
         return isLoaded;
     }
 
+/*
     private String parseShortcutHead (int mode) {
         switch (mode) {
             case Launcher.MODE_HOME:
@@ -315,6 +318,7 @@ public class AppDataLoader {
         }
         return null;
     }
+*/
 
     /*
     public String getShortcutString(int mode) {

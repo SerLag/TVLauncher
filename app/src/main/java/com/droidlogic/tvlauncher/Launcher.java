@@ -18,9 +18,6 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-/*import android.os.SystemProperties;
-import android.provider.Settings;
-import android.text.TextUtils;*/
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -39,16 +36,13 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.res.AssetManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -232,39 +226,7 @@ public class Launcher extends Activity {
             }
         }
     };
-/*    private BroadcastReceiver instabootReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.14
-        @Override // android.content.BroadcastReceiver
-        public void onReceive(Context context, Intent intent) {
-            if ("com.droidlogic.instaboot.RELOAD_APP_COMPLETED".equals(intent.getAction())) {
-                Log.e("MediaBoxLauncher", "reloadappcompleted");
-                Launcher.this.displayShortcuts();
-            }
-        }
-    };*/
-/*    private Handler mTvHandler = new Handler() { // from class: com.droidlogic.tvlauncher.Launcher.15
-        @Override // android.os.Handler
-        public void handleMessage(Message message) {
-            int i = message.what;
-            if (i == 0) {
-                if (Launcher.this.isBootvideoStopped()) {
-                    Log.d("MediaBoxLauncher", "======== bootvideo is stopped, and tvapp released, start tv play");
-                    return;
-                }
-                Log.d("MediaBoxLauncher", "======== bootvideo is not stopped, or tvapp not released, wait it");
-                Launcher.this.mTvHandler.sendEmptyMessageDelayed(0, 200L);
-            } else if (i != 1) {
-            } else {
-                if (Launcher.this.isBootvideoStopped()) {
-                    Log.d("MediaBoxLauncher", "======== bootvideo is stopped, start tv app");
-                    Launcher.this.startTvApp();
-                    Launcher.this.finish();
-                    return;
-                }
-                Log.d("MediaBoxLauncher", "======== bootvideo is not stopped, wait it");
-                Launcher.this.mTvHandler.sendEmptyMessageDelayed(1, 50L);
-            }
-        }
-    };*/
+
     private final String ENGLISH = "en";
     private final String FRENCH = "fr";
     private final String ESPANOL = "es";
@@ -284,9 +246,7 @@ public class Launcher extends Activity {
         setContentView(R.layout.main);
         Log.d("MediaBoxLauncher", "------onCreate");
         String[] d = getFilesDir().list();
-/*        if(getFilesDir().list().length == 0) {
-            copyAssets();
-        }*/
+
         copyResources(R.raw.home_shortcuts);
         copyResources(R.raw.local_shortcuts);
 
@@ -828,7 +788,6 @@ public class Launcher extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void updateStatus() {
         ((BaseAdapter) this.lv_status.getAdapter()).notifyDataSetChanged();
     }
@@ -848,7 +807,7 @@ public class Launcher extends Activity {
         Log.d("MediaBoxLauncher", "resetShortcutScreen mode is " + i);
         if (this.mAppDataLoader.isDataLoaded()) {
             if (i == MODE_HOME) {
-                this.mHomeShortcutView.setLayoutView(i, this.mAppDataLoader.gethomeShortCuts());
+                this.mHomeShortcutView.setLayoutView(i, this.mAppDataLoader.getlocalShortCuts());
                 return;
             } else {
                 this.mSecondScreen.setLayout(i, this.mAppDataLoader.getappShortCuts());
@@ -1050,30 +1009,6 @@ public class Launcher extends Activity {
 
     public boolean isBootvideoStopped() {
         return TextUtils.equals(SystemProperties.get("init.svc.bootanim", "running"), "stopped") && TextUtils.equals(SystemProperties.get("dev.bootcomplete", "0"), "1") && getContentResolver().acquireContentProviderClient("android.media.tv") != null;
-    }
-*/
-
-/*
-    private void copyAssets() {
-        AssetManager assetManager = getAssets();
-        String[] files = null;
-        try {
-            files = assetManager.list("config");
-            if (files != null) {
-                for (String filename : files) {
-                    InputStream in = null;
-                    OutputStream out = null;
-                    in = assetManager.open("config/" + filename);
-                    File outFile = new File(getFilesDir(),filename);
-                    out = new FileOutputStream(outFile);
-                    copyFile(in, out);
-                    in.close();
-                    out.close();
-                }
-            }
-        } catch (IOException e) {
-            Log.e("MediaBoxLauncher", "Failed to copy assets" + e);
-        }
     }
 */
 
