@@ -1,15 +1,13 @@
 package com.droidlogic.tvlauncher;
 
-import android.app.ActivityManager;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 /*import android.os.Handler;
 import android.os.Message;*/
 import android.content.Context;
-/*import android.content.ComponentName;*/
+
 import android.content.Intent;
 import android.content.pm.LauncherActivityInfo;
-import android.content.pm.LauncherApps;
 import android.graphics.drawable.Drawable;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -19,17 +17,11 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-/*import java.io.InputStream;*/
-import java.io.InputStreamReader;
-/*import java.io.FileInputStream;
-import java.io.FileOutputStream;*/
 import java.io.IOException;
-import java.nio.CharBuffer;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
-/*import java.util.Collections;*/
 import java.text.Collator;
 
 
@@ -37,7 +29,7 @@ public class AppDataLoader {
     private final static String TAG = "AppDataLoader";
     public final static String NAME = "name";
     public final static String ICON = "icon";
-    public final static String INTENT = "intent";
+    public final static String LABEL = "label";
 
     public final static String SHORTCUT_PATH = "/data/data/com.droidlogic.tvlauncher/shortcut.cfg";
   //  public final static int DEFAULT_SHORTCUR_PATH = R.raw.default_shortcut;
@@ -53,8 +45,8 @@ public class AppDataLoader {
     ///////////////
     private PackageManager mPackageManager;
 
-    private String[] list_homeShortcut;
-    private String[] list_localShortcut;
+    List<String> list_homeShortcut;
+    List<String> list_localShortcut;
 
     List<ArrayMap<String, Object>> homeShortCuts = new ArrayList<ArrayMap<String, Object>>();
     List<ArrayMap<String, Object>> appShortCuts = new ArrayList<ArrayMap<String, Object>>();
@@ -198,19 +190,19 @@ public class AppDataLoader {
     private void getShortcuts() {
         String str;
         File mFile;
-        mFile = new File(mContext.getFilesDir(),"home_shortcuts");
+        mFile = new File(mContext.getFilesDir(), "home_shortcuts");
         try {
             BufferedReader br = new BufferedReader(new FileReader(mFile));
             str = br.readLine();
-            list_homeShortcut = str.split(";");
+            list_homeShortcut = new ArrayList<>(Arrays.asList(str.split(";")));
         } catch (IOException e) {
             Log.e("MediaBoxLauncher", "Failed read home_shortcuts:" + e);
         }
-        mFile = new File(mContext.getFilesDir(),"local_shortcuts");
+        mFile = new File(mContext.getFilesDir(), "local_shortcuts");
         try {
             BufferedReader br = new BufferedReader(new FileReader(mFile));
             str = br.readLine();
-            list_localShortcut = str.split(";");
+            list_localShortcut = new ArrayList<>(Arrays.asList(str.split(";")));
         } catch (IOException e) {
             Log.e("MediaBoxLauncher", "Failed read local_shortcuts:" + e);
         }
@@ -250,30 +242,30 @@ public class AppDataLoader {
                 application.icon = app.loadIcon(mPackageManager);
                 application.label = app.activityInfo.packageName;
                 if (list_homeShortcut != null) {
-                    for (int j = 0; j < list_homeShortcut.length; j++) {
-                        if (app.activityInfo.packageName.equals(list_homeShortcut[j])) {
+                    for (String homeShortcut : list_homeShortcut) {
+                        if (app.activityInfo.packageName.equals(homeShortcut)) {
                             homeShortCuts.add(buildShortcutMap(application.title.toString(),
-                                    application.icon,  mPackageManager.getLaunchIntentForPackage(
-                                            application.label.toString())));
+                                    application.icon, application.label.toString()));
                             break;
                         }
                     }
                 }
 
                 if (list_localShortcut != null) {
-                    for (int j = 0; j < list_localShortcut.length; j++) {
-                        if (app.activityInfo.packageName.equals(list_localShortcut[j])) {
+                    for (String localShortcut : list_localShortcut) {
+                        if (app.activityInfo.packageName.equals(localShortcut)) {
                             localShortCuts.add(buildShortcutMap(application.title.toString(),
+                                    application.icon, application.label.toString()));
+/*                            localShortCuts.add(buildShortcutMap(application.title.toString(),
                                     application.icon, mPackageManager.getLaunchIntentForPackage(
-                                            application.label.toString())));
+                                            application.label.toString())));*/
                             break;
                         }
                     }
                 }
 
                 appShortCuts.add(buildShortcutMap(application.title.toString(),
-                        application.icon, mPackageManager.getLaunchIntentForPackage(
-                                application.label.toString())));
+                        application.icon, application.label.toString()));
                 application.icon.setCallback(null);
             }
         }
@@ -281,11 +273,11 @@ public class AppDataLoader {
         localShortCuts.add(buildAddMap());
     }
 
-    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, Intent intent) {
+    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, String label) {
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put(NAME, name);
         map.put(ICON, icon);
-        map.put(INTENT, intent);
+        map.put(LABEL, label);
 
         return map;
     }
@@ -298,33 +290,17 @@ public class AppDataLoader {
         return map;
     }
 
-    public List<ArrayMap<String, Object>> getShortcutList(int mode) {
-        synchronized (mLock) {
-            switch (mode) {
-                case Launcher.MODE_HOME:
-                    return homeShortCuts;
-                case Launcher.MODE_APP:
-                    return appShortCuts;
-                case Launcher.MODE_LOCAL:
-                    return localShortCuts;
-            }
-        }
-        return null;
+    public List<ArrayMap<String, Object>> gethomeShortCuts() {
+         return homeShortCuts;
     }
 
-/*
-    public String getShortcutString(int mode) {
-        synchronized (mLock) {
-            switch (mode) {
-                case Launcher.MODE_HOME:
-                    return str_homeShortcut;
-                case Launcher.MODE_LOCAL:
-                    return str_localShortcut;
-            }
-        }
-        return null;
+    public List<ArrayMap<String, Object>> getappShortCuts() {
+        return appShortCuts;
     }
-*/
+
+    public List<ArrayMap<String, Object>> getlocalShortCuts() {
+         return localShortCuts;
+    }
 
     public boolean isDataLoaded() {
         return isLoaded;
@@ -339,6 +315,20 @@ public class AppDataLoader {
         }
         return null;
     }
+
+    /*
+    public String getShortcutString(int mode) {
+        synchronized (mLock) {
+            switch (mode) {
+                case Launcher.MODE_HOME:
+                    return str_homeShortcut;
+                case Launcher.MODE_LOCAL:
+                    return str_localShortcut;
+            }
+        }
+        return null;
+    }
+*/
 
 /*    private int parsePackageIcon(String packageName){
         if (packageName.equals("com.droidlogic.FileBrower")) {

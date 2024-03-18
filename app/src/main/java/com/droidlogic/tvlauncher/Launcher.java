@@ -284,9 +284,12 @@ public class Launcher extends Activity {
         setContentView(R.layout.main);
         Log.d("MediaBoxLauncher", "------onCreate");
         String[] d = getFilesDir().list();
-        if(getFilesDir().list().length == 0) {
+/*        if(getFilesDir().list().length == 0) {
             copyAssets();
-        }
+        }*/
+        copyResources(R.raw.home_shortcuts);
+        copyResources(R.raw.local_shortcuts);
+
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
         this.mMainFrameLayout.setVisibility(View.VISIBLE);
         this.mAppDataLoader = new AppDataLoader(this);
@@ -683,6 +686,7 @@ public class Launcher extends Activity {
         this.mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
         this.mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
         this.mHomeShortcutView = (MyGridLayout) findViewById(R.id.gv_shortcut);
+
         this.mVideoView = (MyRelativeLayout) findViewById(R.id.layout_video);
         this.mRecommendView = (MyRelativeLayout) findViewById(R.id.layout_recommend);
         this.mMusicView = (MyRelativeLayout) findViewById(R.id.layout_music);
@@ -832,22 +836,22 @@ public class Launcher extends Activity {
     public void setShortcutScreen(int i) {
         resetShortcutScreen(i);
         this.current_screen_mode = i;
-        if (i == 4) {
+/*        if (i == 4) {
             LedControl.control_led_status(getResources().getString(R.string.app_led), true);
         } else {
             LedControl.control_led_status(getResources().getString(R.string.app_led), false);
-        }
+        }*/
     }
 
     public void resetShortcutScreen(int i) {
         this.mHandler.removeMessages(0);
         Log.d("MediaBoxLauncher", "resetShortcutScreen mode is " + i);
         if (this.mAppDataLoader.isDataLoaded()) {
-            if (i == 0) {
-                this.mHomeShortcutView.setLayoutView(i, this.mAppDataLoader.getShortcutList(i));
+            if (i == MODE_HOME) {
+                this.mHomeShortcutView.setLayoutView(i, this.mAppDataLoader.gethomeShortCuts());
                 return;
             } else {
-                this.mSecondScreen.setLayout(i, this.mAppDataLoader.getShortcutList(i));
+                this.mSecondScreen.setLayout(i, this.mAppDataLoader.getappShortCuts());
                 return;
             }
         }
@@ -882,7 +886,7 @@ public class Launcher extends Activity {
         } else {
             mode = mChildScreens[(getChildModeIndex() + 1) % mChildScreens.length];
         }
-        mSecondScreen.setLayoutWithAnim(animType, mode, mAppDataLoader.getShortcutList(mode));
+        mSecondScreen.setLayoutWithAnim(animType, mode, mAppDataLoader.getlocalShortCuts());
         current_screen_mode = mode;
     }
 
@@ -1049,16 +1053,17 @@ public class Launcher extends Activity {
     }
 */
 
+/*
     private void copyAssets() {
         AssetManager assetManager = getAssets();
         String[] files = null;
         try {
-            files = assetManager.list("");
+            files = assetManager.list("config");
             if (files != null) {
                 for (String filename : files) {
                     InputStream in = null;
                     OutputStream out = null;
-                    in = assetManager.open(filename);
+                    in = assetManager.open("config/" + filename);
                     File outFile = new File(getFilesDir(),filename);
                     out = new FileOutputStream(outFile);
                     copyFile(in, out);
@@ -1070,12 +1075,36 @@ public class Launcher extends Activity {
             Log.e("MediaBoxLauncher", "Failed to copy assets" + e);
         }
     }
+*/
 
     private void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
         while((read = in.read(buffer)) != -1){
             out.write(buffer, 0, read);
+        }
+    }
+    public void copyResources(int resId) {
+
+        InputStream in = getResources().openRawResource(resId);
+        String filename = getResources().getResourceEntryName(resId);
+
+        File outfile = new File(getFilesDir(), filename);
+
+        if(!outfile.exists()) {
+            try {
+                OutputStream out = new FileOutputStream(outfile);
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer, 0, buffer.length)) != -1) {
+                    out.write(buffer, 0, len);
+                }
+                in.close();
+                out.close();
+
+            } catch (IOException e) {
+                Log.e("MediaBoxLauncher", "Failed to copy Resources " + e);
+            }
         }
     }
 }

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/* loaded from: classes.dex */
 public class LocalAdapter extends BaseAdapter implements Filterable {
     private Context mContext;
     private List<? extends Map<String, ?>> mData;
@@ -32,12 +31,11 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
     private ArrayList<Map<String, ?>> mUnfilteredData;
     private ViewBinder mViewBinder;
 
-    /* loaded from: classes.dex */
     public interface ViewBinder {
         boolean setViewValue(View view, Object obj, String str);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public long getItemId(int i) {
         return i;
     }
@@ -52,17 +50,17 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
         this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
         return this.mData.size();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public Object getItem(int i) {
         return this.mData.get(i);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         return createViewFromResource(i, view, viewGroup, this.mResource);
     }
@@ -79,7 +77,7 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
         return view;
     }
 
-    @Override // android.widget.BaseAdapter, android.widget.SpinnerAdapter
+    @Override
     public View getDropDownView(int i, View view, ViewGroup viewGroup) {
         return createViewFromResource(i, view, viewGroup, this.mDropDownResource);
     }
@@ -117,7 +115,7 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
                     setViewText((TextView) findViewById, str);
                 } else if (findViewById instanceof ImageView) {
                     if (obj instanceof Integer) {
-                        ((ImageView) findViewById).setImageDrawable(this.mContext.getResources().getDrawable(((Integer) obj).intValue()));
+                        ((ImageView) findViewById).setImageDrawable(this.mContext.getResources().getDrawable(((Integer) obj).intValue(), null));
                     } else if (obj instanceof Drawable) {
                         ((ImageView) findViewById).setImageDrawable((Drawable) obj);
                     } else {
@@ -129,7 +127,7 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
                     }
                 } else if (findViewById instanceof RelativeLayout) {
                     if (obj instanceof Integer) {
-                        findViewById.setBackgroundDrawable(this.mContext.getResources().getDrawable(((Integer) obj).intValue()));
+                        findViewById.setBackground(this.mContext.getResources().getDrawable(((Integer) obj).intValue(), null));
                     }
                 } else {
                     throw new IllegalStateException(findViewById.getClass().getName() + " is not a  view that can be bounds by this LocalAdapter");

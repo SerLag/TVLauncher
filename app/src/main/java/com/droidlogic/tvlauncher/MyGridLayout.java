@@ -76,7 +76,7 @@ public class MyGridLayout extends GridLayout {
                 imageView.setBackgroundDrawable((Drawable) new SoftReference(this.mContext.getResources().getDrawable(parseItemBackground(i, i))).get());
                 if (list.get(i).get("icon") instanceof Drawable) {
                     imageView.setImageDrawable((Drawable) new SoftReference((Drawable) list.get(i).get("icon")).get());
-                    myRelativeLayout.setIntent((Intent) list.get(i).get("intent"));
+                    myRelativeLayout.setIntent(mContext.getPackageManager().getLaunchIntentForPackage(list.get(i).get("label").toString()));
                 } else {
                     imageView.setImageDrawable((Drawable) new SoftReference(this.mContext.getResources().getDrawable(R.drawable.item_img_add)).get());
                     imageView.setContentDescription("img_add");
