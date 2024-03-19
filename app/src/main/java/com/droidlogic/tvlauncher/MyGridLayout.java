@@ -68,7 +68,7 @@ public class MyGridLayout extends GridLayout {
                 } else {
                     myRelativeLayout = (MyRelativeLayout) View.inflate(this.mContext, R.layout.childgrid_item, null);
                     myRelativeLayout.setPadding(5, 5, 5, 5);
-                    ((TextView) myRelativeLayout.getChildAt(1)).setText((String) list.get(i).get(AppDataLoader.NAME));
+                    ((TextView) myRelativeLayout.getChildAt(1)).setText((String) list.get(i).get("name"));
                     myRelativeLayout.setType(Launcher.TYPE_APP_SHORTCUT);
                     myRelativeLayout.setNumber(i);
                 }

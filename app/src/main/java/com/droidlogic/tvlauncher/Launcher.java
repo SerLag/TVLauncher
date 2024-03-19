@@ -69,25 +69,20 @@ public class Launcher extends Activity {
     private GridView lv_status;
     private AppDataLoader mAppDataLoader;
     private MyRelativeLayout mAppView;
-    private FrameLayout mBlackFrameLayout;
-    private MyRelativeLayout mBrowser;
     private MyRelativeLayout mFilemanager;
-    private MyRelativeLayout mGoogleplay;
+
     private HoverView mHoverView;
-    private MyRelativeLayout mKodi;
-    private MyRelativeLayout mLocalView;
+
     private FrameLayout mMainFrameLayout;
-    private MyRelativeLayout mMemory;
-    private MyRelativeLayout mMiracast;
-    private MyRelativeLayout mMusicView;
-    private MyRelativeLayout mNetflix;
+
+
+    private MyRelativeLayout[] mAction;
+
     private RequestQueue mQueue;
-    private MyRelativeLayout mRecommendView;
+
     private MyRelativeLayout mSettingsView;
     private StatusLoader mStatusLoader;
-    private TvInputManager mTvInputManager;
-    private MyRelativeLayout mVideoView;
-    private MyRelativeLayout mYoutube;
+
     private ImageButton pg_favorite;
     private ImageButton pg_home;
     private ImageButton query_button;
@@ -101,22 +96,16 @@ public class Launcher extends Activity {
     public static int HOME_SHORTCUT_COUNT = 11;
     public static TextView memory_used = null;
     public static ImageView memory_circle = null;
+    public static MyRelativeLayout mMemory;
 
-    public static final int TYPE_VIDEO                           = 0;
-    public static final int TYPE_RECOMMEND                       = 1;
-    public static final int TYPE_MUSIC                           = 2;
-    public static final int TYPE_APP                             = 3;
-    public static final int TYPE_LOCAL                           = 4;
-    public static final int TYPE_SETTINGS                        = 5;
-    public static final int TYPE_HOME_SHORTCUT                   = 6;
-    public static final int TYPE_APP_SHORTCUT                    = 7;
+    public static final int TYPE_HOME                            = 0;
+    public static final int TYPE_SETTINGS                        = 1;
+    public static final int TYPE_HOME_SHORTCUT                   = 2;
+    public static final int TYPE_APP_SHORTCUT                    = 3;
 
     public static final int MODE_HOME                            = 0;
-    public static final int MODE_VIDEO                           = 1;
-    public static final int MODE_RECOMMEND                       = 2;
-    public static final int MODE_MUSIC                           = 3;
-    public static final int MODE_APP                             = 4;
-    public static final int MODE_LOCAL                           = 5;
+    public static final int MODE_APP                             = 1;
+    public static final int MODE_LOCAL                           = 2;
 
     private static final int MSG_REFRESH_SHORTCUT                = 0;
     private static final int MSG_RECOVER_HOME                    = 1;
@@ -135,9 +124,6 @@ public class Launcher extends Activity {
     private TextView tvPrompt = null;
     public int tvViewMode = -1;
     private int mTvTop = -1;
-    private boolean isRadioChannel = false;
-    private boolean isChannelBlocked = false;
-    private boolean isAvNoSignal = false;
     private Object mlock = new Object();
     private boolean mTvStartPlaying = false;
     private LinearInterpolator lin = null;
@@ -227,29 +213,23 @@ public class Launcher extends Activity {
         }
     };
 
-    private final String ENGLISH = "en";
-    private final String FRENCH = "fr";
-    private final String ESPANOL = "es";
-    private final String SPANISH = "sp";
-    public final int ENGLISH_INDEX = 0;
-    private final int FRENCH_INDEX = 1;
-    private final int ESPANOL_INDEX = 2;
-
-    private boolean checkNeedStartTvApp(boolean z) {
-        return false;
-    }
-
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
         setContentView(R.layout.main);
         Log.d("MediaBoxLauncher", "------onCreate");
-        String[] d = getFilesDir().list();
 
         copyResources(R.raw.home_shortcuts);
         copyResources(R.raw.local_shortcuts);
+        copyResources(R.raw.banner1);
+        copyResources(R.raw.banner2);
+        copyResources(R.raw.banner3);
+        copyResources(R.raw.banner4);
+        copyResources(R.raw.banner5);
+        copyResources(R.raw.banner6);
 
+        this.mAction = new MyRelativeLayout[6];
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
         this.mMainFrameLayout.setVisibility(View.VISIBLE);
         this.mAppDataLoader = new AppDataLoader(this);
@@ -274,7 +254,7 @@ public class Launcher extends Activity {
     }
 
     private void setFirstFocus() {
-        this.mNetflix.requestFocus();
+        this.mAction[0].requestFocus();
     }
 
     private void initMemory() {
@@ -446,7 +426,6 @@ public class Launcher extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void showSecondScreen(int i) {
         setHomeViewVisible(false);
         setShortcutScreen(i);
@@ -479,30 +458,18 @@ public class Launcher extends Activity {
                 }
             }
         }, new Response.ErrorListener() { // from class: com.droidlogic.tvlauncher.Launcher.7
-            @Override // com.android.volley.Response.ErrorListener
+            @Override
             public void onErrorResponse(VolleyError volleyError) {
             }
         }));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public int parseIcon(String str) {
         if (str == null) {
             return -1;
         }
         return ("01n".equals(str) || "01d".equals(str)) ? R.drawable.sunny : "04n".equals(str) ? R.drawable.partly_cloudy : ("04d".equals(str) || "02n".equals(str) || "02d".equals(str) || "03n".equals(str) || "03d".equals(str)) ? R.drawable.overcast : ("09n".equals(str) || "09d".equals(str)) ? R.drawable.thunder : ("10n".equals(str) || "10d".equals(str)) ? R.drawable.light_rain : ("11n".equals(str) || "11d".equals(str) || "13n".equals(str) || "13d".equals(str)) ? R.drawable.snow : (!"50n".equals(str) && "50d".equals(str)) ? R.drawable.smoke : R.drawable.sunny;
     }
-
-/*
-    private void releasePlayingTv() {
-        Log.d("MediaBoxLauncher", "------releasePlayingTv");
-        this.isChannelBlocked = false;
-        recycleBigBackgroundDrawable();
-        this.mTvHandler.removeMessages(0);
-        releaseTvView();
-        this.mTvStartPlaying = false;
-    }
-*/
 
     @Override
     protected void onResume() {
@@ -542,20 +509,6 @@ public class Launcher extends Activity {
         unregisterReceiver(this.mediaReceiver);
         unregisterReceiver(this.netReceiver);
         unregisterReceiver(this.appReceiver);
-    }
-
-    @Override // android.app.Activity
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if ("android.intent.action.MAIN".equals(intent.getAction())) {
-            setHomeViewVisible(true);
-            this.current_screen_mode = 0;
-            ((MyRelativeLayout) findViewById(R.id.layout_netflix)).requestFocus();
-        } else if (intent.getAction().equals("android.intent.action.ALLAPPS")) {
-            Log.d("MediaBoxLauncher", " ----keycode f7 process all apps");
-            setHomeViewVisible(false);
-            setShortcutScreen(4);
-        }
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
@@ -610,7 +563,7 @@ public class Launcher extends Activity {
                 startActivity(intent);
                 return true;
             } else if (i == 178) {
-                startTvSource();
+ //               startTvSource();
                 return true;
             } else if (i == 139) {
                 startMemoryAnimation();
@@ -619,12 +572,10 @@ public class Launcher extends Activity {
         return super.onKeyDown(i, keyEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void displayStatus() {
         this.lv_status.setAdapter((ListAdapter) new LocalAdapter(this, this.mStatusLoader.getStatusData(), R.layout.homelist_item, new String[]{"item_icon"}, new int[]{R.id.item_type}));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void displayDate() {
         TextView textView = (TextView) findViewById(R.id.tx_time);
         TextView textView2 = (TextView) findViewById(R.id.tx_date);
@@ -636,8 +587,8 @@ public class Launcher extends Activity {
         this.lv_status = (GridView) findViewById(R.id.list_status);
         this.lv_status.setFocusable(false);
         this.lv_status.setFocusableInTouchMode(false);
-        this.lv_status.setOnTouchListener(new View.OnTouchListener() { // from class: com.droidlogic.tvlauncher.Launcher.8
-            @Override // android.view.View.OnTouchListener
+        this.lv_status.setOnTouchListener(new View.OnTouchListener() {
+            @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return motionEvent.getAction() == 2;
             }
@@ -647,135 +598,64 @@ public class Launcher extends Activity {
         this.mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
         this.mHomeShortcutView = (MyGridLayout) findViewById(R.id.gv_shortcut);
 
-        this.mVideoView = (MyRelativeLayout) findViewById(R.id.layout_video);
-        this.mRecommendView = (MyRelativeLayout) findViewById(R.id.layout_recommend);
-        this.mMusicView = (MyRelativeLayout) findViewById(R.id.layout_music);
-        this.mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
-        this.mLocalView = (MyRelativeLayout) findViewById(R.id.layout_local);
+        this.mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_bannder1);
+        this.mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_bannder2);
+        this.mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_bannder3);
+        this.mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_bannder4);
+        this.mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_bannder5);
+        this.mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_bannder6);
+
         this.mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
-        this.mGoogleplay = (MyRelativeLayout) findViewById(R.id.layout_googleplay);
-        this.mKodi = (MyRelativeLayout) findViewById(R.id.layout_kodi);
-        this.mBrowser = (MyRelativeLayout) findViewById(R.id.layout_browser);
-        this.mMemory = (MyRelativeLayout) findViewById(R.id.layout_memory);
-        this.mYoutube = (MyRelativeLayout) findViewById(R.id.layout_youtube);
-        this.mNetflix = (MyRelativeLayout) findViewById(R.id.layout_netflix);
-        this.mMiracast = (MyRelativeLayout) findViewById(R.id.layout_miracast);
         this.mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
+        this.mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
         setHomeRectType();
- //       this.tvView = (TvView) findViewById(R.id.tv_view);
- //       this.tvPrompt = (TextView) findViewById(R.id.tx_tv_prompt);
         this.mChildScreens = childScreens;
- //       this.tvPrompt.setVisibility(View.GONE);
-    //    TvView tvView = this.tvView;
- //       if (tvView != null) {
-  //          tvView.setVisibility(View.GONE);
- //       }
+
     }
 
     private void setBigBackgroundDrawable() {
-        getMainView().setBackgroundDrawable(getResources().getDrawable(R.drawable.bg));
-        ((ImageView) findViewById(R.id.img_video)).setImageDrawable(getResources().getDrawable(R.drawable.img_video));
-        ((ImageView) findViewById(R.id.img_recommend)).setImageDrawable(getResources().getDrawable(R.drawable.img_recommend));
-        ((ImageView) findViewById(R.id.img_music)).setImageDrawable(getResources().getDrawable(R.drawable.img_music));
-        ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app));
-        ((ImageView) findViewById(R.id.img_local)).setImageDrawable(getResources().getDrawable(R.drawable.img_local));
-        ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting));
-        ((ImageView) findViewById(R.id.img_googleplay)).setImageDrawable(getResources().getDrawable(R.drawable.img_googleplay));
-        ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(getResources().getDrawable(R.drawable.img_kodi));
-        ((ImageView) findViewById(R.id.img_browser)).setImageDrawable(getResources().getDrawable(R.drawable.img_browser));
-        ((ImageView) findViewById(R.id.img_memory)).setImageDrawable(getResources().getDrawable(R.drawable.img_memory));
-        ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(getResources().getDrawable(R.drawable.img_youtube));
-        ((ImageView) findViewById(R.id.img_netflix)).setImageDrawable(getResources().getDrawable(R.drawable.img_netflix));
-        ((ImageView) findViewById(R.id.img_miracast)).setImageDrawable(getResources().getDrawable(R.drawable.img_miracast));
-        ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager));
-    }
-
-    private void recycleBigBackgroundDrawable() {
-        Drawable background = getMainView().getBackground();
-        getMainView().setBackgroundResource(0);
-        if (background != null) {
-            background.setCallback(null);
-        }
-        Drawable drawable = ((ImageView) findViewById(R.id.img_video)).getDrawable();
-        if (drawable != null) {
-            drawable.setCallback(null);
-            Log.d("MediaBoxLauncher", "recycle-img_video");
-        }
-        Drawable drawable2 = ((ImageView) findViewById(R.id.img_local)).getDrawable();
-        if (drawable2 != null) {
-            drawable2.setCallback(null);
-        }
-        Drawable drawable3 = ((ImageView) findViewById(R.id.img_music)).getDrawable();
-        if (drawable3 != null) {
-            drawable3.setCallback(null);
-        }
-        Drawable drawable4 = ((ImageView) findViewById(R.id.img_recommend)).getDrawable();
-        if (drawable4 != null) {
-            drawable4.setCallback(null);
-        }
-        Drawable drawable5 = ((ImageView) findViewById(R.id.img_setting)).getDrawable();
-        if (drawable5 != null) {
-            drawable5.setCallback(null);
-        }
-        Drawable drawable6 = ((ImageView) findViewById(R.id.img_app)).getDrawable();
-        if (drawable6 != null) {
-            drawable6.setCallback(null);
-        }
-        Drawable drawable7 = ((ImageView) findViewById(R.id.img_googleplay)).getDrawable();
-        if (drawable7 != null) {
-            drawable7.setCallback(null);
-        }
-        Drawable drawable8 = ((ImageView) findViewById(R.id.img_kodi)).getDrawable();
-        if (drawable8 != null) {
-            drawable8.setCallback(null);
-        }
-        Drawable drawable9 = ((ImageView) findViewById(R.id.img_browser)).getDrawable();
-        if (drawable9 != null) {
-            drawable9.setCallback(null);
-        }
-        Drawable drawable10 = ((ImageView) findViewById(R.id.img_memory)).getDrawable();
-        if (drawable10 != null) {
-            drawable10.setCallback(null);
-        }
-        Drawable drawable11 = ((ImageView) findViewById(R.id.img_youtube)).getDrawable();
-        if (drawable11 != null) {
-            drawable11.setCallback(null);
-        }
-        Drawable drawable12 = ((ImageView) findViewById(R.id.img_netflix)).getDrawable();
-        if (drawable12 != null) {
-            drawable12.setCallback(null);
-        }
-        Drawable drawable13 = ((ImageView) findViewById(R.id.img_miracast)).getDrawable();
-        if (drawable13 != null) {
-            drawable13.setCallback(null);
-        }
-        ((ImageView) findViewById(R.id.img_filemanager)).getDrawable();
+        getMainView().setBackground(getResources().getDrawable(R.drawable.bg, null));
+        ((ImageView) findViewById(R.id.img_banner1)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
+        ((ImageView) findViewById(R.id.img_banner2)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
+        ((ImageView) findViewById(R.id.img_banner3)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
+        ((ImageView) findViewById(R.id.img_banner4)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner4"));
+        ((ImageView) findViewById(R.id.img_banner5)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner5"));
+        ((ImageView) findViewById(R.id.img_banner6)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner6"));
+        ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting, null));
+        ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager, null));
+        ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app, null));
     }
 
     private void setHomeRectType() {
-        this.mVideoView.setType(0);
-        this.mMusicView.setType(2);
-        this.mRecommendView.setType(1);
+//        this.mVideoView.setType(0);
+//        this.mMusicView.setType(2);
+//        this.mRecommendView.setType(1);
         this.mAppView.setType(3);
-        this.mLocalView.setType(4);
-        this.mMemory.setType(13);
+    //    this.mLocalView.setType(4);
+   //     this.mMemory.setType(13);
         Intent intent = new Intent();
-        intent.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_SETTINGS));
+ //       intent.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_SETTINGS));
         this.mSettingsView.setType(5);
         this.mSettingsView.setIntent(intent);
-        this.mGoogleplay.setType(10);
-        this.mKodi.setType(11);
-        this.mBrowser.setType(12);
-        this.mYoutube.setType(14);
-        this.mNetflix.setType(15);
-        Intent intent2 = new Intent();
-        intent2.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_MIRACAST));
-        this.mMiracast.setType(16);
-        this.mMiracast.setIntent(intent2);
+   //     this.mGoogleplay.setType(10);
+  //      this.mKodi.setType(11);
+  //      this.mBrowser.setType(12);
+ //       this.mYoutube.setType(14);
+//        this.mNetflix.setType(15);
+//        Intent intent2 = new Intent();
+//        intent2.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_MIRACAST));
+//        this.mMiracast.setType(16);
+//        this.mMiracast.setIntent(intent2);
         Intent intent3 = new Intent();
-        intent3.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_FILEMANAGER));
+//        intent3.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_FILEMANAGER));
         this.mFilemanager.setType(17);
         this.mFilemanager.setIntent(intent3);
+        this.mAction[0].setType(0);
+        this.mAction[1].setType(1);
+        this.mAction[2].setType(2);
+        this.mAction[3].setType(3);
+        this.mAction[4].setType(4);
+        this.mAction[5].setType(5);
     }
 
     public void displayShortcuts() {
@@ -897,6 +777,7 @@ public class Launcher extends Activity {
         }
     }
 
+/*
     public void startTvSource() {
         try {
             Intent intent = new Intent();
@@ -907,6 +788,7 @@ public class Launcher extends Activity {
             Log.e("MediaBoxLauncher", " can't start TvSources:" + e);
         }
     }
+*/
 
     @Override // android.app.Activity
     public void onActivityResult(int i, int i2, Intent intent) {
@@ -1036,7 +918,6 @@ public class Launcher extends Activity {
                 }
                 in.close();
                 out.close();
-
             } catch (IOException e) {
                 Log.e("MediaBoxLauncher", "Failed to copy Resources " + e);
             }

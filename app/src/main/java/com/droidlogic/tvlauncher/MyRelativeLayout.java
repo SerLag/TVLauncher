@@ -1,86 +1,90 @@
 package com.droidlogic.tvlauncher;
 
-import android.content.ComponentName;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
+import android.content.pm.PackageManager;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.ImageView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.RelativeLayout;
+import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.KeyEvent;
+import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.graphics.drawable.Drawable;
+import android.graphics.Rect;
+import android.graphics.Outline;
+import android.util.AttributeSet;
+import android.util.Log;
 
-import static android.view.KeyEvent.KEYCODE_DPAD_LEFT;
-import static android.view.KeyEvent.KEYCODE_DPAD_RIGHT;
+import java.lang.Character;
 
-/* loaded from: classes.dex */
-public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver.OnGlobalLayoutListener {
-    private boolean isSwitchAnimRunning;
-    private boolean layoutCompleted;
-    private Context mContext;
-    private float mElevation;
-    private Intent mIntent;
-    private boolean mIsAddButton;
-    private int mNumber;
+
+public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutListener {
+
+    private final static float ELEVATION_HOVER_MIN = 30;
+    private final static float ELEVATION_HOVER_MID = 36;
+    private final static float ELEVATION_HOVER_MAX = 40;
+    public final static float ELEVATION_ABOVE_HOVER = 51;
+    public final static float ELEVATION_UNDER_HOVER = 10;
+    private final static float ALPHA_HOVER = 200;
+    private final static float SCALE_PARA_SMALL = 1.07f;
+    private final static float SCALE_PARA_BIG = 1.1f;
+    private final static float SHADOW_SMALL = 0.9f;
+    private final static float SHADOW_BIG = 1.0f;
     private float mScale;
+    private float mElevation;
     private float mShadowScale;
-    private int mType;
 
-    private void setHoverView() {
-    }
+    public final static int COLUMN_NUMBER = 6;
+    private static final int animDuration = 70;
+    private static final int animDelay = 0;
+
+    private boolean isSwitchAnimRunning = false;
+    private boolean layoutCompleted = false;
+    private Context mContext = null;
+    private Intent mIntent = null;
+    private boolean mIsAddButton = false;
+    private int mNumber = -1;
+    private int mType = -1;
+
+/*    private void setHoverView() {
+    }*/
 
     public MyRelativeLayout(Context context) {
         super(context);
-        this.mContext = null;
-        this.layoutCompleted = false;
-        this.mType = -1;
-        this.mIntent = null;
-        this.mNumber = -1;
-        this.mIsAddButton = false;
-        this.isSwitchAnimRunning = false;
     }
 
     public MyRelativeLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.mContext = null;
-        this.layoutCompleted = false;
-        this.mType = -1;
-        this.mIntent = null;
-        this.mNumber = -1;
-        this.mIsAddButton = false;
-        this.isSwitchAnimRunning = false;
         this.mContext = context;
         setFocusable(true);
         setFocusableInTouchMode(true);
-        setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
+        setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
-    public MyRelativeLayout(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
-        this.mContext = null;
-        this.layoutCompleted = false;
-        this.mType = -1;
-        this.mIntent = null;
-        this.mNumber = -1;
-        this.mIsAddButton = false;
-        this.isSwitchAnimRunning = false;
+    public MyRelativeLayout(Context context, AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
     }
 
-    @Override // android.view.ViewGroup, android.view.View
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
     }
 
-    @Override // android.widget.RelativeLayout, android.view.ViewGroup, android.view.View
+    @Override
     protected void onLayout (boolean changed, int left, int top, int right, int bottom) {
         super.onLayout (changed, left, top, right, bottom);
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    protected void onDetachedFromWindow () {
         super.onDetachedFromWindow();
     }
 
@@ -300,86 +304,109 @@ public class MyRelativeLayout extends RelativeLayout implements ViewTreeObserver
         return true;
     }
 
-    @Override // android.view.View
-    protected void onFocusChanged (boolean gainFocus, int direction, Rect previouslyFocusedRect){
-        if (this.layoutCompleted) {
-            setFocusViewBg(gainFocus, this);
-        }
-        super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
-    }
-
-    public void setType(int i) {
-        this.mType = i;
-        switch (this.mType) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-                this.mScale = 1.07f;
-                this.mElevation = 40.0f;
-                this.mShadowScale = 1.0f;
-                return;
-            case 6:
-                this.mScale = 1.1f;
-                this.mElevation = 30.0f;
-                this.mShadowScale = 0.9f;
-                return;
-            case 7:
-                this.mScale = 1.1f;
-                this.mElevation = 36.0f;
-                this.mShadowScale = 0.9f;
-                return;
-            case 8:
-            case 9:
-            default:
-                return;
-        }
-    }
-
-    public void setIntent(Intent intent) {
-        this.mIntent = intent;
-    }
-
-    private void showSecondScreen(int i) {
-        ((Launcher) this.mContext).setHomeViewVisible(false);
-        ((Launcher) this.mContext).setShortcutScreen(i);
-    }
-
-    private void setFocusViewBg(boolean z, View view) {
-        if (z) {
-            view.setBackgroundColor(0xFFFFFF00);
-        } else {
-            view.setBackground(null);
-        }
-    }
-
-    public void setNumber(int number) {
-        mNumber = number;
-    }
-
-    public void setAddButton(boolean z) {
-        this.mIsAddButton = z;
-    }
-
-    @Override // android.view.View
-    public float getElevation() {
-        return this.mElevation;
-    }
-
     private void startActivityFromPackage(String str) {
         Intent launchIntentForPackage = this.mContext.getPackageManager().getLaunchIntentForPackage(str);
         if (launchIntentForPackage != null) {
             this.mContext.startActivity(launchIntentForPackage);
         }
     }
+
+    @Override
+    protected void onFocusChanged (boolean gainFocus, int direction, Rect previouslyFocusedRect){
+        if (gainFocus) {
+            if (layoutCompleted) {
+                setHoverView();
+            }
+        } else {
+            ScaleAnimation anim = new ScaleAnimation(1.07f, 1f, 1.07f, 1f,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.setZAdjustment(Animation.ZORDER_TOP);
+            anim.setDuration(animDuration);
+            anim.setStartTime(animDelay);
+            this.startAnimation(anim);
+        }
+        super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
+    }
+
+/*    @Override // android.view.View
+    protected void onFocusChanged (boolean gainFocus, int direction, Rect previouslyFocusedRect){
+        if (this.layoutCompleted) {
+            setFocusViewBg(gainFocus, this);
+        }
+        super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
+    }*/
+
+    public void setType(int type) {
+        mType = type;
+        switch (mType) {
+            case Launcher.TYPE_HOME:
+            case Launcher.TYPE_SETTINGS:
+                mScale = SCALE_PARA_SMALL;
+                mElevation = ELEVATION_HOVER_MAX;
+                mShadowScale = SHADOW_BIG;
+                break;
+            case Launcher.TYPE_APP_SHORTCUT:
+                mScale = SCALE_PARA_BIG;
+                mElevation = ELEVATION_HOVER_MID;
+                mShadowScale = SHADOW_SMALL;
+                break;
+            case Launcher.TYPE_HOME_SHORTCUT:
+                mScale = SCALE_PARA_BIG;
+                mElevation = ELEVATION_HOVER_MIN;
+                mShadowScale = SHADOW_SMALL;
+                break;
+        }
+    }
+
+    public void setIntent(Intent intent) {
+        mIntent = intent;
+    }
+
+    private void showSecondScreen(int mode){
+        ((Launcher)mContext).setHomeViewVisible(false);
+        ((Launcher)mContext).setShortcutScreen(mode);
+    }
+
+    private void setHoverView(){
+        ((Launcher)mContext).getHoverView().setHover(this);
+    }
+
+    public void setNumber(int number) {
+        mNumber = number;
+    }
+
+    public void setAddButton(boolean isAdd) {
+        mIsAddButton = isAdd;
+    }
+
+    public boolean isAddButton() {
+        return mIsAddButton;
+    }
+
+    public int getType() {
+        return mType;
+    }
+
+    public float getScale() {
+        return mScale;
+    }
+
+    public float getElevation() {
+        return mElevation;
+    }
+
+    public float getShadowScale() {
+        return mShadowScale;
+    }
+
+
+
+
+/*    private void setFocusViewBg(boolean z, View view) {
+        if (z) {
+            view.setBackgroundColor(0xFFFFFF00);
+        } else {
+            view.setBackground(null);
+        }
+    }*/
+
 }

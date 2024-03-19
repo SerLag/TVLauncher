@@ -123,8 +123,8 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     break;
                 }
             }
-            map.put("item_name", list_all.get(i).get(AppDataLoader.NAME));
-            map.put("item_icon", list_all.get(i).get(AppDataLoader.ICON));
+            map.put("item_name", list_all.get(i).get("name"));
+            map.put("item_icon", list_all.get(i).get("icon"));
             map.put("item_background", R.drawable.item_child_6);
             map.put("label", list_all.get(i).get("label"));
             list.add(map);
@@ -154,6 +154,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     return;
                 }
                 this.custom_apps.add(arrayMap.get("label").toString());
+
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_sel);
                 updateView();
                 if (this.mMode == 0) {
