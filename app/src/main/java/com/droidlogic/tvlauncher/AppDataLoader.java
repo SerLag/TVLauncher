@@ -101,6 +101,7 @@ public class AppDataLoader {
         }
     }
 
+/*
     private static final Comparator<LauncherActivityInfo> getAppNameComparator() {
         final Collator collator = Collator.getInstance();
         return new Comparator<LauncherActivityInfo>() {
@@ -118,6 +119,7 @@ public class AppDataLoader {
             }
         };
     }
+*/
 
     private void loadShortcutList() {
         homeShortCuts.clear();
@@ -164,18 +166,19 @@ public class AppDataLoader {
         localShortCuts.add(buildAddMap());
     }
 
-    private ArrayMap<String, Object> buildShortcutMap(String name, Drawable icon, String label) {
+    private ArrayMap<String, Object> buildShortcutMap(String name, Intent i, Drawable icon, ComponentName c) {
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put("name", name);
+        map.put("intent", i);
         map.put("icon", icon);
-        map.put("label", label);
-
+        map.put("component", c);
         return map;
     }
 
     private ArrayMap<String, Object> buildAddMap(){
         ArrayMap<String, Object> map = new ArrayMap<String, Object>();
         map.put("name", mContext.getResources().getString(R.string.str_add));
+        map.put("intent", null);
         map.put("icon", R.drawable.item_img_add);
 
         return map;

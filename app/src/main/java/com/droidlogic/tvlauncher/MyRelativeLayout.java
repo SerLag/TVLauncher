@@ -88,227 +88,90 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         super.onDetachedFromWindow();
     }
 
-    @Override
-    public void onGlobalLayout() {
-        this.layoutCompleted = true;
+    public  void onGlobalLayout () {
+        layoutCompleted = true;
         if (isFocused()) {
             setHoverView();
-            setFocusViewBg(true, this);
         }
         getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        try {
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                switch (keyEvent.getKeyCode()) {
-                    case KeyEvent.KEYCODE_DPAD_UP:
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_DOWN:
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_LEFT:
-                        if (this.mNumber != -1 && this.mNumber % 6 == 0) {
-                            this.isSwitchAnimRunning = true;
-                            ((Launcher) this.mContext).switchSecondScren(0);
-                            break;
-                        }
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_RIGHT:
-                        if (this.mNumber != -1 && (this.mNumber % 6 == 5 || this.mNumber == ((ViewGroup) getParent()).getChildCount() - 1)) {
-                            this.isSwitchAnimRunning = true;
-                            ((Launcher) this.mContext).switchSecondScren(1);
-                            break;
-                        }
-                        break;
-                    case KeyEvent.KEYCODE_DPAD_CENTER:
-                    case KeyEvent.KEYCODE_ENTER:
-                        if (this.mType != Launcher.TYPE_APP_SHORTCUT) {
-                            ((Launcher) this.mContext).saveHomeFocus(this);
-                        }
+        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyEvent.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    break;
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_ENTER:
+                    try {
                         switch (mType) {
-                            case Launcher.TYPE_VIDEO:
-      //                          ((Launcher) mContext).startTvApp();
-                                break;
-                            case Launcher.TYPE_RECOMMEND:
-                                showSecondScreen(Launcher.MODE_RECOMMEND);
-                                break;
-                            case Launcher.TYPE_MUSIC:
-                                showSecondScreen(Launcher.MODE_MUSIC);
-                                break;
-                            case Launcher.TYPE_APP:
-                                showSecondScreen(Launcher.MODE_APP);
-                                break;
-                            case Launcher.TYPE_LOCAL:
-                                showSecondScreen(Launcher.MODE_LOCAL);
+                            case Launcher.TYPE_HOME:
+                                if (mIntent != null) {
+                                    mContext.startActivity(mIntent);
+                                }
                                 break;
                             case Launcher.TYPE_SETTINGS:
-                                if (this.mIntent != null) {
-                                    this.mContext.startActivity(this.mIntent);
-                                    if (this.mIntent.getComponent().flattenToString().equals("com.android.tv.settings/com.android.tv.settings.MainSettings")) {
-                                        Launcher.isLaunchingTvSettings = true;
-                                        break;
-                                    }
-                                }
-                                break;
+
+                            case Launcher.TYPE_FILEMANAGER:
+
+                            case Launcher.TYPE_APPS:
+
                             case Launcher.TYPE_APP_SHORTCUT:
                             case Launcher.TYPE_HOME_SHORTCUT:
-                                ComponentName componentName = new ComponentName("com.android.camera2", "com.android.camera.CameraLauncher");
-                                if (this.mIntent != null) {
-                                    if (this.mIntent.getComponent().flattenToString().equals(Launcher.COMPONENT_TV_APP)) {
-     //                                   ((Launcher) this.mContext).startTvApp();
-                                        break;
-                                    } else if (this.mIntent.getComponent().equals(componentName)) {
-                                        if (this.mContext.getPackageManager().getComponentEnabledSetting(componentName) != 2) {
-                                            try {
-                                                this.mContext.startActivity(this.mIntent);
-                                                break;
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        this.mContext.startActivity(this.mIntent);
-                                        String[] split = this.mIntent.getComponent().flattenToString().split("/");
-                                        if (split.length > 0 && split[0].equals("com.android.gl2jni")) {
-                                            Launcher.isLaunchingThomasroom = true;
-                                            break;
-                                        }
-                                    }
-                                } else if (this.mIsAddButton) {
-                                    ((Launcher) this.mContext).startCustomScreen(this);
-                                    break;
+                                if (mIntent != null) {
+                                    mContext.startActivity(mIntent);
+                                } else if (mIsAddButton) {
+                                    ((Launcher) mContext).startCustomScreen(this);
                                 }
                                 break;
-/*                            case 10:
-                                startActivityFromPackage("com.android.vending");
-                                break;
-                            case 11:
-                                startActivityFromPackage("org.xbmc.kodi");
-                                break;
-                            case 12:
-                                startActivityFromPackage("com.android.chrome");
-                                break;
-                            case 14:
-                                startActivityFromPackage("com.google.android.youtube.tv");
-                                break;
-                            case 15:
-                                startActivityFromPackage("ru.mts.mtstv");
-                                break;
-                            case 16:
-                            case 17:
-                                if (this.mIntent != null) {
-                                    this.mContext.startActivity(this.mIntent);
-                                    break;
-                                }
-                                break; */
                         }
-
-                }
-
+                    } catch (Exception e) {
+                        Log.e("MediaBoxLauncher", "Failed start activity:" + e);
+                    }
+                    break;
             }
         }
-         catch (Exception e2) {
-             e2.printStackTrace();
-         }
         return super.dispatchKeyEvent(keyEvent);
     }
 
-    @Override // android.view.View
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        try {
-            if (motionEvent.getAction() != 0 && motionEvent.getAction() == 1) {
-                switch (this.mType) {
-                    case 0:
-                        showSecondScreen(1);
-                        return false;
-                    case 1:
-                        showSecondScreen(2);
-                        return false;
-                    case 2:
-                        showSecondScreen(3);
-                        return false;
-                    case 3:
-                        showSecondScreen(4);
-                        return false;
-                    case 4:
-                        showSecondScreen(5);
-                        return false;
-                    case 5:
-                        if (this.mIntent != null) {
-                            this.mContext.startActivity(this.mIntent);
-                            return false;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() != MotionEvent.ACTION_DOWN && event.getAction() == MotionEvent.ACTION_UP) {
+            try {
+                switch (mType) {
+                    case Launcher.TYPE_HOME:
+                        if (mIntent != null) {
+                            mContext.startActivity(mIntent);
                         }
-                        return false;
-                    case 6:
-                    case 7:
-                        ComponentName componentName = new ComponentName("com.android.camera2", "com.android.camera.CameraLauncher");
-                        if (this.mIntent != null) {
-                            if (this.mIntent.getComponent().flattenToString().equals(Launcher.COMPONENT_TV_APP)) {
-     //                           ((Launcher) this.mContext).startTvApp();
-                                return false;
-                            } else if (this.mIntent.getComponent().equals(componentName)) {
-                                if (this.mContext.getPackageManager().getComponentEnabledSetting(componentName) != 2) {
-                                    try {
-                                        this.mContext.startActivity(this.mIntent);
-                                        return false;
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        return false;
-                                    }
-                                }
-                                return false;
-                            } else {
-                                this.mContext.startActivity(this.mIntent);
-                                return false;
-                            }
-                        } else if (this.mIsAddButton) {
-                            ((Launcher) this.mContext).startCustomScreen(this);
-                            return false;
-                        } else {
-                            return false;
+                        break;
+                    case Launcher.TYPE_SETTINGS:
+
+                    case Launcher.TYPE_FILEMANAGER:
+
+                    case Launcher.TYPE_APPS:
+
+                    case Launcher.TYPE_APP_SHORTCUT:
+                    case Launcher.TYPE_HOME_SHORTCUT:
+                        if (mIntent != null) {
+                            mContext.startActivity(mIntent);
+                        } else if (mIsAddButton) {
+                            ((Launcher) mContext).startCustomScreen(this);
                         }
-                    case 8:
-                    case 9:
-                    case 13:
-                    default:
-                        return false;
-                    case 10:
-                        startActivityFromPackage("com.android.vending");
-                        return false;
-                    case 11:
-                        startActivityFromPackage("org.xbmc.kodi");
-                        return false;
-                    case 12:
-                        startActivityFromPackage("com.android.chrome");
-                        return false;
-                    case 14:
-                        startActivityFromPackage("com.google.android.youtube.tv");
-                        return false;
-                    case 15:
-                        startActivityFromPackage("ru.mts.mtstv");
-                        return false;
-                    case 16:
-                    case 17:
-                        if (this.mIntent != null) {
-                            this.mContext.startActivity(this.mIntent);
-                            return false;
-                        }
-                        return false;
+                        break;
                 }
+            } catch (Exception e) {
+                Log.e("MediaBoxLauncher", "Failed start activity:" + e);
             }
-        } catch (Exception e2) {
-            e2.printStackTrace();
+            return false;
         }
         return true;
-    }
-
-    private void startActivityFromPackage(String str) {
-        Intent launchIntentForPackage = this.mContext.getPackageManager().getLaunchIntentForPackage(str);
-        if (launchIntentForPackage != null) {
-            this.mContext.startActivity(launchIntentForPackage);
-        }
     }
 
     @Override
@@ -326,14 +189,6 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         }
         super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
     }
-
-/*    @Override // android.view.View
-    protected void onFocusChanged (boolean gainFocus, int direction, Rect previouslyFocusedRect){
-        if (this.layoutCompleted) {
-            setFocusViewBg(gainFocus, this);
-        }
-        super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
-    }*/
 
     public void setType(int type) {
         mType = type;
@@ -397,16 +252,5 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
     public float getShadowScale() {
         return mShadowScale;
     }
-
-
-
-
-/*    private void setFocusViewBg(boolean z, View view) {
-        if (z) {
-            view.setBackgroundColor(0xFFFFFF00);
-        } else {
-            view.setBackground(null);
-        }
-    }*/
 
 }

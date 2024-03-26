@@ -100,8 +100,10 @@ public class Launcher extends Activity {
 
     public static final int TYPE_HOME                            = 0;
     public static final int TYPE_SETTINGS                        = 1;
-    public static final int TYPE_HOME_SHORTCUT                   = 2;
-    public static final int TYPE_APP_SHORTCUT                    = 3;
+    public static final int TYPE_FILEMANAGER                     = 2;
+    public static final int TYPE_APPS                            = 3;
+    public static final int TYPE_HOME_SHORTCUT                   = 4;
+    public static final int TYPE_APP_SHORTCUT                    = 5;
 
     public static final int MODE_HOME                            = 0;
     public static final int MODE_APP                             = 1;
@@ -598,12 +600,12 @@ public class Launcher extends Activity {
         this.mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
         this.mHomeShortcutView = (MyGridLayout) findViewById(R.id.gv_shortcut);
 
-        this.mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_bannder1);
-        this.mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_bannder2);
-        this.mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_bannder3);
-        this.mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_bannder4);
-        this.mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_bannder5);
-        this.mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_bannder6);
+        this.mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_video);
+        this.mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_youtube);
+        this.mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_kodi);
+        this.mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_browser);
+        this.mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_playstore);
+        this.mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_miracast);
 
         this.mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
         this.mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
@@ -615,12 +617,12 @@ public class Launcher extends Activity {
 
     private void setBigBackgroundDrawable() {
         getMainView().setBackground(getResources().getDrawable(R.drawable.bg, null));
-        ((ImageView) findViewById(R.id.img_banner1)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
-        ((ImageView) findViewById(R.id.img_banner2)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
-        ((ImageView) findViewById(R.id.img_banner3)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
-        ((ImageView) findViewById(R.id.img_banner4)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner4"));
-        ((ImageView) findViewById(R.id.img_banner5)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner5"));
-        ((ImageView) findViewById(R.id.img_banner6)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner6"));
+        ((ImageView) findViewById(R.id.img_video)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
+        ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
+        ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
+        ((ImageView) findViewById(R.id.img_browser)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner4"));
+        ((ImageView) findViewById(R.id.img_playstore)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner5"));
+        ((ImageView) findViewById(R.id.img_miracast)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner6"));
         ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting, null));
         ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager, null));
         ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app, null));
@@ -923,4 +925,5 @@ public class Launcher extends Activity {
             }
         }
     }
+
 }
