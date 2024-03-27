@@ -53,11 +53,11 @@ import org.json.JSONObject;
 
 
 public class Launcher extends Activity {
-    public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
+/*    public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
     public static String COMPONENT_TV_FILEMANAGER = "com.softwinner.TvdFileManager/.MainUI";
     public static String COMPONENT_TV_MIRACAST = "com.softwinner.miracastReceiver/.Miracast";
     public static String COMPONENT_TV_SETTINGS = "com.android.tv.settings/com.android.tv.settings.MainSettings";
-    public static String COMPONENT_TV_SOURCE = "com.droidlogic.tv.settings/com.droidlogic.tv.settings.TvSourceActivity";
+    public static String COMPONENT_TV_SOURCE = "com.droidlogic.tv.settings/com.droidlogic.tv.settings.TvSourceActivity";*/
     public static float endX = 0.0f;
     public static boolean isLaunchingThomasroom = false;
     public static boolean isLaunchingTvSettings = false;
@@ -498,7 +498,6 @@ public class Launcher extends Activity {
         filter.addDataScheme("package");
         registerReceiver(this.appReceiver, filter);
 
-        setBigBackgroundDrawable();
         displayShortcuts();
         displayStatus();
         displayDate();
@@ -586,6 +585,7 @@ public class Launcher extends Activity {
     }
 
     private void initChildViews() {
+        // TODO переделать
         this.lv_status = (GridView) findViewById(R.id.list_status);
         this.lv_status.setFocusable(false);
         this.lv_status.setFocusableInTouchMode(false);
@@ -595,24 +595,38 @@ public class Launcher extends Activity {
                 return motionEvent.getAction() == 2;
             }
         });
-        this.mHoverView = (HoverView) findViewById(R.id.hover_view);
-        this.mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
-        this.mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
-        this.mHomeShortcutView = (MyGridLayout) findViewById(R.id.gv_shortcut);
+        mHoverView = (HoverView) findViewById(R.id.hover_view);
+        mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
+        mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
+        mHomeShortcutView = (MyGridLayout) findViewById(R.id.gv_shortcut);
 
-        this.mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_video);
-        this.mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_youtube);
-        this.mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_kodi);
-        this.mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_browser);
-        this.mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_playstore);
-        this.mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_miracast);
+        setBigBackgroundDrawable();
+        mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_video);
+        mAction[0].setType(TYPE_HOME);
+        mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_youtube);
+        mAction[1].setType(TYPE_HOME);
+        mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_kodi);
+        mAction[2].setType(TYPE_HOME);
+        mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_miracast);
+        mAction[3].setType(TYPE_HOME);
+        mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_browser);
+        mAction[4].setType(TYPE_HOME);
+        mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_playstore);
+        mAction[5].setType(TYPE_HOME);
 
-        this.mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
-        this.mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
-        this.mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
-        setHomeRectType();
-        this.mChildScreens = childScreens;
-
+        Intent intent = new Intent();
+        mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
+        mSettingsView.setType(TYPE_SETTINGS);
+        intent.setComponent(ComponentName.unflattenFromString("com.android.tv.settings/com.android.tv.settings.MainSettings"));
+        mSettingsView.setIntent(intent);
+        mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
+        mFilemanager.setType(TYPE_FILEMANAGER);
+        intent.setComponent(ComponentName.unflattenFromString("com.softwinner.TvdFileManager/.MainUI"));
+        mFilemanager.setIntent(intent);
+        mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
+        mAppView.setType(TYPE_APPS);
+        mAppView.setIntent(null);
+        mChildScreens = childScreens;
     }
 
     private void setBigBackgroundDrawable() {
@@ -626,38 +640,6 @@ public class Launcher extends Activity {
         ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting, null));
         ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager, null));
         ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app, null));
-    }
-
-    private void setHomeRectType() {
-//        this.mVideoView.setType(0);
-//        this.mMusicView.setType(2);
-//        this.mRecommendView.setType(1);
-        this.mAppView.setType(3);
-    //    this.mLocalView.setType(4);
-   //     this.mMemory.setType(13);
-        Intent intent = new Intent();
- //       intent.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_SETTINGS));
-        this.mSettingsView.setType(5);
-        this.mSettingsView.setIntent(intent);
-   //     this.mGoogleplay.setType(10);
-  //      this.mKodi.setType(11);
-  //      this.mBrowser.setType(12);
- //       this.mYoutube.setType(14);
-//        this.mNetflix.setType(15);
-//        Intent intent2 = new Intent();
-//        intent2.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_MIRACAST));
-//        this.mMiracast.setType(16);
-//        this.mMiracast.setIntent(intent2);
-        Intent intent3 = new Intent();
-//        intent3.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_FILEMANAGER));
-        this.mFilemanager.setType(17);
-        this.mFilemanager.setIntent(intent3);
-        this.mAction[0].setType(0);
-        this.mAction[1].setType(1);
-        this.mAction[2].setType(2);
-        this.mAction[3].setType(3);
-        this.mAction[4].setType(4);
-        this.mAction[5].setType(5);
     }
 
     public void displayShortcuts() {
@@ -674,32 +656,30 @@ public class Launcher extends Activity {
         ((BaseAdapter) this.lv_status.getAdapter()).notifyDataSetChanged();
     }
 
-    public void setShortcutScreen(int i) {
-        resetShortcutScreen(i);
-        this.current_screen_mode = i;
-/*        if (i == 4) {
-            LedControl.control_led_status(getResources().getString(R.string.app_led), true);
-        } else {
-            LedControl.control_led_status(getResources().getString(R.string.app_led), false);
-        }*/
+    public int getCurrentScreenMode() {
+        return current_screen_mode;
+    }
+    public void setShortcutScreen(int mode) {
+        resetShortcutScreen(mode);
+        current_screen_mode = mode;
     }
 
-    public void resetShortcutScreen(int i) {
-        this.mHandler.removeMessages(0);
-        Log.d("MediaBoxLauncher", "resetShortcutScreen mode is " + i);
+    public void resetShortcutScreen(int mode) {
+        this.mHandler.removeMessages(MSG_REFRESH_SHORTCUT);
+        Log.d("MediaBoxLauncher", "resetShortcutScreen mode is " + mode);
         if (this.mAppDataLoader.isDataLoaded()) {
-            if (i == MODE_HOME) {
-                this.mHomeShortcutView.setLayoutView(i, this.mAppDataLoader.getlocalShortCuts());
+            if (mode == MODE_HOME) {
+                this.mHomeShortcutView.setLayoutView(mode, this.mAppDataLoader.getlocalShortCuts());
                 return;
             } else {
-                this.mSecondScreen.setLayout(i, this.mAppDataLoader.getappShortCuts());
+                this.mSecondScreen.setLayout(mode, this.mAppDataLoader.getappShortCuts());
                 return;
             }
         }
         Message message = new Message();
-        message.what = 0;
-        message.arg1 = i;
-        this.mHandler.sendMessageDelayed(message, 100L);
+        message.what = MSG_REFRESH_SHORTCUT;
+        message.arg1 = mode;
+        this.mHandler.sendMessageDelayed(message, 100);
     }
 
     private int getChildModeIndex() {
@@ -821,19 +801,18 @@ public class Launcher extends Activity {
 */
 
     public void startCustomScreen(View view) {
-        if (this.current_screen_mode == 6) {
+        if (this.current_screen_mode == MODE_LOCAL) {
             return;
         }
         this.mHoverView.clear();
-        int i = this.current_screen_mode;
-        this.saveModeBeforeCustom = i;
-        this.mCustomView = new CustomView(this, view, i);
-        this.current_screen_mode = 6;
+        this.saveModeBeforeCustom = current_screen_mode;
+        this.mCustomView = new CustomView(this, view, current_screen_mode);
+        this.current_screen_mode = MODE_LOCAL;
         Rect rect = new Rect();
         view.getGlobalVisibleRect(rect);
         if (rect.top > getResources().getDisplayMetrics().heightPixels / 2) {
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(-2, -2);
-            layoutParams.addRule(12);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             getRootView().addView(this.mCustomView, layoutParams);
         } else {
             getRootView().addView(this.mCustomView);

@@ -1,22 +1,17 @@
 package com.droidlogic.tvlauncher;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.ViewOutlineProvider;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
 import android.graphics.Outline;
 import android.util.AttributeSet;
-import android.util.Log;
 
 
 public class HoverView extends RelativeLayout{
@@ -34,14 +29,14 @@ public class HoverView extends RelativeLayout{
     private TextView textTop;
     private TextView textBottom;
 
-    public HoverView(Context context) {
+    public HoverView(Context context){
         super(context);
-        this.mContext = context;
+        mContext = context;
     }
 
-    public HoverView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        this.mContext = context;
+    public HoverView(Context context, AttributeSet attrs){
+        super(context, attrs);
+        mContext = context;
         initlayout();
     }
 
@@ -50,23 +45,32 @@ public class HoverView extends RelativeLayout{
     }
 
     private void initlayout() {
-        inflate(this.mContext, R.layout.layout_hover, this);
-        hoverImage_home = (ImageView) findViewById(R.id.img_hover_home);
-        hoverImage_second = (ImageView) findViewById(R.id.img_hover_second);
-        textTop = (TextView) findViewById(R.id.tx_hover_top);
-        textBottom = (TextView) findViewById(R.id.tx_hover_bottom);
+        inflate(mContext, R.layout.layout_hover, this);
+        hoverImage_home = (ImageView)findViewById(R.id.img_hover_home);
+        hoverImage_second= (ImageView)findViewById(R.id.img_hover_second);
+        textTop = (TextView)findViewById(R.id.tx_hover_top);
+        textBottom = (TextView)findViewById(R.id.tx_hover_bottom);
+    }
+
+    private void startAnimation(){
+        ScaleAnimation shadowAnim = new ScaleAnimation(0.95f, 1f, 0.95f, 1f,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
+        shadowAnim.setDuration(animDuration);
+        shadowAnim.setStartTime(animDelay);
+        shadowAnim.setAnimationListener(new ScaleAnimationListener());
+
+        this.startAnimation(shadowAnim);
     }
 
     public void clear() {
-        hoverImage_home.setBackgroundDrawable(null);
+        hoverImage_home.setBackground(null);
         hoverImage_home.setImageDrawable(null);
-        hoverImage_second.setBackgroundDrawable(null);
+        hoverImage_second.setBackground(null);
         hoverImage_second.setImageDrawable(null);
-        textTop.setText((CharSequence) null);
-        textBottom.setText((CharSequence) null);
+        textTop.setText(null);
+        textBottom.setText(null);
         this.setOutlineProvider(null);
-        this.setElevation(0.0f);
-        this.setViewPosition(this, new Rect(0, 0, 0, 0));
+        this.setElevation(0);
+        setViewPosition(this, new Rect(0, 0, 0, 0));
     }
 
     public void setHover(MyRelativeLayout focusView){
@@ -78,7 +82,7 @@ public class HoverView extends RelativeLayout{
 
         focusView.getGlobalVisibleRect(imgRect);
 
-        if (((Launcher)mContext).needPreviewFeture()) {
+/*        if (((Launcher)mContext).needPreviewFeture()) {
             if (focusView.getType() == Launcher.TYPE_VIDEO) {
                 ((Launcher)mContext).setTvViewElevation(MyRelativeLayout.ELEVATION_ABOVE_HOVER);
             } else {
@@ -94,7 +98,7 @@ public class HoverView extends RelativeLayout{
                         && (imgRect.top + imgRect.bottom) / 2 <= ((Launcher)mContext).dipToPx(mContext, 360))
                     ((Launcher)mContext).setTvViewPosition(Launcher.TV_MODE_BOTTOM);
             }
-        }
+        }*/
 
         int scale_w = (int)((scale - 1) * imgRect.width() / 2);
         int scale_h = (int)((scale - 1) * imgRect.height() / 2);
@@ -129,14 +133,14 @@ public class HoverView extends RelativeLayout{
 
     private void setHoverImage(MyRelativeLayout focusView, ImageView source) {
         if (focusView.getType() != Launcher.TYPE_APP_SHORTCUT) {
-            hoverImage_home.setBackgroundDrawable(source.getBackground());
+            hoverImage_home.setBackground(source.getBackground());
             hoverImage_home.setImageDrawable(source.getDrawable());
-            hoverImage_second.setBackgroundDrawable(null);
+            hoverImage_second.setBackground(null);
             hoverImage_second.setImageDrawable(null);
         } else {
-            hoverImage_home.setBackgroundDrawable(null);
+            hoverImage_home.setBackground(null);
             hoverImage_home.setImageDrawable(null);
-            hoverImage_second.setBackgroundDrawable(source.getBackground());
+            hoverImage_second.setBackground(source.getBackground());
             hoverImage_second.setImageDrawable(source.getDrawable());
         }
     }
@@ -172,3 +176,4 @@ public class HoverView extends RelativeLayout{
         }
     }
 }
+

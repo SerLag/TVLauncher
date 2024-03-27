@@ -1,28 +1,17 @@
 package com.droidlogic.tvlauncher;
 
 import android.content.Context;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.KeyEvent;
-import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
-import android.graphics.Outline;
 import android.util.AttributeSet;
 import android.util.Log;
-
-import java.lang.Character;
 
 
 public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutListener {
@@ -113,17 +102,16 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
                     try {
                         switch (mType) {
                             case Launcher.TYPE_HOME:
+                            case Launcher.TYPE_SETTINGS:
+                            case Launcher.TYPE_FILEMANAGER:
                                 if (mIntent != null) {
                                     mContext.startActivity(mIntent);
                                 }
                                 break;
-                            case Launcher.TYPE_SETTINGS:
-
-                            case Launcher.TYPE_FILEMANAGER:
-
                             case Launcher.TYPE_APPS:
-
+                                showSecondScreen(Launcher.MODE_APP);
                             case Launcher.TYPE_APP_SHORTCUT:
+                                showSecondScreen(Launcher.MODE_LOCAL);
                             case Launcher.TYPE_HOME_SHORTCUT:
                                 if (mIntent != null) {
                                     mContext.startActivity(mIntent);
@@ -195,6 +183,8 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         switch (mType) {
             case Launcher.TYPE_HOME:
             case Launcher.TYPE_SETTINGS:
+            case Launcher.TYPE_FILEMANAGER:
+            case Launcher.TYPE_APPS:
                 mScale = SCALE_PARA_SMALL;
                 mElevation = ELEVATION_HOVER_MAX;
                 mShadowScale = SHADOW_BIG;
@@ -233,9 +223,9 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         mIsAddButton = isAdd;
     }
 
-    public boolean isAddButton() {
+/*    public boolean isAddButton() {
         return mIsAddButton;
-    }
+    }*/
 
     public int getType() {
         return mType;

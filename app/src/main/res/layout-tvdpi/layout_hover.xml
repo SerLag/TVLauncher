@@ -1,7 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <ImageView android:id="@+id/img_hover_home" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" android:layout_centerInParent="true"/>
-    <ImageView android:id="@+id/img_hover_second" android:paddingLeft="15dp" android:paddingTop="0dp" android:paddingRight="15dp" android:paddingBottom="30dp" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter"/>
-    <com.droidlogic.tvlauncher.MyTextView android:textSize="21dp" android:textColor="@color/btn_text_color" android:ellipsize="marquee" android:gravity="center" android:id="@+id/tx_hover_top" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="7.5dp" android:layout_marginTop="7.5dp" android:singleLine="true" android:marqueeRepeatLimit="marquee_forever"/>
-    <com.droidlogic.tvlauncher.MyTextView android:textSize="21dp" android:textColor="@color/btn_text_color" android:ellipsize="marquee" android:gravity="center" android:id="@+id/tx_hover_bottom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="4dp" android:layout_marginRight="4dp" android:singleLine="true" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" android:marqueeRepeatLimit="marquee_forever"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/img_hover_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:layout_centerInParent="true"/>
+    <ImageView android:id="@+id/img_hover_second"
+        android:paddingLeft="15dp"
+        android:paddingTop="0dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"/>
+    <com.droidlogic.tvlauncher.MyTextView
+        android:textSize="21dp"
+        android:textColor="@color/btn_text_color"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:id="@+id/tx_hover_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7.5dp"
+        android:layout_marginTop="7.5dp"
+        android:singleLine="true"
+        android:marqueeRepeatLimit="marquee_forever"/>
+    <com.droidlogic.tvlauncher.MyTextView
+        android:textSize="21dp"
+        android:textColor="@color/btn_text_color"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:id="@+id/tx_hover_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:singleLine="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:marqueeRepeatLimit="marquee_forever"/>
 </RelativeLayout>
