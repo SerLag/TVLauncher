@@ -1,17 +1,22 @@
 package com.droidlogic.tvlauncher;
 
 import android.content.Context;
+import android.content.Intent;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
 import android.graphics.Outline;
 import android.util.AttributeSet;
+import android.util.Log;
 
 
 public class HoverView extends RelativeLayout{

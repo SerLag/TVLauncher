@@ -1,20 +1,32 @@
 package com.droidlogic.tvlauncher;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.ImageView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.KeyEvent;
+import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
+import android.graphics.Outline;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import java.lang.Character;
 
-public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutListener {
+
+public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutListener{
+    private final static String TAG="MyRelativeLayout";
 
     private final static float ELEVATION_HOVER_MIN = 30;
     private final static float ELEVATION_HOVER_MID = 36;
@@ -34,24 +46,22 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
     private static final int animDuration = 70;
     private static final int animDelay = 0;
 
-    private boolean isSwitchAnimRunning = false;
-    private boolean layoutCompleted = false;
     private Context mContext = null;
-    private Intent mIntent = null;
-    private boolean mIsAddButton = false;
-    private int mNumber = -1;
+    private static Rect imgRect;
+    private boolean layoutCompleted = false;
     private int mType = -1;
+    private Intent mIntent = null;
+    private int mNumber = -1;
+    private boolean mIsAddButton = false;
+    private boolean isSwitchAnimRunning = false;
 
-/*    private void setHoverView() {
-    }*/
-
-    public MyRelativeLayout(Context context) {
+    public MyRelativeLayout(Context context){
         super(context);
     }
 
-    public MyRelativeLayout(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        this.mContext = context;
+    public MyRelativeLayout(Context context, AttributeSet attrs){
+        super(context, attrs);
+        mContext = context;
         setFocusable(true);
         setFocusableInTouchMode(true);
         setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
@@ -86,9 +96,9 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
     }
 
     @Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (keyEvent.getKeyCode()) {
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_DPAD_UP:
                     break;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
@@ -126,7 +136,7 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
                     break;
             }
         }
-        return super.dispatchKeyEvent(keyEvent);
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -223,9 +233,9 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         mIsAddButton = isAdd;
     }
 
-/*    public boolean isAddButton() {
+    public boolean isAddButton() {
         return mIsAddButton;
-    }*/
+    }
 
     public int getType() {
         return mType;

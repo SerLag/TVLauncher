@@ -1,91 +1,96 @@
 package com.droidlogic.tvlauncher;
 
-import android.animation.Animator;
+import android.content.Intent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.graphics.Rect;
-import android.text.TextUtils;
-import android.util.ArrayMap;
-import android.view.KeyEvent;
+import android.os.Bundle;
+
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
+import android.view.KeyEvent;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.graphics.drawable.Drawable;
+import android.graphics.Rect;
+
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
+import android.widget.GridView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AccelerateInterpolator;
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.view.ViewGroup;
+import android.util.ArrayMap;
+import android.util.Log;
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/* loaded from: classes.dex */
-public class CustomView extends FrameLayout implements AdapterView.OnItemClickListener, ViewTreeObserver.OnGlobalLayoutListener {
+import android.widget.ListAdapter;
 
+public class CustomView extends FrameLayout implements AdapterView.OnItemClickListener, OnGlobalLayoutListener {
 
     private static boolean allowAnimation = true;
-    static final Object mLock = new Object[0];
-    private GridView gv;
-    private int homeShortcutCount;
-    private ImageView img_dim;
-    private ImageView img_screen_shot;
-    private ImageView img_screen_shot_keep;
-    private Context mContext;
-    private int mMode;
-    private View mSource;
+    private ImageView img_screen_shot = null;
+    private ImageView img_screen_shot_keep = null;
+    private ImageView img_dim = null;
+    private GridView gv = null;
+    private CustomView thisView = null;
+    private Context mContext = null;
     private List<String> custom_apps;
-    private CustomView thisView;
-    private int transY;
+    private int transY = 0;
+    private int homeShortcutCount;
+    final static Object mLock = new Object[0];
+    private View mSource;
+    private int mMode = -1;
 
-    public CustomView(Context context, View view, int i) {
+    public CustomView(Context context, View source, int mode){
+
         super(context);
-        this.img_screen_shot = null;
-        this.img_screen_shot_keep = null;
-        this.img_dim = null;
-        this.gv = null;
-        this.thisView = null;
-        this.mContext = null;
-        this.transY = 0;
-        this.mMode = -1;
-        this.mContext = context;
-        this.mSource = view;
-        this.mMode = i;
+        mContext = context;
+        mSource = source;
+        mMode = mode;
         inflate(this.mContext, R.layout.layout_custom, this);
-        this.thisView = this;
-        this.gv = (GridView) findViewById(R.id.grid_add_apps);
-        this.gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps));
-        this.gv.setOnItemClickListener(this);
+        thisView = this;
+        gv = (GridView) findViewById(R.id.grid_add_apps);
+        gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps, null));
+        gv.setOnItemClickListener(this);
         displayView();
-        this.custom_apps = ((Launcher)mContext).getAppDataLoader().list_localShortcut;
- //    ????   this.str_custom_apps = ((Launcher) this.mContext).getAppDataLoader().getShortcutString(this.mMode);
+        custom_apps = ((Launcher)mContext).getAppDataLoader().list_localShortcut;
         getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
     @Override
     public void onGlobalLayout() {
         Rect rect = new Rect();
-        this.mSource.getGlobalVisibleRect(rect);
-        if (rect.top > this.mContext.getResources().getDisplayMetrics().heightPixels / 2) {
-            this.transY = -getHeight();
+        mSource.getGlobalVisibleRect(rect);
+        if (rect.top > mContext.getResources().getDisplayMetrics().heightPixels / 2) {
+            transY = -getHeight();
         } else {
-            this.transY = getHeight();
+            transY = getHeight();
         }
         setCustomView();
         getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
-    private void setCustomView() {
-        ((Launcher) this.mContext).getMainView().setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-        ((Launcher) this.mContext).getMainView().animate().translationY(this.transY).setDuration(300L).alpha(0.5f).start();
-        this.gv.getGlobalVisibleRect(new Rect());
-        this.gv.requestFocus();
-        TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, -this.transY, 0.0f);
-        translateAnimation.setDuration(300L);
-        translateAnimation.setInterpolator(new AccelerateInterpolator());
-        this.gv.startAnimation(translateAnimation);
+    private void setCustomView(){
+        ((Launcher)mContext).getMainView().setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        View view = ((Launcher)mContext).getMainView();//getWindow().getDecorView();
+        view.animate().
+                translationY(transY).
+                setDuration(300).
+                alpha(0.5f).
+                start();
+        Rect rect = new Rect();
+        gv.getGlobalVisibleRect(rect);
+        gv.requestFocus();
     }
 
     // возвращаем главный экран
@@ -96,11 +101,12 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         if (allowAnimation) {
             allowAnimation = false;
             TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -this.transY);
-            translateAnimation.setDuration(300L);
+            translateAnimation.setDuration(300);
             translateAnimation.setInterpolator(new AccelerateInterpolator());
             this.gv.startAnimation(translateAnimation);
-            mainView.animate().translationY(0.0f).setDuration(300L).alpha(1.0f).setInterpolator(new AccelerateInterpolator()).setListener(new mAnimatorListener()).start();
- //           launcher.getAppDataLoader().saveShortcut(this.mMode, this.str_custom_apps);
+            mainView.animate().translationY(0.0f).setDuration(300).alpha(1.0f).setInterpolator(new AccelerateInterpolator()).setListener(new mAnimatorListener()).start();
+        // TODO сохранить настройки
+        //           launcher.getAppDataLoader().saveShortcut(this.mMode, this.str_custom_apps);
         }
     }
 
@@ -114,8 +120,8 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
             ArrayMap<String, Object> map = new ArrayMap<String, Object>();
             map.put("item_selection", R.drawable.item_img_unsel);
             for (int j = 0; j < list_current.size() - 1; j++) {
-                if (TextUtils.equals(list_all.get(i).get("label").toString(),
-                        list_current.get(j).get("label").toString())) {
+                if (TextUtils.equals(list_all.get(i).get("component").toString(),
+                        list_current.get(j).get("component").toString())) {
                     map.put("item_selection", R.drawable.item_img_sel);
                     if (mMode == Launcher.MODE_HOME) {
                         homeShortcutCount++;
@@ -125,23 +131,74 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
             }
             map.put("item_name", list_all.get(i).get("name"));
             map.put("item_icon", list_all.get(i).get("icon"));
-            map.put("item_background", R.drawable.item_child_6);
-            map.put("label", list_all.get(i).get("label"));
+            map.put("item_background", parseItemBackground(i));
+            map.put("component", list_all.get(i).get("component"));
             list.add(map);
         }
         this.gv.setAdapter((ListAdapter) new LocalAdapter(this.mContext, list, R.layout.add_apps_grid_item, new String[]{"item_icon", "item_name", "item_selection", "item_background"}, new int[]{R.id.item_type, R.id.item_name, R.id.item_sel, R.id.relative_layout}));
     }
 
     private void updateView() {
-        ((BaseAdapter) this.gv.getAdapter()).notifyDataSetChanged();
+        ((BaseAdapter)gv.getAdapter()).notifyDataSetChanged();
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getAction() == 0 && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            recoverMainView();
+    public boolean dispatchKeyEvent (KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    recoverMainView();
+                    break;
+            }
         }
-        return super.dispatchKeyEvent(keyEvent);
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    private int  parseItemBackground(int num){
+        switch (num % 20 + 1) {
+            case 1:
+                return R.drawable.item_child_1;
+            case 2:
+                return R.drawable.item_child_2;
+            case 3:
+                return R.drawable.item_child_3;
+            case 4:
+                return R.drawable.item_child_4;
+            case 5:
+                return R.drawable.item_child_5;
+            case 6:
+                return R.drawable.item_child_6;
+            case 7:
+                return R.drawable.item_child_3;
+            case 8:
+                return R.drawable.item_child_4;
+            case 9:
+                return R.drawable.item_child_1;
+            case 10:
+                return R.drawable.item_child_2;
+            case 11:
+                return R.drawable.item_child_6;
+            case 12:
+                return R.drawable.item_child_5;
+            case 13:
+                return R.drawable.item_child_6;
+            case 14:
+                return R.drawable.item_child_2;
+            case 15:
+                return R.drawable.item_child_5;
+            case 16:
+                return R.drawable.item_child_3;
+            case 17:
+                return R.drawable.item_child_1;
+            case 18:
+                return R.drawable.item_child_4;
+            case 19:
+                return R.drawable.item_child_2;
+            case 0:
+                return R.drawable.item_child_3;
+            default:
+                return R.drawable.item_child_1;
+        }
     }
 
     @Override
@@ -153,7 +210,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     Toast.makeText(this.mContext, this.mContext.getResources().getString(R.string.str_nospace), Toast.LENGTH_LONG).show();
                     return;
                 }
-                this.custom_apps.add(arrayMap.get("label").toString());
+                this.custom_apps.add(arrayMap.get("component").toString());
 
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_sel);
                 updateView();
@@ -161,7 +218,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     this.homeShortcutCount++;
                 }
             } else {
-                String packageName = arrayMap.get("label").toString();
+                String packageName = arrayMap.get("component").toString();
                 this.custom_apps.remove(packageName);
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_unsel);
                 updateView();
