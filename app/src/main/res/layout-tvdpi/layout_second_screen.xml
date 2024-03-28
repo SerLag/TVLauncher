@@ -3,19 +3,12 @@
     android:descendantFocusability="afterDescendants"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/image_icon"
-        android:layout_width="75dp"
-        android:layout_height="52.6dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginTop="3dp"
-        android:src="@drawable/app"/>
     <TextView
         android:textSize="25dp"
         android:id="@+id/tx_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="156dp"
+        android:layout_marginLeft="120dp"
         android:layout_marginTop="19dp"
         android:text="@string/str_app"/>
     <com.droidlogic.tvlauncher.MyScrollView
@@ -24,7 +17,7 @@
         android:layout_width="859.5dp"
         android:layout_height="385dp"
         android:layout_marginLeft="88.5dp"
-        android:layout_marginTop="64dp">
+        android:layout_marginTop="70dp">
         <com.droidlogic.tvlauncher.MyGridLayout
             android:orientation="horizontal"
             android:id="@+id/gl_shortcut"
@@ -44,11 +37,5 @@
         android:background="@drawable/line"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginTop="465dp"/>
-        <ImageView
-            android:id="@+id/image_prompt"
-            android:layout_width="310.5dp"
-            android:layout_height="78dp"
-            android:layout_marginTop="462dp"
-            android:layout_centerHorizontal="true"/>
+        android:layout_marginTop="480dp"/>
 </RelativeLayout>

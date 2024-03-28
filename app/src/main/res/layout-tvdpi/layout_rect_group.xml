@@ -56,6 +56,23 @@
     </com.droidlogic.tvlauncher.MyRelativeLayout>
 
     <com.droidlogic.tvlauncher.MyRelativeLayout
+        android:id="@+id/layout_miracast"
+        android:layout_width="240dp"
+        android:layout_height="135dp"
+        android:layout_marginLeft="552dp"
+        android:layout_marginTop="244dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:descendantFocusability="beforeDescendants">
+
+        <ImageView
+            android:id="@+id/img_miracast"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
+    </com.droidlogic.tvlauncher.MyRelativeLayout>
+
+    <com.droidlogic.tvlauncher.MyRelativeLayout
         android:id="@+id/layout_browser"
         android:layout_width="240dp"
         android:layout_height="135dp"
@@ -86,24 +103,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
-    </com.droidlogic.tvlauncher.MyRelativeLayout>
-
-    <com.droidlogic.tvlauncher.MyRelativeLayout
-        android:id="@+id/layout_miracast"
-        android:layout_width="240dp"
-        android:layout_height="135dp"
-        android:layout_marginLeft="552dp"
-        android:layout_marginTop="244dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:descendantFocusability="beforeDescendants">
-
-        <ImageView
-            android:id="@+id/img_miracast"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-/>
     </com.droidlogic.tvlauncher.MyRelativeLayout>
 
     <com.droidlogic.tvlauncher.MyRelativeLayout

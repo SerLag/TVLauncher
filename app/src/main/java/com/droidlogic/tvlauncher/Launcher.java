@@ -17,6 +17,8 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -46,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -595,6 +598,7 @@ public class Launcher extends Activity{
                 return motionEvent.getAction() == 2;
             }
         });
+
         mHoverView = (HoverView) findViewById(R.id.hover_view);
         mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
         mSecondScreen = (AppLayout) findViewById(R.id.second_screen);
@@ -602,18 +606,16 @@ public class Launcher extends Activity{
 
         setBigBackgroundDrawable();
         mAction[0] = (MyRelativeLayout) findViewById(R.id.layout_video);
-        mAction[0].setType(TYPE_HOME);
         mAction[1] = (MyRelativeLayout) findViewById(R.id.layout_youtube);
-        mAction[1].setType(TYPE_HOME);
         mAction[2] = (MyRelativeLayout) findViewById(R.id.layout_kodi);
-        mAction[2].setType(TYPE_HOME);
         mAction[3] = (MyRelativeLayout) findViewById(R.id.layout_miracast);
-        mAction[3].setType(TYPE_HOME);
         mAction[4] = (MyRelativeLayout) findViewById(R.id.layout_browser);
-        mAction[4].setType(TYPE_HOME);
         mAction[5] = (MyRelativeLayout) findViewById(R.id.layout_playstore);
-        mAction[5].setType(TYPE_HOME);
 
+        for (int i = 0; i < 6; i++) {
+            mAction[i].setType(TYPE_HOME);
+            mAction[i].setIntent(getPackageManager().getLaunchIntentForPackage(mAppDataLoader.list_homeShortcut.get(i)));
+        }
         Intent intent = new Intent();
         mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
         mSettingsView.setType(TYPE_SETTINGS);
@@ -630,7 +632,6 @@ public class Launcher extends Activity{
     }
 
     private void setBigBackgroundDrawable() {
-    //    getMainView().setBackground(getResources().getDrawable(R.drawable.bg, null));
         ((ImageView) findViewById(R.id.img_video)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
         ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
         ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
@@ -751,26 +752,12 @@ public class Launcher extends Activity{
         this.saveHomeFocusView = view;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void updateAppList(Intent intent) {
         String schemeSpecificPart;
         if (intent.getData() == null || !((schemeSpecificPart = intent.getData().getSchemeSpecificPart()) == null || schemeSpecificPart.length() == 0 || schemeSpecificPart.equals("com.android.provision"))) {
             displayShortcuts();
         }
     }
-
-/*
-    public void startTvSource() {
-        try {
-            Intent intent = new Intent();
-            intent.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_SOURCE));
-            intent.putExtra("requestpackage", "com.droidlogic.tvlauncher");
-            startActivityForResult(intent, 3);
-        } catch (ActivityNotFoundException e) {
-            Log.e("MediaBoxLauncher", " can't start TvSources:" + e);
-        }
-    }
-*/
 
     @Override // android.app.Activity
     public void onActivityResult(int i, int i2, Intent intent) {
@@ -787,18 +774,6 @@ public class Launcher extends Activity{
             }
         }
     }
-
-/*
-    public void startTvApp() {
-        try {
-            Intent intent = new Intent();
-            intent.setComponent(ComponentName.unflattenFromString(COMPONENT_TV_APP));
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Log.e("MediaBoxLauncher", " can't start TvSettings:" + e);
-        }
-    }
-*/
 
     public void startCustomScreen(View view) {
         if (this.current_screen_mode == MODE_LOCAL) {
@@ -826,63 +801,7 @@ public class Launcher extends Activity{
         getMainView().requestFocus();
     }
 
-    public static int dipToPx(Context context, float f) {
-        return (int) ((f * context.getResources().getDisplayMetrics().density) + 0.5f);
-    }
-
-    public void setTvViewPosition(int i) {
-        int dipToPx;
-        int dipToPx2;
-        int dipToPx3;
-        int dipToPx4;
-        int i2;
-        this.tvViewMode = i;
-        int i3 = 0;
-        if (i == 1) {
-            i3 = -dipToPx(this, 545.0f);
-        } else if (i != 2) {
-            dipToPx = dipToPx(this, 120.0f);
-            dipToPx2 = dipToPx(this, 197.0f);
-            dipToPx3 = dipToPx(this, 310.0f) + dipToPx;
-            dipToPx4 = dipToPx(this, 174.0f) + dipToPx2;
-            i2 = 0;
-//            HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-//            HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-            float f = i3;
-            long j = i2;
-//            this.tvView.animate().translationY(f).setDuration(j).start();
-//            this.tvPrompt.animate().translationY(f).setDuration(j).start();
-        }
-        dipToPx = dipToPx(this, 969.0f);
-        dipToPx2 = dipToPx(this, 545.0f);
-        dipToPx3 = dipToPx(this, 310.0f) + dipToPx;
-        dipToPx4 = dipToPx(this, 174.0f) + dipToPx2;
-        i2 = 500;
-//        HoverView.setViewPosition(this.tvView, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-//        HoverView.setViewPosition(this.tvPrompt, new Rect(dipToPx, dipToPx2, dipToPx3, dipToPx4));
-        float f2 = i3;
-        long j2 = i2;
-//        this.tvView.animate().translationY(f2).setDuration(j2).start();
-//        this.tvPrompt.animate().translationY(f2).setDuration(j2).start();
-    }
-
-/*
-    */
-/* JADX INFO: Access modifiers changed from: private *//*
-
-    public boolean isBootvideoStopped() {
-        return TextUtils.equals(SystemProperties.get("init.svc.bootanim", "running"), "stopped") && TextUtils.equals(SystemProperties.get("dev.bootcomplete", "0"), "1") && getContentResolver().acquireContentProviderClient("android.media.tv") != null;
-    }
-*/
-
-    private void copyFile(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while((read = in.read(buffer)) != -1){
-            out.write(buffer, 0, read);
-        }
-    }
-    public void copyResources(int resId) {
+     public void copyResources(int resId) {
 
         InputStream in = getResources().openRawResource(resId);
         String filename = getResources().getResourceEntryName(resId);
