@@ -25,6 +25,7 @@ import java.text.Collator;
 
 
 public class AppDataLoader {
+    private final static String TAG = "AppDataLoader";
 
     private Context mContext;
     private PackageManager mPackageManager;
@@ -61,12 +62,8 @@ public class AppDataLoader {
     public void saveShortcuts(){
         String str = "";
         File mFile;
-        list_localShortcut.clear();
-        for ( ArrayMap localShortCut :localShortCuts) {
-            if (!localShortCut.get("name").equals(mContext.getResources().getString(R.string.str_add))) {
-                str = str + localShortCut.get("label").toString() + ";";
-                list_localShortcut.add(str);
-            }
+        for ( String localShortCut :list_localShortcut) {
+            str = str +  localShortCut + ";";
         }
         mFile = new File(mContext.getFilesDir(), "local_shortcuts");
         try {

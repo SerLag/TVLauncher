@@ -21,18 +21,6 @@
         android:textColor="@color/btn_text_color"
         android:ellipsize="marquee"
         android:gravity="center"
-        android:id="@+id/tx_hover_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="7.5dp"
-        android:layout_marginTop="7.5dp"
-        android:singleLine="true"
-        android:marqueeRepeatLimit="marquee_forever"/>
-    <com.droidlogic.tvlauncher.MyTextView
-        android:textSize="21dp"
-        android:textColor="@color/btn_text_color"
-        android:ellipsize="marquee"
-        android:gravity="center"
         android:id="@+id/tx_hover_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

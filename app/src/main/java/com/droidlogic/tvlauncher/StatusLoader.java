@@ -19,6 +19,7 @@ import java.util.Locale;
 
 /* loaded from: classes.dex */
 public class StatusLoader {
+    private final static String TAG = "StatusLoader";
     private ConnectivityManager mConnectivityManager;
     private Context mContext;
     private StorageManager mStorageManager;

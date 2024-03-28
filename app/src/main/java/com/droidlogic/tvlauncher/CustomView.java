@@ -36,7 +36,7 @@ import java.util.List;
 import android.widget.ListAdapter;
 
 public class CustomView extends FrameLayout implements AdapterView.OnItemClickListener, OnGlobalLayoutListener {
-
+    private final static String TAG = "CustomView";
     private static boolean allowAnimation = true;
     private ImageView img_screen_shot = null;
     private ImageView img_screen_shot_keep = null;
@@ -60,7 +60,8 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         inflate(this.mContext, R.layout.layout_custom, this);
         thisView = this;
         gv = (GridView) findViewById(R.id.grid_add_apps);
-        gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps, null));
+//        gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps, null));
+        gv.setBackgroundColor(0xFF373778);
         gv.setOnItemClickListener(this);
         displayView();
         custom_apps = ((Launcher)mContext).getAppDataLoader().list_localShortcut;
@@ -93,7 +94,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         gv.requestFocus();
     }
 
-    // возвращаем главный экран
+
     public void recoverMainView() {
         Launcher launcher = (Launcher) this.mContext;
         ViewGroup mainView = launcher.getMainView();
@@ -105,8 +106,9 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
             translateAnimation.setInterpolator(new AccelerateInterpolator());
             this.gv.startAnimation(translateAnimation);
             mainView.animate().translationY(0.0f).setDuration(300).alpha(1.0f).setInterpolator(new AccelerateInterpolator()).setListener(new mAnimatorListener()).start();
-        // TODO сохранить настройки
-        //           launcher.getAppDataLoader().saveShortcut(this.mMode, this.str_custom_apps);
+            // save home_shortcuts
+            launcher.getAppDataLoader().update();
+            launcher.getAppDataLoader().saveShortcuts();
         }
     }
 
@@ -210,16 +212,14 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     Toast.makeText(this.mContext, this.mContext.getResources().getString(R.string.str_nospace), Toast.LENGTH_LONG).show();
                     return;
                 }
-                this.custom_apps.add(arrayMap.get("component").toString());
-
+                this.custom_apps.add(((ComponentName) arrayMap.get("component")).getPackageName());
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_sel);
                 updateView();
                 if (this.mMode == 0) {
                     this.homeShortcutCount++;
                 }
             } else {
-                String packageName = arrayMap.get("component").toString();
-                this.custom_apps.remove(packageName);
+                this.custom_apps.remove(((ComponentName) arrayMap.get("component")).getPackageName());
                 ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_unsel);
                 updateView();
                 if (this.mMode == 0) {
@@ -229,37 +229,6 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         }
     }
 
-/*    private List<ArrayMap<String, Object>> getAppList() {
-        List<ArrayMap<String, Object>> list = new ArrayList<ArrayMap<String, Object>>();
-        List<ArrayMap<String, Object>> list_all = ((Launcher)mContext).getAppDataLoader().getShortcutList(Launcher.MODE_APP);
-        List<ArrayMap<String, Object>> list_current = ((Launcher)mContext).getAppDataLoader().getShortcutList(mMode);
-        homeShortcutCount = 0;
-
-        for (int i = 0; i < list_all.size(); i++) {
-            ArrayMap<String, Object> map = new ArrayMap<String, Object>();
-            map.put("item_selection", R.drawable.item_img_unsel);
-            for (int j = 0; j < list_current.size() - 1; j++) {
-                if (TextUtils.equals(list_all.get(i).get("intent").toString(),
-                        list_current.get(j).get("intent").toString())) {
-                    map.put("item_selection", R.drawable.item_img_sel);
-                    if (mMode == Launcher.MODE_HOME) {
-                        homeShortcutCount++;
-                    }
-                    break;
-                }
-            }
-            map.put("item_name", list_all.get(i).get(AppDataLoader.NAME));
-            map.put("item_icon", list_all.get(i).get(AppDataLoader.ICON));
-            map.put("item_background", R.drawable.item_child_6);
-            map.put("intent", list_all.get(i).get("intent"));
-            list.add(map);
-        }
-
-        return list;
-    }*/
-
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
     public class mAnimatorListener implements Animator.AnimatorListener {
         @Override // android.animation.Animator.AnimatorListener
         public void onAnimationCancel(Animator animator) {

@@ -5,11 +5,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
-/* loaded from: classes.dex */
+
 public class MyScrollView extends ScrollView {
+    private final static String TAG="MyScrollView";
     private Context mContext;
 
-    @Override // android.widget.ScrollView, android.view.View
+    @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         return false;
     }

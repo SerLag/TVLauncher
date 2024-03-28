@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class AppLayout extends RelativeLayout {
-
+    private final static String TAG = "AppLayout";
     public final static int ANIM_LEFT = 0;
     public final static int ANIM_RIGHT = 1;
     private final static int TYPE_ANIM_IN = 0;

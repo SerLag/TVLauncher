@@ -52,8 +52,7 @@ public class HoverView extends RelativeLayout{
     private void initlayout() {
         inflate(mContext, R.layout.layout_hover, this);
         hoverImage_home = (ImageView)findViewById(R.id.img_hover_home);
-        hoverImage_second= (ImageView)findViewById(R.id.img_hover_second);
-        textTop = (TextView)findViewById(R.id.tx_hover_top);
+        hoverImage_second = (ImageView)findViewById(R.id.img_hover_second);
         textBottom = (TextView)findViewById(R.id.tx_hover_bottom);
     }
 
@@ -71,7 +70,6 @@ public class HoverView extends RelativeLayout{
         hoverImage_home.setImageDrawable(null);
         hoverImage_second.setBackground(null);
         hoverImage_second.setImageDrawable(null);
-        textTop.setText(null);
         textBottom.setText(null);
         this.setOutlineProvider(null);
         this.setElevation(0);
@@ -86,24 +84,6 @@ public class HoverView extends RelativeLayout{
         final float shadowScale = focusView.getShadowScale();
 
         focusView.getGlobalVisibleRect(imgRect);
-
-/*        if (((Launcher)mContext).needPreviewFeture()) {
-            if (focusView.getType() == Launcher.TYPE_VIDEO) {
-                ((Launcher)mContext).setTvViewElevation(MyRelativeLayout.ELEVATION_ABOVE_HOVER);
-            } else {
-                ((Launcher)mContext).setTvViewElevation(MyRelativeLayout.ELEVATION_UNDER_HOVER);
-            }
-
-            if (((Launcher)mContext).getCurrentScreenMode() != Launcher.MODE_HOME
-                    && ((Launcher)mContext).getCurrentScreenMode() != Launcher.MODE_CUSTOM) {
-                if (((Launcher)mContext).tvViewMode != Launcher.TV_MODE_TOP
-                        && (imgRect.top + imgRect.bottom) / 2 >  ((Launcher)mContext).dipToPx(mContext, 360))
-                    ((Launcher)mContext).setTvViewPosition(Launcher.TV_MODE_TOP);
-                else if (((Launcher)mContext).tvViewMode != Launcher.TV_MODE_BOTTOM
-                        && (imgRect.top + imgRect.bottom) / 2 <= ((Launcher)mContext).dipToPx(mContext, 360))
-                    ((Launcher)mContext).setTvViewPosition(Launcher.TV_MODE_BOTTOM);
-            }
-        }*/
 
         int scale_w = (int)((scale - 1) * imgRect.width() / 2);
         int scale_h = (int)((scale - 1) * imgRect.height() / 2);
@@ -122,6 +102,7 @@ public class HoverView extends RelativeLayout{
             }
         };
         this.setOutlineProvider(viewOutlineProvider);
+        this.setBackgroundColor(0xFF354E5A);
         this.setElevation(elevation);
 
         setHoverImage(focusView, (ImageView)(focusView.getChildAt(0)));
@@ -152,10 +133,8 @@ public class HoverView extends RelativeLayout{
 
     private void setHoverText(MyRelativeLayout focusView, String s){
         if (focusView.getType() != Launcher.TYPE_APP_SHORTCUT) {
-            textTop.setText(s);
             textBottom.setText(null);
         } else {
-            textTop.setText(null);
             textBottom.setText(s);
         }
     }

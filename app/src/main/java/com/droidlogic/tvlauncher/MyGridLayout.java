@@ -28,7 +28,9 @@ import java.lang.ref.SoftReference;
         public MyGridLayout(Context context, AttributeSet attrs){
             super(context, attrs);
             mContext = context;
-            mLock = ((Launcher)mContext).getLock();
+            if(!isInEditMode()) {
+                mLock = ((Launcher) mContext).getLock();
+            }
         }
 
         public MyGridLayout(Context context, AttributeSet attrs, int defStyle){
@@ -78,14 +80,14 @@ import java.lang.ref.SoftReference;
                 }
 
                 ImageView img_bg = (ImageView)view.getChildAt(0);
-                SoftReference<Drawable> bg = new SoftReference<Drawable>(mContext.getResources().getDrawable(parseItemBackground(i, mode)));
+                SoftReference<Drawable> bg = new SoftReference<Drawable>(mContext.getResources().getDrawable(parseItemBackground(i, mode), null));
                 img_bg.setBackground(bg.get());
                 if (list.get(i).get("icon") instanceof Drawable) {
                     SoftReference<Drawable> icon = new SoftReference<Drawable>((Drawable)list.get(i).get("icon"));
                     img_bg.setImageDrawable(icon.get());
                     view.setIntent((Intent)list.get(i).get("intent"));
                 } else {
-                    SoftReference<Drawable> add = new SoftReference<Drawable>(mContext.getResources().getDrawable(R.drawable.item_img_add));
+                    SoftReference<Drawable> add = new SoftReference<Drawable>(mContext.getResources().getDrawable(R.drawable.item_img_add, null));
                     img_bg.setImageDrawable(add.get());
                     img_bg.setContentDescription("img_add");
                     view.setAddButton(true);

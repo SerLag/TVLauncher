@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.tv.TvInputManager;
 import android.media.tv.TvView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -52,8 +51,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class Launcher extends Activity {
-/*    public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
+public class Launcher extends Activity{
+    private final static String TAG="MediaBoxLauncher";
+    /*    public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
     public static String COMPONENT_TV_FILEMANAGER = "com.softwinner.TvdFileManager/.MainUI";
     public static String COMPONENT_TV_MIRACAST = "com.softwinner.miracastReceiver/.Miracast";
     public static String COMPONENT_TV_SETTINGS = "com.android.tv.settings/com.android.tv.settings.MainSettings";
@@ -93,7 +93,7 @@ public class Launcher extends Activity {
     private WifiManager wifiManager;
     private static final int[] childScreens = {1, 2, 4, 3, 5};
     private static final int[] childScreensTv = {2, 4, 3, 5};
-    public static int HOME_SHORTCUT_COUNT = 11;
+    public static int HOME_SHORTCUT_COUNT = 10;
     public static TextView memory_used = null;
     public static ImageView memory_circle = null;
     public static MyRelativeLayout mMemory;
@@ -630,7 +630,7 @@ public class Launcher extends Activity {
     }
 
     private void setBigBackgroundDrawable() {
-        getMainView().setBackground(getResources().getDrawable(R.drawable.bg, null));
+    //    getMainView().setBackground(getResources().getDrawable(R.drawable.bg, null));
         ((ImageView) findViewById(R.id.img_video)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
         ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
         ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
@@ -821,7 +821,7 @@ public class Launcher extends Activity {
     }
 
     public void recoverFromCustom() {
-        this.mHandler.sendEmptyMessage(1);
+        this.mHandler.sendEmptyMessage(MSG_RECOVER_HOME);
         getMainView().setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
         getMainView().requestFocus();
     }

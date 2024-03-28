@@ -1,16 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:background="@color/transparent_background" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="13.5dp">
-    <GridView android:id="@+id/list_status" android:paddingLeft="0dp" android:paddingTop="0dp" android:paddingRight="0dp" android:paddingBottom="0dp" android:focusable="false" android:scrollbars="none" android:fadingEdgeLength="15dp" android:layout_width="150dp" android:layout_height="40dp" android:layout_marginTop="10dp" android:layout_marginRight="300dp" android:drawSelectorOnTop="false" android:cacheColorHint="#00000000" android:horizontalSpacing="0dp" android:verticalSpacing="0dp" android:numColumns="3" android:layout_alignParentRight="true"/>
-    <ImageView android:id="@+id/bg_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="42dp" android:layout_marginTop="15dp" android:src="@drawable/tvbox"/>
-    <ImageButton android:id="@+id/pg_home" android:background="@drawable/home_green" android:visibility="gone" android:nextFocusRight="@+id/pg_favorite" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="37dp" android:layout_marginTop="56.25dp" android:layout_alignParentLeft="true"/>
-    <ImageButton android:id="@+id/pg_favorite" android:background="@drawable/favorite_white" android:visibility="gone" android:nextFocusLeft="@+id/pg_home" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="120dp" android:layout_marginTop="56.25dp" android:layout_alignParentLeft="true"/>
-    <ImageView android:id="@+id/img_weather" android:layout_width="20dp" android:layout_height="20dp" android:layout_marginTop="20dp" android:layout_marginRight="15dp" android:layout_toLeftOf="@+id/home_line"/>
-    <TextView android:textSize="20sp" android:id="@+id/tx_condition" android:layout_width="15dp" android:layout_height="15dp" android:layout_marginLeft="15dp" android:layout_marginTop="17.25dp" android:layout_toRightOf="@+id/img_weather"/>
-    <TextView android:textSize="15sp" android:id="@+id/tx_temp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="35dp" android:layout_marginRight="5dp" android:layout_toLeftOf="@+id/home_line"/>
-    <TextView android:textSize="20sp" android:id="@+id/tx_city" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="1dp" android:layout_marginTop="25dp" android:layout_toLeftOf="@+id/tx_time"/>
-    <EditText android:id="@+id/eth_editext" android:visibility="gone" android:nextFocusRight="@+id/query_button" android:layout_width="60dp" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginRight="7.5dp" android:singleLine="true" android:layout_toLeftOf="@+id/query_button"/>
-    <ImageButton android:id="@+id/query_button" android:background="@drawable/search" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="19dp" android:layout_marginRight="262.5dp" android:layout_toLeftOf="@+id/list_status" android:layout_alignParentRight="true"/>
-    <TextView android:textSize="35sp" android:textStyle="normal" android:id="@+id/tx_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginRight="54dp" android:layout_alignParentRight="true"/>
-    <TextView android:textSize="15sp" android:id="@+id/tx_date" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="35dp" android:layout_marginRight="10dp" android:layout_toLeftOf="@+id/tx_time"/>
-    <ImageView android:id="@+id/home_line" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="23dp" android:layout_marginRight="5dp" android:src="@drawable/home_line" android:layout_toLeftOf="@+id/tx_city"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/transparent_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="13.5dp">
+    <GridView
+        android:id="@+id/list_status"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
+        android:focusable="false"
+        android:scrollbars="none"
+        android:fadingEdgeLength="15dp"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="300dp"
+        android:drawSelectorOnTop="false"
+        android:cacheColorHint="#00000000"
+        android:horizontalSpacing="0dp"
+        android:verticalSpacing="0dp"
+        android:numColumns="3"
+        android:layout_alignParentRight="true"/>
+    <ImageView
+        android:id="@+id/bg_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/tvbox"/>
+    <ImageButton
+        android:id="@+id/pg_home"
+        android:background="@drawable/home_green"
+        android:visibility="gone"
+        android:nextFocusRight="@+id/pg_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="37dp"
+        android:layout_marginTop="56.25dp"
+        android:layout_alignParentLeft="true"/>
+    <ImageButton
+        android:id="@+id/pg_favorite"
+        android:background="@drawable/favorite_white"
+        android:visibility="gone"
+        android:nextFocusLeft="@+id/pg_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="56.25dp"
+        android:layout_alignParentLeft="true"/>
+    <ImageView
+        android:id="@+id/img_weather"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/home_line"/>
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/tx_condition"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="17.25dp"
+        android:layout_toRightOf="@+id/img_weather"/>
+    <TextView
+        android:textSize="15sp"
+        android:id="@+id/tx_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/home_line"/>
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/tx_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/tx_time"/>
+    <EditText
+        android:id="@+id/eth_editext"
+        android:visibility="gone"
+        android:nextFocusRight="@+id/query_button"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="7.5dp"
+        android:singleLine="true"
+        android:layout_toLeftOf="@+id/query_button"/>
+    <ImageButton
+        android:id="@+id/query_button"
+        android:background="@drawable/search"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginRight="262.5dp"
+        android:layout_toLeftOf="@+id/list_status"
+        android:layout_alignParentRight="true"/>
+    <TextView
+        android:textSize="35sp"
+        android:textStyle="normal"
+        android:id="@+id/tx_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="54dp"
+        android:layout_alignParentRight="true"/>
+    <TextView
+        android:textSize="15sp"
+        android:id="@+id/tx_date"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/tx_time"/>
+    <ImageView
+        android:id="@+id/home_line"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/home_line"
+        android:layout_toLeftOf="@+id/tx_city"/>
 </RelativeLayout>
