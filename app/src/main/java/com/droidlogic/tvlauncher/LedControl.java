@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 
 /* loaded from: classes.dex */
 public class LedControl {
-/*
     public static boolean control_led(String str, int i) {
         Process process;
         DataOutputStream dataOutputStream = null;
@@ -31,7 +30,7 @@ public class LedControl {
                         }
                         return true;
                     } catch (Exception e2) {
-                    //    e = e2;
+                        //    e = e2;
                         dataOutputStream = dataOutputStream2;
                         Log.d("runtime_exception:", e2.getMessage());
                         if (dataOutputStream != null) {
@@ -62,17 +61,17 @@ public class LedControl {
                     //th = th2;
                 }
             } catch (Exception e5) {
-             //   e = e5;
+                //   e = e5;
             }
         } catch (Exception e6) {
-         //   e = e6;
+            //   e = e6;
             process = null;
         } catch (Throwable th3) {
-          //  th = th3;
+            //  th = th3;
             process = null;
         }
+        return true;
     }
-*/
 
     public static String checkStatus(String str) {
         try {

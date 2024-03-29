@@ -17,8 +17,6 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -48,22 +46,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class Launcher extends Activity{
-    private final static String TAG="MediaBoxLauncher";
-    /*    public static String COMPONENT_TV_APP = "com.droidlogic.tvsource/com.droidlogic.tvsource.DroidLogicTv";
-    public static String COMPONENT_TV_FILEMANAGER = "com.softwinner.TvdFileManager/.MainUI";
-    public static String COMPONENT_TV_MIRACAST = "com.softwinner.miracastReceiver/.Miracast";
-    public static String COMPONENT_TV_SETTINGS = "com.android.tv.settings/com.android.tv.settings.MainSettings";
-    public static String COMPONENT_TV_SOURCE = "com.droidlogic.tv.settings/com.droidlogic.tv.settings.TvSourceActivity";*/
+    private final static String TAG="MediaBoxlauncher";
     public static float endX = 0.0f;
-    public static boolean isLaunchingThomasroom = false;
-    public static boolean isLaunchingTvSettings = false;
     public static float startX;
     private Animation animation;
     private EditText etCity;
@@ -154,7 +144,7 @@ public class Launcher extends Activity{
     private BroadcastReceiver mediaReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("MediaBoxlauncher",intent.getAction().toString());
+            Log.i(TAG,intent.getAction().toString());
             Launcher.this.displayStatus();
             Launcher.this.updateStatus();
         }
@@ -164,7 +154,7 @@ public class Launcher extends Activity{
         public void onReceive(Context context, Intent intent) {
             NetworkInfo networkInfo;
             String action = intent.getAction();
-            Log.i("MediaBoxlauncher","netReceiver" + action.toString());
+            Log.i(TAG,"netReceiver" + action.toString());
             if (action == null) {
                 return;
             }
@@ -178,17 +168,17 @@ public class Launcher extends Activity{
                     intent2.setAction("com.weather.broadcast");
                     intent2.putExtra("launcher", "weather");
                     Launcher.this.sendBroadcast(intent2);
-                    Log.d("MediaBoxlauncher", "send BroadcastReceiver++++++++=");
+                    Log.d(TAG, "send BroadcastReceiver++++++++=");
                 }
             }
             if (action.equals("com.example.perference.shared_id")) {
                 String string = intent.getExtras().getString("city");
-                Log.d("MediaBoxlauncher", "weatherCity    is" + string);
+                Log.d(TAG, "weatherCity    is" + string);
                 if (string != null) {
                     try {
                         Launcher.this.urlcity = "https://api.openweathermap.org/data/2.5/weather?q=" + string + "&units=metric&appid=b7587b51674093373a847ac72e033c85";
                         Launcher.this.getData(Launcher.this.urlcity);
-                        Log.d("MediaBoxlauncher", "############Weather City is#######" + Launcher.this.urlcity);
+                        Log.d(TAG, "############Weather City is#######" + Launcher.this.urlcity);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -211,7 +201,7 @@ public class Launcher extends Activity{
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i("MediaBoxlauncher","appReceiver" + intent.getAction().toString());
+            Log.i(TAG,"appReceiver" + intent.getAction().toString());
             if ("android.intent.action.PACKAGE_CHANGED".equals(action) || "android.intent.action.PACKAGE_REMOVED".equals(action) || "android.intent.action.PACKAGE_ADDED".equals(action)) {
                 Launcher.this.updateAppList(intent);
             }
@@ -223,16 +213,16 @@ public class Launcher extends Activity{
         super.onCreate(bundle);
 
         setContentView(R.layout.main);
-        Log.d("MediaBoxLauncher", "------onCreate");
+        Log.d(TAG, "------onCreate");
 
         copyResources(R.raw.home_shortcuts);
         copyResources(R.raw.local_shortcuts);
-        copyResources(R.raw.banner1);
-        copyResources(R.raw.banner2);
-        copyResources(R.raw.banner3);
-        copyResources(R.raw.banner4);
-        copyResources(R.raw.banner5);
-        copyResources(R.raw.banner6);
+        copyResources(R.drawable.img_video);
+        copyResources(R.drawable.img_youtube);
+        copyResources(R.drawable.img_kodi);
+        copyResources(R.drawable.img_miracast);
+        copyResources(R.drawable.img_chrome);
+        copyResources(R.drawable.img_google);
 
         this.mAction = new MyRelativeLayout[6];
         this.mMainFrameLayout = (FrameLayout) findViewById(R.id.layout_main);
@@ -249,7 +239,7 @@ public class Launcher extends Activity{
                     Launcher.this.handler.postDelayed(this, 500L);
                     return;
                 }
-                Log.i("MediaBoxLauncher", "Runnable() : wFile.canWrite() = true");
+                Log.i(TAG, "Runnable() : wFile.canWrite() = true");
                 Launcher.this.mAppDataLoader.update();
                 Launcher launcher = Launcher.this;
                 launcher.setShortcutScreen(launcher.current_screen_mode);
@@ -308,7 +298,7 @@ public class Launcher extends Activity{
     public void startMemoryAnimation() {
         final long currentTimeMillis = System.currentTimeMillis();
         memory_circle.startAnimation(this.animation);
-        Log.d("MediaBoxLauncher", "cleanMemory");
+        Log.d(TAG, "cleanMemory");
         new Thread() { // from class: com.droidlogic.xlauncher.Launcher.5
             @Override // java.lang.Thread, java.lang.Runnable
             public void run() {
@@ -421,7 +411,7 @@ public class Launcher extends Activity{
                     String obj = Launcher.this.etCity.getText().toString();
                     if (!obj.isEmpty()) {
                         Launcher.this.tx_city.setVisibility(View.GONE);
-                        Log.d("MediaBoxLauncher", "etCity========" + obj);
+                        Log.d(TAG, "etCity========" + obj);
                         Launcher.this.getData("https://api.openweathermap.org/data/2.5/weather?q=" + obj + "&units=metric&appid=b7587b51674093373a847ac72e033c85");
                         return;
                     }
@@ -448,7 +438,7 @@ public class Launcher extends Activity{
                     Launcher.this.tx_city.setText(str2);
                     Launcher.this.tx_city.setVisibility(View.VISIBLE);
                     Launcher.this.home_line.setVisibility(View.VISIBLE);
-                    Log.d("MediaBoxLauncher", "weather mtemperature=====" + Double.parseDouble(string));
+                    Log.d(TAG, "weather mtemperature=====" + Double.parseDouble(string));
                     if (!Locale.getDefault().getLanguage().equals("en")) {
                         Launcher.this.tx_temp.setText("" + string + Launcher.this.getResources().getString(R.string.str_temp));
                     } else {
@@ -456,7 +446,7 @@ public class Launcher extends Activity{
                         Launcher.this.tx_temp.setText("" + decimalFormat.format((Double.parseDouble(string) * 1.8d) + 32.0d) + Launcher.this.getResources().getString(R.string.str_eu_temp));
                     }
                     String string2 = jSONObject.getJSONArray("weather").getJSONObject(0).getString("icon");
-                    Log.d("MediaBoxLauncher", "weather iconString=====" + string2);
+                    Log.d(TAG, "weather iconString=====" + string2);
                     Launcher.this.img_weather.setImageResource(Launcher.this.parseIcon(string2));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -479,7 +469,7 @@ public class Launcher extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("MediaBoxLauncher", "------onResume");
+        Log.d(TAG, "------onResume");
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.MEDIA_EJECT");
         filter.addAction("android.intent.action.MEDIA_UNMOUNTED");
@@ -509,7 +499,7 @@ public class Launcher extends Activity{
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("MediaBoxLauncher", "------onPause");
+        Log.d(TAG, "------onPause");
         unregisterReceiver(this.mediaReceiver);
         unregisterReceiver(this.netReceiver);
         unregisterReceiver(this.appReceiver);
@@ -536,8 +526,8 @@ public class Launcher extends Activity{
         if (i == 4) {
             switch (this.current_screen_mode) {
                 case 4:
-                    Log.d("MediaBoxLauncher", "++++onkey down APP");
-                    LedControl.control_led_status(getResources().getString(R.string.app_led), false);
+                    Log.d(TAG, "++++onkey down APP");
+//                    LedControl.control_led_status(getResources().getString(R.string.app_led), false);
                     this.mSecondScreen.clearAnimation();
                 case 1:
                 case 2:
@@ -577,7 +567,9 @@ public class Launcher extends Activity{
     }
 
     public void displayStatus() {
-        this.lv_status.setAdapter((ListAdapter) new LocalAdapter(this, this.mStatusLoader.getStatusData(), R.layout.homelist_item, new String[]{"item_icon"}, new int[]{R.id.item_type}));
+        this.lv_status.setAdapter((ListAdapter) new LocalAdapter(this,
+                this.mStatusLoader.getStatusData(), R.layout.homelist_item,
+                new String[]{"item_icon"}, new int[]{R.id.item_type}));
     }
 
     public void displayDate() {
@@ -592,12 +584,12 @@ public class Launcher extends Activity{
         this.lv_status = (GridView) findViewById(R.id.list_status);
         this.lv_status.setFocusable(false);
         this.lv_status.setFocusableInTouchMode(false);
-        this.lv_status.setOnTouchListener(new View.OnTouchListener() {
+/*        this.lv_status.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return motionEvent.getAction() == 2;
             }
-        });
+        });*/
 
         mHoverView = (HoverView) findViewById(R.id.hover_view);
         mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
@@ -632,12 +624,12 @@ public class Launcher extends Activity{
     }
 
     private void setBigBackgroundDrawable() {
-        ((ImageView) findViewById(R.id.img_video)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner1"));
-        ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner2"));
-        ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner3"));
-        ((ImageView) findViewById(R.id.img_browser)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner4"));
-        ((ImageView) findViewById(R.id.img_playstore)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner5"));
-        ((ImageView) findViewById(R.id.img_miracast)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/banner6"));
+        ((ImageView) findViewById(R.id.img_video)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_video"));
+        ((ImageView) findViewById(R.id.img_youtube)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_youtube"));
+        ((ImageView) findViewById(R.id.img_kodi)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_kodi"));
+        ((ImageView) findViewById(R.id.img_browser)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_miracast"));
+        ((ImageView) findViewById(R.id.img_playstore)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_chrome"));
+        ((ImageView) findViewById(R.id.img_miracast)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_google"));
         ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting, null));
         ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager, null));
         ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app, null));
@@ -667,7 +659,7 @@ public class Launcher extends Activity{
 
     public void resetShortcutScreen(int mode) {
         this.mHandler.removeMessages(MSG_REFRESH_SHORTCUT);
-        Log.d("MediaBoxLauncher", "resetShortcutScreen mode is " + mode);
+        Log.d(TAG, "resetShortcutScreen mode is " + mode);
         if (this.mAppDataLoader.isDataLoaded()) {
             if (mode == MODE_HOME) {
                 this.mHomeShortcutView.setLayoutView(mode, this.mAppDataLoader.getlocalShortCuts());
@@ -761,7 +753,7 @@ public class Launcher extends Activity{
 
     @Override // android.app.Activity
     public void onActivityResult(int i, int i2, Intent intent) {
-        Log.d("MediaBoxLauncher", "onActivityResult requestCode = " + i + ", resultCode = " + i2);
+        Log.d(TAG, "onActivityResult requestCode = " + i + ", resultCode = " + i2);
         if (i == 3 && i2 == -1 && intent != null) {
             if (this.mTvStartPlaying) {
      //           releasePlayingTv();
@@ -770,7 +762,7 @@ public class Launcher extends Activity{
                 startActivity(intent);
                 finish();
             } catch (ActivityNotFoundException e) {
-                Log.e("MediaBoxLauncher", " can't start LiveTv:" + e);
+                Log.e(TAG, " can't start LiveTv:" + e);
             }
         }
     }
@@ -819,7 +811,7 @@ public class Launcher extends Activity{
                 in.close();
                 out.close();
             } catch (IOException e) {
-                Log.e("MediaBoxLauncher", "Failed to copy Resources " + e);
+                Log.e(TAG, "Failed to copy Resources " + e);
             }
         }
     }

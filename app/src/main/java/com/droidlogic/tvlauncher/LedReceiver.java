@@ -19,18 +19,18 @@ public class LedReceiver extends BroadcastReceiver {
             return;
         }
         intent.getData().getPath();
-        String string = context.getResources().getString(R.string.usb_led);
-        String string2 = context.getResources().getString(R.string.card_led);
+     //   String string = context.getResources().getString(R.string.usb_led);
+     //   String string2 = context.getResources().getString(R.string.card_led);
         Log.d("LedReceiver", "~~~~~~~~~~OnReceive!!!");
         if (isSdcardExist()) {
-            LedControl.control_led_status(string2, true);
+    //        LedControl.control_led_status(string2, true);
         } else {
-            LedControl.control_led_status(string2, false);
+     //       LedControl.control_led_status(string2, false);
         }
         if (isUdiskExist()) {
-            LedControl.control_led_status(string, true);
+    //        LedControl.control_led_status(string, true);
         } else {
-            LedControl.control_led_status(string, false);
+     //       LedControl.control_led_status(string, false);
         }
     }
 

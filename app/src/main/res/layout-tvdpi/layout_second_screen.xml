@@ -17,6 +17,7 @@
         android:layout_width="859.5dp"
         android:layout_height="385dp"
         android:layout_marginLeft="88.5dp"
+
         android:layout_marginTop="70dp">
         <com.droidlogic.tvlauncher.MyGridLayout
             android:orientation="horizontal"

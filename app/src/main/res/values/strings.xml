@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_led">/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/appled</string>
-    <string name="app_name">MediaBox launcher</string>
-    <string name="card_led">/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/cardled</string>
+
     <string name="hello">Hello World</string>
-    <string name="img_desc">image</string>
-    <string name="str_add">Add</string>
-    <string name="str_app">My Apps</string>
-    <string name="str_blocked">Program is blocked</string>
-    <string name="str_day">日</string>
-    <string name="str_eu_temp">°F</string>
-    <string name="str_exit">Exit</string>
-    <string name="str_local">Local</string>
-    <string name="str_music">Music</string>
-    <string name="str_no_channel">No channel</string>
-    <string name="str_no_signal">No signal</string>
-    <string name="str_nospace">Shortcuts no space!</string>
+    <string name="app_name">MediaBox launcher</string>
+    <string name="str_video">Online Video </string>
+    <string name="str_tvapp">TV App </string>
     <string name="str_recommend">Recommend</string>
-    <string name="str_scrambeled">Scrambled</string>
     <string name="str_setting">Settings</string>
-    <string name="str_temp">℃</string>
-    <string name="str_test">Favorite</string>
-    <string name="str_tvapp">LiveTv</string>
-    <string name="str_video">Online Video</string>
-    <string name="toast_livetv_warn">LiveTv is releasing, please wait</string>
-    <string name="usb_led">/sys/devices/platform/soc/soc@03000000:meson-vfd/attr/usbled</string>
+    <string name="str_app">Applications</string>
+    <string name="str_music">Music</string>
+    <string name="str_local">Local</string>
+    <string name="str_nospace">Shortcuts no space!</string>
+    <string name="str_day">日</string>
+    <string name="str_add">Add</string>
+    <string name="img_desc">image</string>
+    <string name="str_exit">Exit</string>
+    <string name="str_no_signal">No signal</string>
+    <string name="str_scrambeled">Scrambled</string>
+
+    <string name="str_eu_temp">°F</string>
+    <string name="str_temp">°C</string>
 </resources>
