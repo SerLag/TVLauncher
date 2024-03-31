@@ -14,6 +14,8 @@ import android.media.tv.TvView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -45,7 +47,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,6 +91,7 @@ public class Launcher extends Activity{
     private static final int[] childScreens = {1, 2, 4, 3, 5};
     private static final int[] childScreensTv = {2, 4, 3, 5};
     public static int HOME_SHORTCUT_COUNT = 10;
+
     public static TextView memory_used = null;
     public static ImageView memory_circle = null;
     public static MyRelativeLayout mMemory;
@@ -124,6 +129,9 @@ public class Launcher extends Activity{
     private LinearInterpolator lin = null;
     private long totalMemory = 0;
     private long availMemory = 0;
+    private boolean isSdcardExist = false;
+    private boolean isUdiskExist = false;
+
     private Handler handler = new Handler();
 
     private Handler mHandler = new Handler() {
@@ -608,15 +616,16 @@ public class Launcher extends Activity{
             mAction[i].setType(TYPE_HOME);
             mAction[i].setIntent(getPackageManager().getLaunchIntentForPackage(mAppDataLoader.list_homeShortcut.get(i)));
         }
-        Intent intent = new Intent();
+        Intent intent1 = new Intent();
         mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
         mSettingsView.setType(TYPE_SETTINGS);
-        intent.setComponent(ComponentName.unflattenFromString("com.android.tv.settings/com.android.tv.settings.MainSettings"));
-        mSettingsView.setIntent(intent);
+        intent1.setComponent(ComponentName.unflattenFromString("com.android.tv.settings/com.android.tv.settings.MainSettings"));
+        mSettingsView.setIntent(intent1);
+        Intent intent2 = new Intent();
         mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
         mFilemanager.setType(TYPE_FILEMANAGER);
-        intent.setComponent(ComponentName.unflattenFromString("com.softwinner.TvdFileManager/.MainUI"));
-        mFilemanager.setIntent(intent);
+        intent2.setComponent(ComponentName.unflattenFromString("com.softwinner.TvdFileManager/.MainUI"));
+        mFilemanager.setIntent(intent2);
         mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
         mAppView.setType(TYPE_APPS);
         mAppView.setIntent(null);

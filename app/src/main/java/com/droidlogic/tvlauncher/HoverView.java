@@ -102,7 +102,7 @@ public class HoverView extends RelativeLayout{
             }
         };
         this.setOutlineProvider(viewOutlineProvider);
-        this.setBackgroundColor(0xFF354E5A);
+        this.setBackgroundColor(getResources().getColor(R.color.shortcut_bg_color, null));
         this.setElevation(elevation);
 
         setHoverImage(focusView, (ImageView)(focusView.getChildAt(0)));

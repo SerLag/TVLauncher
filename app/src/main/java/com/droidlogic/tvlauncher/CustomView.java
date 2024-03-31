@@ -61,7 +61,7 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         thisView = this;
         gv = (GridView) findViewById(R.id.grid_add_apps);
 //        gv.setBackground(this.mContext.getResources().getDrawable(R.drawable.bg_add_apps, null));
-        gv.setBackgroundColor(0xFF373778);
+        gv.setBackgroundColor(this.mContext.getResources().getColor(R.color.bg_add_apps, null));
         gv.setOnItemClickListener(this);
         displayView();
         custom_apps = ((Launcher)mContext).getAppDataLoader().list_localShortcut;
