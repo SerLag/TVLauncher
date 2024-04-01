@@ -9,11 +9,11 @@ import android.util.Log;
 import java.util.Collections;
 import java.util.List;
 
-/* loaded from: classes.dex */
+
 public class LedReceiver extends BroadcastReceiver {
     private StorageManager mStorageManager;
 
-    @Override // android.content.BroadcastReceiver
+    @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == null) {
             return;

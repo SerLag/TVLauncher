@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
+import android.view.Menu;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -157,8 +158,8 @@ public class Launcher extends Activity{
             Launcher.this.updateStatus();
         }
     };
-    private BroadcastReceiver netReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.12
-        @Override // android.content.BroadcastReceiver
+    private BroadcastReceiver netReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             NetworkInfo networkInfo;
             String action = intent.getAction();
@@ -205,8 +206,8 @@ public class Launcher extends Activity{
             }
         }
     };
-    private BroadcastReceiver appReceiver = new BroadcastReceiver() { // from class: com.droidlogic.tvlauncher.Launcher.13
-        @Override // android.content.BroadcastReceiver
+    private BroadcastReceiver appReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.i(TAG,"appReceiver" + intent.getAction().toString());
@@ -216,6 +217,17 @@ public class Launcher extends Activity{
         }
     };
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+
+        menu.add("menu1");
+        menu.add("menu2");
+        menu.add("menu3");
+        menu.add("menu4");
+
+        return super.onCreateOptionsMenu(menu);
+    }
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -238,8 +250,8 @@ public class Launcher extends Activity{
         this.mAppDataLoader = new AppDataLoader(this);
         this.mStatusLoader = new StatusLoader(this);
         initChildViews();
-//        initWeather();
-//        initMemory();
+        initWeather();
+        initMemory();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -261,38 +273,38 @@ public class Launcher extends Activity{
     }
 
     private void initMemory() {
-        memory_used = (TextView) findViewById(R.id.memory_used);
-        memory_circle = (ImageView) findViewById(R.id.memory_circle);
-        this.animation = AnimationUtils.loadAnimation(this, R.anim.memory_cleaner_recircle);
-        this.lin = new LinearInterpolator();
+//        memory_used = (TextView) findViewById(R.id.memory_used);
+//        memory_circle = (ImageView) findViewById(R.id.memory_circle);
+//        this.animation = AnimationUtils.loadAnimation(this, R.anim.memory_cleaner_recircle);
+//        this.lin = new LinearInterpolator();
         this.totalMemory = MemoryManager.getTotalMemory();
         this.availMemory = MemoryManager.getAvailMemory(this);
-        initMemoryAction();
+ //       initMemoryAction();
     }
 
     private void initMemoryAction() {
         memory_used.setText(FormatData.formatRate(this.totalMemory, this.availMemory));
         this.animation.setInterpolator(this.lin);
-        new Thread() { // from class: com.droidlogic.tvlauncher.Launcher.2
-            @Override // java.lang.Thread, java.lang.Runnable
+        new Thread() {
+            @Override
             public void run() {
                 Launcher.this.totalMemory = MemoryManager.getTotalMemory();
                 Launcher launcher = Launcher.this;
                 launcher.availMemory = MemoryManager.getAvailMemory(launcher);
                 Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
-                Launcher.this.handler.postDelayed(this, 400L);
+                Launcher.this.handler.postDelayed(this, 400);
             }
         }.start();
-        this.mMemory.setOnClickListener(new View.OnClickListener() { // from class: com.droidlogic.tvlauncher.Launcher.3
-            @Override // android.view.View.OnClickListener
+        this.mMemory.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 Launcher.this.startMemoryAnimation();
                 MemoryManager.cleanMemory(Launcher.this);
                 Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
             }
         });
-        this.mMemory.setOnTouchListener(new View.OnTouchListener() { // from class: com.droidlogic.tvlauncher.Launcher.4
-            @Override // android.view.View.OnTouchListener
+        this.mMemory.setOnTouchListener(new View.OnTouchListener() {
+            @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 Launcher.this.startMemoryAnimation();
                 MemoryManager.cleanMemory(Launcher.this);
@@ -302,13 +314,12 @@ public class Launcher extends Activity{
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void startMemoryAnimation() {
         final long currentTimeMillis = System.currentTimeMillis();
         memory_circle.startAnimation(this.animation);
         Log.d(TAG, "cleanMemory");
-        new Thread() { // from class: com.droidlogic.xlauncher.Launcher.5
-            @Override // java.lang.Thread, java.lang.Runnable
+        new Thread() {
+            @Override
             public void run() {
                 if (System.currentTimeMillis() - currentTimeMillis < 2500) {
                     Launcher.this.handler.postDelayed(this, 800L);
@@ -340,28 +351,26 @@ public class Launcher extends Activity{
         this.wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
     public class TitleOnFocus implements View.OnFocusChangeListener {
         TitleOnFocus() {
         }
 
-        @Override // android.view.View.OnFocusChangeListener
+        @Override
         public void onFocusChange(View view, boolean z) {
             if (z) {
                 int id = view.getId();
                 if (id != R.id.eth_editext) {
                     switch (id) {
-                        case R.id.pg_favorite /* 2131034167 */:
+                        case R.id.pg_favorite:
                             Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_green);
                             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
                             Launcher.this.mHoverView.clear();
                             break;
-                        case R.id.pg_home /* 2131034168 */:
+                        case R.id.pg_home:
                             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
                             Launcher.this.mHoverView.clear();
                             break;
-                        case R.id.query_button /* 2131034169 */:
+                        case R.id.query_button :
                             Launcher.this.mHoverView.clear();
                             Launcher.this.query_button.setBackgroundResource(R.drawable.search_change);
                             Launcher.this.etCity.setVisibility(View.VISIBLE);
@@ -375,13 +384,13 @@ public class Launcher extends Activity{
                 int id2 = view.getId();
                 if (id2 != R.id.eth_editext) {
                     switch (id2) {
-                        case R.id.pg_favorite /* 2131034167 */:
+                        case R.id.pg_favorite:
                             Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_white);
                             break;
-                        case R.id.pg_home /* 2131034168 */:
+                        case R.id.pg_home:
                             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
                             break;
-                        case R.id.query_button /* 2131034169 */:
+                        case R.id.query_button:
                             Launcher.this.query_button.setBackgroundResource(R.drawable.search);
                             break;
                     }
@@ -399,22 +408,20 @@ public class Launcher extends Activity{
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
     public class TitleClick implements View.OnClickListener {
         TitleClick() {
         }
 
-        @Override // android.view.View.OnClickListener
+        @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.pg_favorite /* 2131034167 */:
+                case R.id.pg_favorite:
                     Launcher.this.showSecondScreen(5);
                     return;
-                case R.id.pg_home /* 2131034168 */:
+                case R.id.pg_home:
                 default:
                     return;
-                case R.id.query_button /* 2131034169 */:
+                case R.id.query_button:
                     Launcher.this.etCity.setVisibility(View.VISIBLE);
                     String obj = Launcher.this.etCity.getText().toString();
                     if (!obj.isEmpty()) {
@@ -434,10 +441,9 @@ public class Launcher extends Activity{
         setShortcutScreen(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void getData(String str) {
-        this.mQueue.add(new JsonObjectRequest(str, null, new Response.Listener<JSONObject>() { // from class: com.droidlogic.xlauncher.Launcher.6
-            @Override // com.android.volley.Response.Listener
+        this.mQueue.add(new JsonObjectRequest(str, null, new Response.Listener<JSONObject>() {
+            @Override
             public void onResponse(JSONObject jSONObject) {
                 try {
                     String str2 = jSONObject.getString("name").toString();
@@ -460,7 +466,7 @@ public class Launcher extends Activity{
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() { // from class: com.droidlogic.tvlauncher.Launcher.7
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
             }
@@ -490,6 +496,8 @@ public class Launcher extends Activity{
         filter.addAction("android.net.wifi.RSSI_CHANGED");
         filter.addAction("android.intent.action.TIME_TICK");
         filter.addAction("android.intent.action.TIME_SET");
+        filter.addAction("EXTERNAL_APPLICATIONS_AVAILABLE");
+        filter.addAction("EXTERNAL_APPLICATIONS_UNAVAILABLE");
         registerReceiver(this.netReceiver, filter);
 
         filter = new IntentFilter();
@@ -513,7 +521,7 @@ public class Launcher extends Activity{
         unregisterReceiver(this.appReceiver);
     }
 
-    @Override // android.app.Activity, android.view.Window.Callback
+    @Override
     public boolean dispatchTouchEvent(MotionEvent motionEvent) {
         if (motionEvent.getAction() == 0) {
             startX = motionEvent.getX();
@@ -523,13 +531,13 @@ public class Launcher extends Activity{
         return super.dispatchTouchEvent(motionEvent);
     }
 
-    @Override // android.app.Activity
+    @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         motionEvent.getAction();
         return true;
     }
 
-    @Override // android.app.Activity, android.view.KeyEvent.Callback
+    @Override
     public boolean onKeyDown(int i, KeyEvent keyEvent) {
         if (i == 4) {
             switch (this.current_screen_mode) {
@@ -754,25 +762,9 @@ public class Launcher extends Activity{
     }
 
     public void updateAppList(Intent intent) {
-        String schemeSpecificPart;
-        if (intent.getData() == null || !((schemeSpecificPart = intent.getData().getSchemeSpecificPart()) == null || schemeSpecificPart.length() == 0 || schemeSpecificPart.equals("com.android.provision"))) {
+        String schemeSpecificPart  = intent.getData().getSchemeSpecificPart();
+        if (intent.getData() == null || !(schemeSpecificPart == null || schemeSpecificPart.length() == 0 )) {
             displayShortcuts();
-        }
-    }
-
-    @Override // android.app.Activity
-    public void onActivityResult(int i, int i2, Intent intent) {
-        Log.d(TAG, "onActivityResult requestCode = " + i + ", resultCode = " + i2);
-        if (i == 3 && i2 == -1 && intent != null) {
-            if (this.mTvStartPlaying) {
-     //           releasePlayingTv();
-            }
-            try {
-                startActivity(intent);
-                finish();
-            } catch (ActivityNotFoundException e) {
-                Log.e(TAG, " can't start LiveTv:" + e);
-            }
         }
     }
 
@@ -824,5 +816,4 @@ public class Launcher extends Activity{
             }
         }
     }
-
 }

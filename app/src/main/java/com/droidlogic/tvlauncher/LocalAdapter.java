@@ -148,7 +148,6 @@ public class LocalAdapter extends BaseAdapter implements Filterable {
         return this.mFilter;
     }
 
-    /* loaded from: classes.dex */
     private class SimpleFilter extends Filter {
         private SimpleFilter() {
         }

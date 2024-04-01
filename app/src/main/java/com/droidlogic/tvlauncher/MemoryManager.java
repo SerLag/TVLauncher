@@ -1,6 +1,5 @@
 package com.droidlogic.tvlauncher;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import java.io.BufferedReader;
@@ -9,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-/* loaded from: classes.dex */
 public class MemoryManager {
     public static long getTotalMemory() {
         try {
@@ -21,10 +19,10 @@ public class MemoryManager {
             return intValue / 1024;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return 0L;
+            return 0;
         } catch (IOException e2) {
             e2.printStackTrace();
-            return 0L;
+            return 0;
         }
     }
 
@@ -35,7 +33,6 @@ public class MemoryManager {
         return memoryInfo.availMem / 1048576;
     }
 
-    @SuppressLint({"NewApi"})
     public static void cleanMemory(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();

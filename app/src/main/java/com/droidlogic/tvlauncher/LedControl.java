@@ -6,7 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/* loaded from: classes.dex */
+
 public class LedControl {
     public static boolean control_led(String str, int i) {
         Process process;

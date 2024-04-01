@@ -4,9 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-/* loaded from: classes.dex */
 public class MyTextView extends TextView {
-    @Override // android.view.View
+    @Override
     public boolean isFocused() {
         return true;
     }
