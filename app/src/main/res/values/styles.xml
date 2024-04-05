@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme" parent="android:Theme">
+    <style name="AppTheme" parent="android:Theme.NoTitleBar.Fullscreen">
         <item name="android:windowAnimationStyle">@style/Animation</item>
+        <item name="android:listMenuViewStyle">@style/PopupMenu</item>
     </style>
     <style name="Animation">
         <item name="android:activityOpenEnterAnimation">@null</item>
@@ -17,7 +18,9 @@
         <item name="android:taskToBackEnterAnimation">@null</item>
         <item name="android:taskToBackExitAnimation">@null</item>
     </style>
-
+    <style name="PopupMenu">
+        <item name="android:listMenuViewStyle">@null</item>
+    </style>
      <style name="dialogWindowAnim" parent="android:Animation" mce_bogus="1">
         <item name="android:windowExitAnimation">@anim/dialog_animation_exit</item>
      </style>

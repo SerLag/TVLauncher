@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/PopupMenu">
+
+    <item android:title="Clean memory" />
+    <item android:title="Save settings" />
+    <item android:title="Restore settings" />
+</menu>
