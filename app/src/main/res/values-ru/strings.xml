@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="str_app">Приложения</string>
+    <string name="str_memory">Память:</string>
+    <string name="str_clean">Очистить память</string>
+    <string name="str_storage">Хранилище</string>
+    <string name="str_save">Сохр. настройки</string>
+    <string name="str_rest">Восст. настройки</string>
+</resources>

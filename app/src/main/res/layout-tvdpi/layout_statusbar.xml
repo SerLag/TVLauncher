@@ -50,10 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:layout_marginStart="480dp"
-        android:text="Память:"/>
+        android:text="@string/str_memory"/>
     <TextView
         android:textSize="26sp"
-        android:id="@+id/tx_memory_size"
+        android:id="@+id/memory_used"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

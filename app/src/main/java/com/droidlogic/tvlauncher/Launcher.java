@@ -8,26 +8,25 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
-import android.view.Menu;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -38,23 +37,17 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Locale;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 public class Launcher extends Activity{
     private final static String TAG="MediaBoxlauncher";
@@ -63,7 +56,7 @@ public class Launcher extends Activity{
     private Animation animation;
     private EditText etCity;
     private ImageView home_line;
-    private ImageView img_weather;
+
     private GridView lv_status;
     private AppDataLoader mAppDataLoader;
     private MyRelativeLayout mAppView;
@@ -73,20 +66,22 @@ public class Launcher extends Activity{
 
     private FrameLayout mMainFrameLayout;
 
-
     private MyRelativeLayout[] mAction;
-
-    private RequestQueue mQueue;
 
     private MyRelativeLayout mSettingsView;
     private StatusLoader mStatusLoader;
+    private MemoryManager mMemoryCleaner;
+    private WeatherInfo mWeatherInfo;
 
     private ImageButton pg_favorite;
     private ImageButton pg_home;
     private ImageButton query_button;
-    private TextView tx_city;
-    private TextView tx_condition;
-    private TextView tx_temp;
+    public static TextView tx_city;
+    public static TextView tx_condition;
+    public static TextView tx_temp;
+    public static ImageView img_weather;
+    private int LastWeatherInfo;
+
     private String urlcity;
     private WifiManager wifiManager;
     private static final int[] childScreens = {1, 2, 4, 3, 5};
@@ -95,7 +90,7 @@ public class Launcher extends Activity{
 
     public static TextView memory_used = null;
     public static ImageView memory_circle = null;
-    public static MyRelativeLayout mMemory;
+    public static MemoryManager mMemory;
 
     public static final int TYPE_HOME                            = 0;
     public static final int TYPE_SETTINGS                        = 1;
@@ -130,8 +125,6 @@ public class Launcher extends Activity{
     private LinearInterpolator lin = null;
     private long totalMemory = 0;
     private long availMemory = 0;
-    private boolean isSdcardExist = false;
-    private boolean isUdiskExist = false;
 
     private Handler handler = new Handler();
 
@@ -153,7 +146,7 @@ public class Launcher extends Activity{
     private BroadcastReceiver mediaReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(TAG,intent.getAction().toString());
+            Log.i(TAG, "mediaReceiver " + intent.getAction());
             Launcher.this.displayStatus();
             Launcher.this.updateStatus();
         }
@@ -163,40 +156,20 @@ public class Launcher extends Activity{
         public void onReceive(Context context, Intent intent) {
             NetworkInfo networkInfo;
             String action = intent.getAction();
-            Log.i(TAG,"netReceiver" + action.toString());
-            if (action == null) {
-                return;
-            }
             if (action.equals("android.intent.action.TIME_SET")) {
                 Launcher.this.displayDate();
             }
             if (action.equals("android.net.conn.CONNECTIVITY_CHANGE") && (networkInfo = ((ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE)).getNetworkInfo(1)) != null && networkInfo.isAvailable()) {
-                networkInfo.getTypeName();
-                if (networkInfo.getType() == 1) {
-                    Intent intent2 = new Intent();
-                    intent2.setAction("com.weather.broadcast");
-                    intent2.putExtra("launcher", "weather");
-                    Launcher.this.sendBroadcast(intent2);
-                    Log.d(TAG, "send BroadcastReceiver++++++++=");
-                }
-            }
-            if (action.equals("com.example.perference.shared_id")) {
-                String string = intent.getExtras().getString("city");
-                Log.d(TAG, "weatherCity    is" + string);
-                if (string != null) {
-                    try {
-                        Launcher.this.urlcity = "https://api.openweathermap.org/data/2.5/weather?q=" + string + "&units=metric&appid=b7587b51674093373a847ac72e033c85";
-                        Launcher.this.getData(Launcher.this.urlcity);
-                        Log.d(TAG, "############Weather City is#######" + Launcher.this.urlcity);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Intent intent3 = new Intent();
-                    intent3.setAction("com.send.info");
-                    Launcher.this.sendBroadcast(intent3);
-                }
-            }
+                Log.i(TAG,"netReceiver " + action);
+                LastWeatherInfo = 0;
+                mWeatherInfo.getData();
+           }
             if (action.equals("android.intent.action.TIME_TICK")) {
+                LastWeatherInfo ++;
+                if (LastWeatherInfo > 30) {
+                    LastWeatherInfo = 0;
+                    mWeatherInfo.getData();
+                }
                 Launcher.this.displayDate();
             } else if ("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE".equals(action) || "android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE".equals(action)) {
                 Launcher.this.updateAppList(intent);
@@ -210,24 +183,13 @@ public class Launcher extends Activity{
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i(TAG,"appReceiver" + intent.getAction().toString());
+            Log.i(TAG,"appReceiver " + action);
             if ("android.intent.action.PACKAGE_CHANGED".equals(action) || "android.intent.action.PACKAGE_REMOVED".equals(action) || "android.intent.action.PACKAGE_ADDED".equals(action)) {
                 Launcher.this.updateAppList(intent);
             }
         }
     };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-
-        menu.add("menu1");
-        menu.add("menu2");
-        menu.add("menu3");
-        menu.add("menu4");
-
-        return super.onCreateOptionsMenu(menu);
-    }
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -237,6 +199,7 @@ public class Launcher extends Activity{
 
         copyResources(R.raw.home_shortcuts);
         copyResources(R.raw.local_shortcuts);
+        copyResources(R.raw.weather_settings);
         copyResources(R.drawable.img_video);
         copyResources(R.drawable.img_youtube);
         copyResources(R.drawable.img_kodi);
@@ -251,12 +214,12 @@ public class Launcher extends Activity{
         this.mStatusLoader = new StatusLoader(this);
         initChildViews();
         initWeather();
-        initMemory();
+      //  initMemory();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (!getFilesDir().canWrite()) {
-                    Launcher.this.handler.postDelayed(this, 500L);
+                    Launcher.this.handler.postDelayed(this, 500);
                     return;
                 }
                 Log.i(TAG, "Runnable() : wFile.canWrite() = true");
@@ -273,37 +236,83 @@ public class Launcher extends Activity{
     }
 
     private void initMemory() {
-//        memory_used = (TextView) findViewById(R.id.memory_used);
-//        memory_circle = (ImageView) findViewById(R.id.memory_circle);
-//        this.animation = AnimationUtils.loadAnimation(this, R.anim.memory_cleaner_recircle);
-//        this.lin = new LinearInterpolator();
-        this.totalMemory = MemoryManager.getTotalMemory();
-        this.availMemory = MemoryManager.getAvailMemory(this);
- //       initMemoryAction();
+        mMemoryCleaner = new MemoryManager(this);
+        memory_used = (TextView) findViewById(R.id.memory_used);
+        updateMemory();
+
+        memory_used.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(Launcher.this, view);
+                popup.inflate(R.menu.actions);
+
+                popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.it_clean:
+                                startMemoryAnimation();
+                            case R.id.it_storage:
+                                startMemoryAnimation();
+                            case R.id.it_apps:
+                                startAppsSettings();
+                            case R.id.it_save:
+                                SaveSettings();
+                            case R.id.it_restore:
+                                RestoreSettings();
+                        }
+                        return false;
+                    }
+                });
+                popup.show();
+            }
+        });
     }
 
-    private void initMemoryAction() {
-        memory_used.setText(FormatData.formatRate(this.totalMemory, this.availMemory));
-        this.animation.setInterpolator(this.lin);
+    public void updateMemory() {
+        if (memory_used != null) {
+            TextView textView = memory_used;
+            textView.setText(this.mMemoryCleaner.getCurrentMemory());
+        }
+    }
+
+    private void RestoreSettings() {
+
+    }
+
+    private void SaveSettings() {
+
+    }
+
+    private void startAppsSettings() {
+
+    }
+
+    public void startMemoryAnimation() {
+        //Launcher.this.startMemoryAnimation();
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.memory_cleaner_recircle);
+        memory_used.startAnimation(anim);
+  //      mMemoryCleaner.cleanMemory();
+        updateMemory();
+        Log.d(TAG, "cleanMemory");
+/*
+              //   Intent i = new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS);
+             //   mContext.startActivity(i);
+ final long currentTimeMillis = System.currentTimeMillis();
+        memory_circle.startAnimation(this.animation);
+        Log.d(TAG, "cleanMemory");
         new Thread() {
             @Override
             public void run() {
-                Launcher.this.totalMemory = MemoryManager.getTotalMemory();
-                Launcher launcher = Launcher.this;
-                launcher.availMemory = MemoryManager.getAvailMemory(launcher);
-                Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
-                Launcher.this.handler.postDelayed(this, 400);
+                if (System.currentTimeMillis() - currentTimeMillis < 2500) {
+                    Launcher.this.handler.postDelayed(this, 800);
+                } else {
+                    Launcher.memory_circle.clearAnimation();
+                }
             }
-        }.start();
-        this.mMemory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Launcher.this.startMemoryAnimation();
-                MemoryManager.cleanMemory(Launcher.this);
-                Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
-            }
-        });
-        this.mMemory.setOnTouchListener(new View.OnTouchListener() {
+        }.start();*/
+    }
+/*        this.mMemory.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 Launcher.this.startMemoryAnimation();
@@ -311,47 +320,39 @@ public class Launcher extends Activity{
                 Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
                 return false;
             }
-        });
-    }
+        });*/
 
-    public void startMemoryAnimation() {
-        final long currentTimeMillis = System.currentTimeMillis();
-        memory_circle.startAnimation(this.animation);
-        Log.d(TAG, "cleanMemory");
-        new Thread() {
-            @Override
-            public void run() {
-                if (System.currentTimeMillis() - currentTimeMillis < 2500) {
-                    Launcher.this.handler.postDelayed(this, 800L);
-                } else {
-                    Launcher.memory_circle.clearAnimation();
-                }
-            }
-        }.start();
-    }
+
 
     private void initWeather() {
-        this.pg_home = (ImageButton) findViewById(R.id.pg_home);
-        this.pg_favorite = (ImageButton) findViewById(R.id.pg_favorite);
-        this.pg_home.setOnFocusChangeListener(new TitleOnFocus());
-        this.pg_favorite.setOnFocusChangeListener(new TitleOnFocus());
-        this.pg_home.setOnClickListener(new TitleClick());
-        this.pg_favorite.setOnClickListener(new TitleClick());
-        this.img_weather = (ImageView) findViewById(R.id.img_weather);
-        this.home_line = (ImageView) findViewById(R.id.home_line);
-        this.tx_temp = (TextView) findViewById(R.id.tx_temp);
-        this.tx_city = (TextView) findViewById(R.id.tx_city);
-        this.tx_condition = (TextView) findViewById(R.id.tx_condition);
-        this.mQueue = Volley.newRequestQueue(this);
-        this.etCity = (EditText) findViewById(R.id.eth_editext);
-        this.query_button = (ImageButton) findViewById(R.id.query_button);
-        this.etCity.setOnFocusChangeListener(new TitleOnFocus());
-        this.query_button.setOnFocusChangeListener(new TitleOnFocus());
-        this.query_button.setOnClickListener(new TitleClick());
-        this.wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        String str;
+        File mFile;
+        String[] weather_parm = null;
+
+        img_weather = (ImageView) findViewById(R.id.img_weather);
+        tx_temp = (TextView) findViewById(R.id.tx_temp);
+        tx_city = (TextView) findViewById(R.id.tx_city);
+        tx_condition = (TextView) findViewById(R.id.tx_condition);
+        LastWeatherInfo = 0;
+
+
+        mFile = new File(getFilesDir(), "weather_settings");
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(mFile));
+            str = br.readLine();
+            weather_parm = str.split(";");
+        } catch (IOException e) {
+            Log.e(TAG, "Failed read weather_settings:" + e);
+        }
+       if (weather_parm != null) {
+           mWeatherInfo = new WeatherInfo(this, weather_parm[0], weather_parm[1], weather_parm[2]);
+        }
+        if (mWeatherInfo != null) {
+            mWeatherInfo.getData();
+        }
     }
 
-    public class TitleOnFocus implements View.OnFocusChangeListener {
+/*    public class TitleOnFocus implements View.OnFocusChangeListener {
         TitleOnFocus() {
         }
 
@@ -362,19 +363,19 @@ public class Launcher extends Activity{
                 if (id != R.id.eth_editext) {
                     switch (id) {
                         case R.id.pg_favorite:
-                            Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_green);
-                            Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
-                            Launcher.this.mHoverView.clear();
+              //              Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_green);
+              //              Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
+              //              Launcher.this.mHoverView.clear();
                             break;
                         case R.id.pg_home:
-                            Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
-                            Launcher.this.mHoverView.clear();
+               //             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
+               //             Launcher.this.mHoverView.clear();
                             break;
                         case R.id.query_button :
-                            Launcher.this.mHoverView.clear();
-                            Launcher.this.query_button.setBackgroundResource(R.drawable.search_change);
-                            Launcher.this.etCity.setVisibility(View.VISIBLE);
-                            Toast.makeText(Launcher.this, "Please enter a city name", Toast.LENGTH_LONG).show();
+                //            Launcher.this.mHoverView.clear();
+                //            Launcher.this.query_button.setBackgroundResource(R.drawable.search_change);
+                //            Launcher.this.etCity.setVisibility(View.VISIBLE);
+                //            Toast.makeText(Launcher.this, "Please enter a city name", Toast.LENGTH_LONG).show();
                             break;
                     }
                 } else {
@@ -406,9 +407,9 @@ public class Launcher extends Activity{
             }
             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
         }
-    }
+    }*/
 
-    public class TitleClick implements View.OnClickListener {
+/*    public class TitleClick implements View.OnClickListener {
         TitleClick() {
         }
 
@@ -427,57 +428,18 @@ public class Launcher extends Activity{
                     if (!obj.isEmpty()) {
                         Launcher.this.tx_city.setVisibility(View.GONE);
                         Log.d(TAG, "etCity========" + obj);
-                        Launcher.this.getData("https://api.openweathermap.org/data/2.5/weather?q=" + obj + "&units=metric&appid=b7587b51674093373a847ac72e033c85");
+ //                        Launcher.this.getData("https://api.openweathermap.org/data/2.5/weather?q=" + obj + "&units=metric&appid=" + token);
                         return;
                     }
                     Toast.makeText(Launcher.this, "Please enter a city name", Toast.LENGTH_LONG).show();
                     return;
             }
         }
-    }
+    }*/
 
     public void showSecondScreen(int i) {
         setHomeViewVisible(false);
         setShortcutScreen(i);
-    }
-
-    public void getData(String str) {
-        this.mQueue.add(new JsonObjectRequest(str, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jSONObject) {
-                try {
-                    String str2 = jSONObject.getString("name").toString();
-                    String string = jSONObject.getJSONObject("main").getString("temp");
-                    jSONObject.getJSONArray("weather").getJSONObject(0).getString("description");
-                    Launcher.this.tx_city.setText(str2);
-                    Launcher.this.tx_city.setVisibility(View.VISIBLE);
-                    Launcher.this.home_line.setVisibility(View.VISIBLE);
-                    Log.d(TAG, "weather mtemperature=====" + Double.parseDouble(string));
-                    if (!Locale.getDefault().getLanguage().equals("en")) {
-                        Launcher.this.tx_temp.setText("" + string + Launcher.this.getResources().getString(R.string.str_temp));
-                    } else {
-                        DecimalFormat decimalFormat = new DecimalFormat("#####0.0");
-                        Launcher.this.tx_temp.setText("" + decimalFormat.format((Double.parseDouble(string) * 1.8d) + 32.0d) + Launcher.this.getResources().getString(R.string.str_eu_temp));
-                    }
-                    String string2 = jSONObject.getJSONArray("weather").getJSONObject(0).getString("icon");
-                    Log.d(TAG, "weather iconString=====" + string2);
-                    Launcher.this.img_weather.setImageResource(Launcher.this.parseIcon(string2));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-        }));
-    }
-
-    public int parseIcon(String str) {
-        if (str == null) {
-            return -1;
-        }
-        return ("01n".equals(str) || "01d".equals(str)) ? R.drawable.sunny : "04n".equals(str) ? R.drawable.partly_cloudy : ("04d".equals(str) || "02n".equals(str) || "02d".equals(str) || "03n".equals(str) || "03d".equals(str)) ? R.drawable.overcast : ("09n".equals(str) || "09d".equals(str)) ? R.drawable.thunder : ("10n".equals(str) || "10d".equals(str)) ? R.drawable.light_rain : ("11n".equals(str) || "11d".equals(str) || "13n".equals(str) || "13d".equals(str)) ? R.drawable.snow : (!"50n".equals(str) && "50d".equals(str)) ? R.drawable.smoke : R.drawable.sunny;
     }
 
     @Override
@@ -579,6 +541,9 @@ public class Launcher extends Activity{
                 startMemoryAnimation();
             }
         }
+        if(i == 82) {
+ //           button.callOnClick();
+        }
         return super.onKeyDown(i, keyEvent);
     }
 
@@ -586,6 +551,11 @@ public class Launcher extends Activity{
         this.lv_status.setAdapter((ListAdapter) new LocalAdapter(this,
                 this.mStatusLoader.getStatusData(), R.layout.homelist_item,
                 new String[]{"item_icon"}, new int[]{R.id.item_type}));
+        updatePopup();
+    }
+
+    private void updatePopup() {
+        // TODO update from storage
     }
 
     public void displayDate() {
@@ -624,19 +594,6 @@ public class Launcher extends Activity{
             mAction[i].setType(TYPE_HOME);
             mAction[i].setIntent(getPackageManager().getLaunchIntentForPackage(mAppDataLoader.list_homeShortcut.get(i)));
         }
-        Intent intent1 = new Intent();
-        mSettingsView = (MyRelativeLayout) findViewById(R.id.layout_setting);
-        mSettingsView.setType(TYPE_SETTINGS);
-        intent1.setComponent(ComponentName.unflattenFromString("com.android.tv.settings/com.android.tv.settings.MainSettings"));
-        mSettingsView.setIntent(intent1);
-        Intent intent2 = new Intent();
-        mFilemanager = (MyRelativeLayout) findViewById(R.id.layout_filemanager);
-        mFilemanager.setType(TYPE_FILEMANAGER);
-        intent2.setComponent(ComponentName.unflattenFromString("com.softwinner.TvdFileManager/.MainUI"));
-        mFilemanager.setIntent(intent2);
-        mAppView = (MyRelativeLayout) findViewById(R.id.layout_app);
-        mAppView.setType(TYPE_APPS);
-        mAppView.setIntent(null);
         mChildScreens = childScreens;
     }
 
@@ -647,9 +604,6 @@ public class Launcher extends Activity{
         ((ImageView) findViewById(R.id.img_browser)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_miracast"));
         ((ImageView) findViewById(R.id.img_playstore)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_chrome"));
         ((ImageView) findViewById(R.id.img_miracast)).setImageDrawable(Drawable.createFromPath(getFilesDir() + "/img_google"));
-        ((ImageView) findViewById(R.id.img_setting)).setImageDrawable(getResources().getDrawable(R.drawable.img_setting, null));
-        ((ImageView) findViewById(R.id.img_filemanager)).setImageDrawable(getResources().getDrawable(R.drawable.img_filemanager, null));
-        ((ImageView) findViewById(R.id.img_app)).setImageDrawable(getResources().getDrawable(R.drawable.img_app, null));
     }
 
     public void displayShortcuts() {
@@ -815,5 +769,19 @@ public class Launcher extends Activity{
                 Log.e(TAG, "Failed to copy Resources " + e);
             }
         }
+    }
+    public void showSettings(View v){
+        Intent intent = new Intent();
+     //   intent.setComponent(new ComponentName("com.android.tv.settings", "com.android.tv.settings.MainSettings"));
+           intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+        startActivity(intent);
+    }
+    public void showFileBrowser(View v){
+        Intent intent = new Intent();
+        intent.setComponent(ComponentName.unflattenFromString("com.softwinner.TvdFileManager/.MainUI"));
+        startActivity(intent);
+    }
+    public void showApps(View v){
+        showSecondScreen(Launcher.MODE_APP);
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/folderpressed"/>
+    <item android:state_focused="true" android:drawable="@drawable/folderfocused"/>
+    <item android:drawable="@drawable/folder"/>
+</selector>

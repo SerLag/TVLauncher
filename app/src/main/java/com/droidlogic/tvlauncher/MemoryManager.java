@@ -5,10 +5,20 @@ import android.content.Context;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.text.NumberFormat;
 import java.io.IOException;
 import java.util.List;
 
 public class MemoryManager {
+    private Context mContext;
+    public static long totalMemory = 0;
+    public static long availMemory = 0;
+
+    public MemoryManager(Context context) {
+        mContext = context;
+        totalMemory = getTotalMemory();
+    }
+
     public static long getTotalMemory() {
         try {
             FileReader fileReader = new FileReader("/proc/meminfo");
@@ -26,15 +36,15 @@ public class MemoryManager {
         }
     }
 
-    public static long getAvailMemory(Context context) {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    private long getAvailMemory() {
+        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
         activityManager.getMemoryInfo(memoryInfo);
         return memoryInfo.availMem / 1048576;
     }
 
-    public static void cleanMemory(Context context) {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    public void cleanMemory() {
+        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
         if (runningAppProcesses != null) {
             for (int i = 0; i < runningAppProcesses.size(); i++) {
@@ -47,5 +57,11 @@ public class MemoryManager {
                 }
             }
         }
+    }
+
+    public String getCurrentMemory() {
+        availMemory = getAvailMemory();
+        double rate = (totalMemory - getAvailMemory()) * 100.0d / totalMemory;
+        return (int) rate + "%";
     }
 }

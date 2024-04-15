@@ -15,9 +15,10 @@
     <string name="str_add">Add</string>
     <string name="img_desc">image</string>
     <string name="str_exit">Exit</string>
-    <string name="str_no_signal">No signal</string>
-    <string name="str_scrambeled">Scrambled</string>
-
-    <string name="str_eu_temp">°F</string>
-    <string name="str_temp">°C</string>
+    <string name="str_memory">Memory:</string>
+    <string name="str_clean">Clean memory</string>
+    <string name="str_storage">Storage</string>
+    <string name="str_save">Save settings</string>
+    <string name="str_rest">Restore settings</string>
+    <string name="str_temp">°</string>
 </resources>

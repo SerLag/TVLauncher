@@ -204,8 +204,8 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
-        ArrayMap arrayMap = (ArrayMap) adapterView.getItemAtPosition(i);
+    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+        ArrayMap arrayMap = (ArrayMap) adapterView.getItemAtPosition(pos);
         synchronized (mLock) {
             if (arrayMap.get("item_selection").equals((int) R.drawable.item_img_unsel)) {
                 if (this.mMode == 0 && this.homeShortcutCount >= Launcher.HOME_SHORTCUT_COUNT) {
@@ -213,14 +213,14 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
                     return;
                 }
                 this.custom_apps.add(((ComponentName) arrayMap.get("component")).getPackageName());
-                ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_sel);
+                ((ArrayMap) adapterView.getItemAtPosition(pos)).put("item_selection", (int) R.drawable.item_img_sel);
                 updateView();
                 if (this.mMode == 0) {
                     this.homeShortcutCount++;
                 }
             } else {
                 this.custom_apps.remove(((ComponentName) arrayMap.get("component")).getPackageName());
-                ((ArrayMap) adapterView.getItemAtPosition(i)).put("item_selection", (int) R.drawable.item_img_unsel);
+                ((ArrayMap) adapterView.getItemAtPosition(pos)).put("item_selection", (int) R.drawable.item_img_unsel);
                 updateView();
                 if (this.mMode == 0) {
                     this.homeShortcutCount--;

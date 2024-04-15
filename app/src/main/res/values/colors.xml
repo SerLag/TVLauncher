@@ -11,7 +11,7 @@
 	<color name="dialog_text_color">#FFFFFFFF</color>
 	<color name="path_focus_color">#FFFFFF00</color>
 	<color name="path_press_color">#FFFF0000</color>
-	<color name="shortcut_bg_color">#FF354E5A</color>
+	<color name="shortcut_bg_color">#FFFFFFFF</color>
 	<color name="bg_add_apps">#FF373778</color>
 	<color name="item_sel_color">#FFFFFFFF</color>
 

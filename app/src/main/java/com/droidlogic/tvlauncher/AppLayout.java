@@ -52,9 +52,9 @@ public class AppLayout extends RelativeLayout {
 
     private void initlayout() {
         RelativeLayout.inflate(this.mContext, R.layout.layout_second_screen, this);
-   //     this.icon = (ImageView) findViewById(R.id.image_icon);
-  //      this.prompt = (ImageView) findViewById(R.id.image_prompt);
-    //    this.title = (TextView) findViewById(R.id.tx_title);
+        //this.icon = (ImageView) findViewById(R.id.image_icon);
+        //this.prompt = (ImageView) findViewById(R.id.image_prompt);
+        this.title = (TextView) findViewById(R.id.tx_title);
 
         this.grid_layout = (MyGridLayout) findViewById(R.id.gl_shortcut);
         this.animLeftIn = AnimationUtils.loadAnimation(this.mContext, R.anim.push_left_in);
@@ -64,32 +64,30 @@ public class AppLayout extends RelativeLayout {
     }
 
     public void setLayout(int mode, List<ArrayMap<String, Object>> list) {
-/*        if (i == 1) {
+/*        if (mode == 1) {
             setImageAndText(R.drawable.video, R.drawable.prompt_video, R.string.str_video);
-        } else if (i == 2) {
+        } else if (mode == 2) {
             setImageAndText(R.drawable.recommend, R.drawable.prompt_recommend, R.string.str_recommend);
-        } else if (i == 3) {
+        } else if (mode == 3) {
             setImageAndText(R.drawable.music, R.drawable.prompt_music, R.string.str_music);
-        } else if (i == 4) {
+        } else if (mode == 4) {
             setImageAndText(R.drawable.app, R.drawable.prompt_app, R.string.str_app);
-        } else if (i == 5) {
+        } else if (mode == 5) {
             setImageAndText(R.drawable.local, R.drawable.prompt_local, R.string.str_test);
         }*/
         this.grid_layout.clearFocus();
         this.grid_layout.setLayoutView(mode, list);
-/*        if (i == 0 || this.grid_layout.getChildCount() <= 0) {
+/*        if (mode == 0 || this.grid_layout.getChildCount() <= 0) {
             return;
         }*/
         ((MyRelativeLayout) this.grid_layout.getChildAt(0)).requestFocus();
     }
 
-/*
     public void setImageAndText(int resIcon, int resPrompt, int resTitle) {
         icon.setImageDrawable(mContext.getResources().getDrawable(resIcon, null));
         prompt.setImageDrawable(mContext.getResources().getDrawable(resPrompt, null));
         title.setText(resTitle);
     }
-*/
 
     public void setLayoutWithAnim(int animType, int mode, List<ArrayMap<String, Object>> list) {
         setLayout(mode, list);

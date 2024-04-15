@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.NoTitleBar.Fullscreen">
+    <style name="AppTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen">
         <item name="android:windowAnimationStyle">@style/Animation</item>
         <item name="android:listMenuViewStyle">@style/PopupMenu</item>
     </style>

@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@style/PopupMenu">
-
-    <item android:title="Clean memory" />
-    <item android:title="Save settings" />
-    <item android:title="Restore settings" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="@string/str_clean"
+        android:id="@+id/it_clean"/>
+    <item
+        android:title="@string/str_storage"
+        android:id="@+id/it_storage"/>
+    <item
+        android:title="@string/str_app"
+        android:id="@+id/it_apps"/>
+    <item
+        android:title="@string/str_save"
+        android:id="@+id/it_save"/>
+    <item
+        android:title="@string/str_rest"
+        android:id="@+id/it_restore"/>
 </menu>

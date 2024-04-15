@@ -183,6 +183,7 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
             anim.setDuration(animDuration);
             anim.setStartTime(animDelay);
             this.startAnimation(anim);
+            ((Launcher)mContext).getHoverView().setVisibility(GONE);
         }
         super.onFocusChanged(gainFocus, direction,  previouslyFocusedRect);
     }
@@ -221,6 +222,7 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
     }
 
     private void setHoverView(){
+        ((Launcher)mContext).getHoverView().setVisibility(VISIBLE);
         ((Launcher)mContext).getHoverView().setHover(this);
     }
 
