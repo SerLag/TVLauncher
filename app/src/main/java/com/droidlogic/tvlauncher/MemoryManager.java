@@ -19,7 +19,7 @@ public class MemoryManager {
         totalMemory = getTotalMemory();
     }
 
-    public static long getTotalMemory() {
+    private long getTotalMemory() {
         try {
             FileReader fileReader = new FileReader("/proc/meminfo");
             BufferedReader bufferedReader = new BufferedReader(fileReader, 8192);
@@ -36,7 +36,7 @@ public class MemoryManager {
         }
     }
 
-    private long getAvailMemory() {
+    public long getAvailMemory() {
         ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
         activityManager.getMemoryInfo(memoryInfo);

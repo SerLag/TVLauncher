@@ -112,14 +112,10 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
                     try {
                         switch (mType) {
                             case Launcher.TYPE_HOME:
-                            case Launcher.TYPE_SETTINGS:
-                            case Launcher.TYPE_FILEMANAGER:
                                 if (mIntent != null) {
                                     mContext.startActivity(mIntent);
                                 }
                                 break;
-                            case Launcher.TYPE_APPS:
-                                showSecondScreen(Launcher.MODE_APP);
                             case Launcher.TYPE_APP_SHORTCUT:
                                 showSecondScreen(Launcher.MODE_LOCAL);
                             case Launcher.TYPE_HOME_SHORTCUT:
@@ -145,14 +141,10 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
             try {
                 switch (mType) {
                     case Launcher.TYPE_HOME:
-                    case Launcher.TYPE_SETTINGS:
-                    case Launcher.TYPE_FILEMANAGER:
                         if (mIntent != null) {
                             mContext.startActivity(mIntent);
                         }
                         break;
-                    case Launcher.TYPE_APPS:
-                        showSecondScreen(Launcher.MODE_APP);
                     case Launcher.TYPE_APP_SHORTCUT:
                         showSecondScreen(Launcher.MODE_LOCAL);
                     case Launcher.TYPE_HOME_SHORTCUT:
@@ -192,9 +184,6 @@ public class MyRelativeLayout extends RelativeLayout implements OnGlobalLayoutLi
         mType = type;
         switch (mType) {
             case Launcher.TYPE_HOME:
-            case Launcher.TYPE_SETTINGS:
-            case Launcher.TYPE_FILEMANAGER:
-            case Launcher.TYPE_APPS:
                 mScale = SCALE_PARA_SMALL;
                 mElevation = ELEVATION_HOVER_MAX;
                 mShadowScale = SHADOW_BIG;

@@ -23,7 +23,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_toEndOf="@+id/tx_temp"
-            android:src="@drawable/clouds3"/>
+            android:src="@drawable/ya_clouds3"/>
         <TextView
             android:textSize="24sp"
             android:id="@+id/tx_city"

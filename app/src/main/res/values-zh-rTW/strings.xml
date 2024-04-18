@@ -11,7 +11,15 @@
     <string name="str_music">音樂</string>
     <string name="str_local">本地播放</string>
     <string name="str_nospace">快捷欄沒有空間了！</string>
+    <string name="str_day">日</string>
     <string name="str_add">添加</string>
-    <string name="str_no_signal">無信號</string>
-    <string name="str_scrambeled">頻道加密</string>
+    <string name="img_desc">image</string>
+    <string name="str_exit">Exit</string>
+    <string name="str_memory">Memory:</string>
+    <string name="str_clean">Clean memory</string>
+    <string name="str_storage">Storage</string>
+    <string name="str_save">Save settings</string>
+    <string name="str_rest">Restore settings</string>
+    <string name="str_temp">°</string>
+    <string name="str_wrong_archive">Wrong archive !</string>
 </resources>

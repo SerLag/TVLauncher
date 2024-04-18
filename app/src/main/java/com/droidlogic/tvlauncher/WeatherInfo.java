@@ -2,6 +2,7 @@ package com.droidlogic.tvlauncher;
 
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -18,17 +19,15 @@ import java.util.Locale;
 
 public class WeatherInfo {
     private final static String TAG = "WeatherInfo";
-/*    private final TextView tx_city;
-    private final TextView tx_temp;
-    private ImageView img_weather;
-    private TextView tx_condition;*/
     private Context mContext;
     private String urlCity;
     private RequestQueue mQueue;
+    private long LastWeatherInfo;
 
     public WeatherInfo(Context context, String City, String Metric, String AppId) {
 
         mContext = context;
+        LastWeatherInfo = 0;
         String lang = Locale.getDefault().getLanguage();
         urlCity = "https://api.openweathermap.org/data/2.5/weather?q=" + City +
                 "&units=" + Metric + "&lang=" + lang + "&appid=" + AppId;
@@ -51,6 +50,7 @@ public class WeatherInfo {
                     Launcher.tx_condition.setText(string1);
                     Launcher.img_weather.setImageResource(parseIcon(string2));
                     Log.d(TAG, "city=" + str2 + ";temp=" + string + ";condition=" + string1 + ";icon=" + string2);
+                    LastWeatherInfo = SystemClock.elapsedRealtime();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -62,17 +62,21 @@ public class WeatherInfo {
         }));
     }
 
-    public int parseIcon(String str) {
+    private int parseIcon(String str) {
         if (str == null) {
             return -1;
         }
-        return ("01d".equals(str) ? R.drawable.clear_d : ("01n".equals(str) ? R.drawable.clear_n :
-                ("02d".equals(str) ? R.drawable.clouds1_d : ("02n".equals(str) ? R.drawable.clear_n :
-                        ("03n".equals(str) || "03d".equals(str) ? R.drawable.clouds2 :
-                                ("04n".equals(str) || "04d".equals(str) ? R.drawable.clouds3 :
-                                        ("09n".equals(str) || "09d".equals(str) ? R.drawable.heavy_rain :
-                                                ("10d".equals(str) ? R.drawable.rain_d : ("10n".equals(str) ? R.drawable.rain_n :
-                                                        ("11n".equals(str) || "11d".equals(str) ? R.drawable.thunderstorm :
-                                                                ("13n".equals(str) || "13d".equals(str) ? R.drawable.snow : R.drawable.mist)))))))))));
+        return ("01d".equals(str) ? R.drawable.ya_clear_d : ("01n".equals(str) ? R.drawable.ya_clear_n :
+                ("02d".equals(str) ? R.drawable.ya_clouds1_d : ("02n".equals(str) ? R.drawable.ya_clear_n :
+                        ("03n".equals(str) || "03d".equals(str) ? R.drawable.ya_clouds2 :
+                                ("04n".equals(str) || "04d".equals(str) ? R.drawable.ya_clouds3 :
+                                        ("09n".equals(str) || "09d".equals(str) ? R.drawable.ya_heavy_rain :
+                                                ("10d".equals(str) ? R.drawable.ya_rain_d : ("10n".equals(str) ? R.drawable.ya_rain_n :
+                                                        ("11n".equals(str) || "11d".equals(str) ? R.drawable.ya_thunderstorm :
+                                                                ("13n".equals(str) || "13d".equals(str) ? R.drawable.ya_snow : R.drawable.ya_mist)))))))))));
+    }
+
+    public long getLastWeatherInfo() {
+        return LastWeatherInfo;
     }
 }

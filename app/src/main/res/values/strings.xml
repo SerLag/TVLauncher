@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="hello">Hello World</string>
     <string name="app_name">MediaBox launcher</string>
     <string name="str_video">Online Video </string>
@@ -21,4 +20,5 @@
     <string name="str_save">Save settings</string>
     <string name="str_rest">Restore settings</string>
     <string name="str_temp">°</string>
+    <string name="str_wrong_archive">Wrong archive !</string>
 </resources>

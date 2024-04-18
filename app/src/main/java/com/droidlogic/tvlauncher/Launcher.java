@@ -11,13 +11,13 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.tv.TvView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -31,7 +31,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
@@ -39,15 +38,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import com.android.volley.RequestQueue;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class Launcher extends Activity{
     private final static String TAG="MediaBoxlauncher";
@@ -59,8 +62,6 @@ public class Launcher extends Activity{
 
     private GridView lv_status;
     private AppDataLoader mAppDataLoader;
-    private MyRelativeLayout mAppView;
-    private MyRelativeLayout mFilemanager;
 
     private HoverView mHoverView;
 
@@ -68,36 +69,24 @@ public class Launcher extends Activity{
 
     private MyRelativeLayout[] mAction;
 
-    private MyRelativeLayout mSettingsView;
     private StatusLoader mStatusLoader;
     private MemoryManager mMemoryCleaner;
     private WeatherInfo mWeatherInfo;
 
-    private ImageButton pg_favorite;
-    private ImageButton pg_home;
-    private ImageButton query_button;
     public static TextView tx_city;
     public static TextView tx_condition;
     public static TextView tx_temp;
     public static ImageView img_weather;
-    private int LastWeatherInfo;
 
-    private String urlcity;
     private WifiManager wifiManager;
     private static final int[] childScreens = {1, 2, 4, 3, 5};
-    private static final int[] childScreensTv = {2, 4, 3, 5};
     public static int HOME_SHORTCUT_COUNT = 10;
 
     public static TextView memory_used = null;
-    public static ImageView memory_circle = null;
-    public static MemoryManager mMemory;
 
     public static final int TYPE_HOME                            = 0;
-    public static final int TYPE_SETTINGS                        = 1;
-    public static final int TYPE_FILEMANAGER                     = 2;
-    public static final int TYPE_APPS                            = 3;
-    public static final int TYPE_HOME_SHORTCUT                   = 4;
-    public static final int TYPE_APP_SHORTCUT                    = 5;
+    public static final int TYPE_HOME_SHORTCUT                   = 1;
+    public static final int TYPE_APP_SHORTCUT                    = 2;
 
     public static final int MODE_HOME                            = 0;
     public static final int MODE_APP                             = 1;
@@ -108,7 +97,7 @@ public class Launcher extends Activity{
     private static final int animDuration                        = 70;
     private static final int animDelay                           = 0;
 
-    private int current_screen_mode = 0;
+    private int current_screen_mode = MODE_HOME;
     private int saveModeBeforeCustom = 0;
     private int[] mChildScreens = childScreens;
     private ViewGroup mHomeView = null;
@@ -116,15 +105,8 @@ public class Launcher extends Activity{
     private View saveHomeFocusView = null;
     private MyGridLayout mHomeShortcutView = null;
     private CustomView mCustomView = null;
-    private TvView tvView = null;
-    private TextView tvPrompt = null;
-    public int tvViewMode = -1;
-    private int mTvTop = -1;
     private Object mlock = new Object();
-    private boolean mTvStartPlaying = false;
     private LinearInterpolator lin = null;
-    private long totalMemory = 0;
-    private long availMemory = 0;
 
     private Handler handler = new Handler();
 
@@ -154,26 +136,18 @@ public class Launcher extends Activity{
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            NetworkInfo networkInfo;
             String action = intent.getAction();
             if (action.equals("android.intent.action.TIME_SET")) {
                 Launcher.this.displayDate();
             }
-            if (action.equals("android.net.conn.CONNECTIVITY_CHANGE") && (networkInfo = ((ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE)).getNetworkInfo(1)) != null && networkInfo.isAvailable()) {
-                Log.i(TAG,"netReceiver " + action);
-                LastWeatherInfo = 0;
-                mWeatherInfo.getData();
-           }
             if (action.equals("android.intent.action.TIME_TICK")) {
-                LastWeatherInfo ++;
-                if (LastWeatherInfo > 30) {
-                    LastWeatherInfo = 0;
-                    mWeatherInfo.getData();
-                }
                 Launcher.this.displayDate();
             } else if ("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE".equals(action) || "android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE".equals(action)) {
                 Launcher.this.updateAppList(intent);
             } else {
+                if (SystemClock.elapsedRealtime() - mWeatherInfo.getLastWeatherInfo() > 1800000) {
+                    mWeatherInfo.getData();
+                }
                 Launcher.this.displayStatus();
                 Launcher.this.updateStatus();
             }
@@ -214,7 +188,7 @@ public class Launcher extends Activity{
         this.mStatusLoader = new StatusLoader(this);
         initChildViews();
         initWeather();
-      //  initMemory();
+        initMemory();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -251,15 +225,20 @@ public class Launcher extends Activity{
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.it_clean:
-                                startMemoryAnimation();
+                                startMemoryClean();
+                                break;
                             case R.id.it_storage:
-                                startMemoryAnimation();
+                                startStorageSettings();
+                                break;
                             case R.id.it_apps:
                                 startAppsSettings();
+                                break;
                             case R.id.it_save:
                                 SaveSettings();
+                                break;
                             case R.id.it_restore:
                                 RestoreSettings();
+                                break;
                         }
                         return false;
                     }
@@ -277,52 +256,75 @@ public class Launcher extends Activity{
     }
 
     private void RestoreSettings() {
-
+        try {
+            FileInputStream fin = new FileInputStream(getExternalFilesDir(null) + "/backup.zip");
+            ZipInputStream zin = new ZipInputStream(fin);
+            ZipEntry ze = null;
+            while ((ze = zin.getNextEntry()) != null) {
+                if (!ze.isDirectory()) {
+                    FileOutputStream out = new FileOutputStream(getFilesDir() + "/" + ze.getName());
+                    byte[] bytesIn = new byte[4096];
+                    int read = 0;
+                    while ((read = zin.read(bytesIn)) != -1) {
+                        out.write(bytesIn, 0, read);
+                    }
+                    zin.closeEntry();
+                    out.close();
+                }
+            }
+            zin.close();
+        }catch (Exception e) {
+            Toast.makeText(this, R.string.str_wrong_archive, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        Intent mIntent = getIntent();
+        finish();
+        startActivity(mIntent);
     }
 
     private void SaveSettings() {
-
+        BufferedInputStream origin = null;
+        File[] inFiles = getFilesDir().listFiles();
+        String zipFile = getExternalFilesDir(null) + "/backup.zip";
+        try {
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
+            for (File file : inFiles) {
+                if (file.isFile()) {
+                    origin = new BufferedInputStream(new FileInputStream(file), 4096);
+                    out.putNextEntry(new ZipEntry(file.getName()));
+                    byte[] bytesIn = new byte[4096];
+                    int read = 0;
+                    while ((read = origin.read(bytesIn)) != -1) {
+                        out.write(bytesIn, 0, read);
+                    }
+                    origin.close();
+                }
+            }
+            out.flush();
+            out.close();
+            Toast.makeText(this, getExternalFilesDir(null) + "/backup.zip", Toast.LENGTH_LONG).show();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startAppsSettings() {
-
+        //   Intent i = new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS);
+        //   startActivity(i);
     }
 
-    public void startMemoryAnimation() {
-        //Launcher.this.startMemoryAnimation();
+    private void startStorageSettings() {
+        //   Intent i = new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS);
+        //   startActivity(i);
+    }
+
+    public void startMemoryClean() {
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.memory_cleaner_recircle);
         memory_used.startAnimation(anim);
-  //      mMemoryCleaner.cleanMemory();
+        mMemoryCleaner.cleanMemory();
+        Log.d(TAG, "Memory free: " + mMemoryCleaner.getAvailMemory());
         updateMemory();
-        Log.d(TAG, "cleanMemory");
-/*
-              //   Intent i = new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS);
-             //   mContext.startActivity(i);
- final long currentTimeMillis = System.currentTimeMillis();
-        memory_circle.startAnimation(this.animation);
-        Log.d(TAG, "cleanMemory");
-        new Thread() {
-            @Override
-            public void run() {
-                if (System.currentTimeMillis() - currentTimeMillis < 2500) {
-                    Launcher.this.handler.postDelayed(this, 800);
-                } else {
-                    Launcher.memory_circle.clearAnimation();
-                }
-            }
-        }.start();*/
     }
-/*        this.mMemory.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Launcher.this.startMemoryAnimation();
-                MemoryManager.cleanMemory(Launcher.this);
-                Launcher.memory_used.setText(FormatData.formatRate(Launcher.this.totalMemory, Launcher.this.availMemory));
-                return false;
-            }
-        });*/
-
-
 
     private void initWeather() {
         String str;
@@ -333,8 +335,6 @@ public class Launcher extends Activity{
         tx_temp = (TextView) findViewById(R.id.tx_temp);
         tx_city = (TextView) findViewById(R.id.tx_city);
         tx_condition = (TextView) findViewById(R.id.tx_condition);
-        LastWeatherInfo = 0;
-
 
         mFile = new File(getFilesDir(), "weather_settings");
         try {
@@ -351,91 +351,6 @@ public class Launcher extends Activity{
             mWeatherInfo.getData();
         }
     }
-
-/*    public class TitleOnFocus implements View.OnFocusChangeListener {
-        TitleOnFocus() {
-        }
-
-        @Override
-        public void onFocusChange(View view, boolean z) {
-            if (z) {
-                int id = view.getId();
-                if (id != R.id.eth_editext) {
-                    switch (id) {
-                        case R.id.pg_favorite:
-              //              Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_green);
-              //              Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
-              //              Launcher.this.mHoverView.clear();
-                            break;
-                        case R.id.pg_home:
-               //             Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
-               //             Launcher.this.mHoverView.clear();
-                            break;
-                        case R.id.query_button :
-                //            Launcher.this.mHoverView.clear();
-                //            Launcher.this.query_button.setBackgroundResource(R.drawable.search_change);
-                //            Launcher.this.etCity.setVisibility(View.VISIBLE);
-                //            Toast.makeText(Launcher.this, "Please enter a city name", Toast.LENGTH_LONG).show();
-                            break;
-                    }
-                } else {
-                    Launcher.this.mHoverView.clear();
-                }
-            } else {
-                int id2 = view.getId();
-                if (id2 != R.id.eth_editext) {
-                    switch (id2) {
-                        case R.id.pg_favorite:
-                            Launcher.this.pg_favorite.setBackgroundResource(R.drawable.favorite_white);
-                            break;
-                        case R.id.pg_home:
-                            Launcher.this.pg_home.setBackgroundResource(R.drawable.home_white);
-                            break;
-                        case R.id.query_button:
-                            Launcher.this.query_button.setBackgroundResource(R.drawable.search);
-                            break;
-                    }
-                } else {
-                    Launcher.this.etCity.setVisibility(View.GONE);
-                }
-            }
-            if (!Launcher.this.etCity.hasFocus() && !Launcher.this.query_button.hasFocus()) {
-                Launcher.this.etCity.setVisibility(View.GONE);
-            }
-            if (Launcher.this.pg_home.hasFocus() || Launcher.this.pg_favorite.hasFocus()) {
-                return;
-            }
-            Launcher.this.pg_home.setBackgroundResource(R.drawable.home_green);
-        }
-    }*/
-
-/*    public class TitleClick implements View.OnClickListener {
-        TitleClick() {
-        }
-
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.pg_favorite:
-                    Launcher.this.showSecondScreen(5);
-                    return;
-                case R.id.pg_home:
-                default:
-                    return;
-                case R.id.query_button:
-                    Launcher.this.etCity.setVisibility(View.VISIBLE);
-                    String obj = Launcher.this.etCity.getText().toString();
-                    if (!obj.isEmpty()) {
-                        Launcher.this.tx_city.setVisibility(View.GONE);
-                        Log.d(TAG, "etCity========" + obj);
- //                        Launcher.this.getData("https://api.openweathermap.org/data/2.5/weather?q=" + obj + "&units=metric&appid=" + token);
-                        return;
-                    }
-                    Toast.makeText(Launcher.this, "Please enter a city name", Toast.LENGTH_LONG).show();
-                    return;
-            }
-        }
-    }*/
 
     public void showSecondScreen(int i) {
         setHomeViewVisible(false);
@@ -469,6 +384,7 @@ public class Launcher extends Activity{
         filter.addDataScheme("package");
         registerReceiver(this.appReceiver, filter);
 
+        updateMemory();
         displayShortcuts();
         displayStatus();
         displayDate();
@@ -481,6 +397,20 @@ public class Launcher extends Activity{
         unregisterReceiver(this.mediaReceiver);
         unregisterReceiver(this.netReceiver);
         unregisterReceiver(this.appReceiver);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if ("android.intent.action.MAIN".equals(intent.getAction())) {
+            setHomeViewVisible(true);
+            this.current_screen_mode = 0;
+            ((MyRelativeLayout) findViewById(R.id.layout_video)).requestFocus();
+        } else if (intent.getAction().equals("android.intent.action.ALLAPPS")) {
+            Log.d("MediaBoxLauncher", " ----keycode f7 process all apps");
+            setHomeViewVisible(false);
+            setShortcutScreen(MODE_APP);
+        }
     }
 
     @Override
@@ -500,12 +430,12 @@ public class Launcher extends Activity{
     }
 
     @Override
-    public boolean onKeyDown(int i, KeyEvent keyEvent) {
-        if (i == 4) {
+    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        // TODO переделать
+        if (keyCode == KeyEvent.FLAG_KEEP_TOUCH_MODE) {
             switch (this.current_screen_mode) {
                 case 4:
                     Log.d(TAG, "++++onkey down APP");
-//                    LedControl.control_led_status(getResources().getString(R.string.app_led), false);
                     this.mSecondScreen.clearAnimation();
                 case 1:
                 case 2:
@@ -520,8 +450,8 @@ public class Launcher extends Activity{
             }
             return true;
         }
-        if (i != 23 && i != 66) {
-            if (i == 84) {
+        if (keyCode != KeyEvent.KEYCODE_TV_DATA_SERVICE && keyCode != KeyEvent.KEYCODE_ENTER) {
+            if (keyCode == KeyEvent.KEYCODE_SEARCH) {
                 ComponentName globalSearchActivity = ((SearchManager) getSystemService(SEARCH_SERVICE)).getGlobalSearchActivity();
                 if (globalSearchActivity == null) {
                     return false;
@@ -534,28 +464,25 @@ public class Launcher extends Activity{
                 intent.putExtra("app_data", bundle);
                 startActivity(intent);
                 return true;
-            } else if (i == 178) {
+            } else if (keyCode == KeyEvent.KEYCODE_TV_INPUT) {
  //               startTvSource();
                 return true;
-            } else if (i == 139) {
-                startMemoryAnimation();
+            } else if (keyCode == KeyEvent.KEYCODE_F9) {
+                startMemoryClean();
             }
         }
-        if(i == 82) {
- //           button.callOnClick();
+        if(keyCode == KeyEvent.KEYCODE_MENU) {
+            if (this.current_screen_mode == MODE_HOME) {
+                memory_used.callOnClick();
+            }
         }
-        return super.onKeyDown(i, keyEvent);
+        return super.onKeyDown(keyCode, keyEvent);
     }
 
     public void displayStatus() {
         this.lv_status.setAdapter((ListAdapter) new LocalAdapter(this,
                 this.mStatusLoader.getStatusData(), R.layout.homelist_item,
                 new String[]{"item_icon"}, new int[]{R.id.item_type}));
-        updatePopup();
-    }
-
-    private void updatePopup() {
-        // TODO update from storage
     }
 
     public void displayDate() {
@@ -566,16 +493,9 @@ public class Launcher extends Activity{
     }
 
     private void initChildViews() {
-        // TODO переделать
         this.lv_status = (GridView) findViewById(R.id.list_status);
         this.lv_status.setFocusable(false);
         this.lv_status.setFocusableInTouchMode(false);
-/*        this.lv_status.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return motionEvent.getAction() == 2;
-            }
-        });*/
 
         mHoverView = (HoverView) findViewById(R.id.hover_view);
         mHomeView = (ViewGroup) findViewById(R.id.layout_homepage);
@@ -664,7 +584,7 @@ public class Launcher extends Activity{
         return this.mAppDataLoader;
     }
 
-    public void switchSecondScren(int animType){
+    public void switchSecondScreen(int animType){
         int mode = -1;
         if (animType == AppLayout.ALIGN_LEFT) {
             mode = mChildScreens[(getChildModeIndex() + mChildScreens.length - 1) % mChildScreens.length];
@@ -684,14 +604,9 @@ public class Launcher extends Activity{
             this.current_screen_mode = 0;
             this.mSecondScreen.setVisibility(View.GONE);
             this.mHomeView.setVisibility(View.VISIBLE);
-//            memory_circle.setVisibility(View.VISIBLE);
-//            memory_used.setVisibility(View.VISIBLE);
-            //setTvViewPosition(0);
             return;
         }
         this.mHomeView.setVisibility(View.GONE);
-//        memory_circle.setVisibility(View.GONE);
-//        memory_used.setVisibility(View.GONE);
         this.mSecondScreen.setVisibility(View.VISIBLE);
     }
 
