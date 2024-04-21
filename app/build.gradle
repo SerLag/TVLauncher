@@ -5,7 +5,7 @@ android {
         platform {
             keyAlias 'platform'
             keyPassword 'android'
-            storeFile file('E:/Android/sdk/emulator.keystore')
+            storeFile file('D:/Android/sdk/emulator.keystore')
             storePassword 'android'
         }
     }

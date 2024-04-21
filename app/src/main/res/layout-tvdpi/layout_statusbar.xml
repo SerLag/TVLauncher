@@ -16,14 +16,12 @@
             android:id="@+id/tx_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="+12°"/>
+            android:layout_centerVertical="true"/>
         <ImageView
             android:id="@+id/img_weather"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_toEndOf="@+id/tx_temp"
-            android:src="@drawable/ya_clouds3"/>
+            android:layout_toEndOf="@+id/tx_temp"/>
         <TextView
             android:textSize="24sp"
             android:id="@+id/tx_city"
@@ -31,8 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginStart="10dp"
-            android:layout_toEndOf="@+id/img_weather"
-            android:text="Орёл"/>
+            android:layout_toEndOf="@+id/img_weather"/>
         <TextView
             android:textSize="15sp"
             android:id="@+id/tx_condition"
@@ -40,14 +37,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_below="@id/tx_city"
-            android:layout_toEndOf="@+id/img_weather"
-            android:text="небольшой дождь"/>
+            android:layout_toEndOf="@+id/img_weather"/>
     </RelativeLayout>
     <TextView
         android:textSize="15sp"
         android:id="@+id/tx_memory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:layout_marginTop="18dp"
         android:layout_marginStart="480dp"
         android:text="@string/str_memory"/>
@@ -56,11 +53,11 @@
         android:id="@+id/memory_used"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:gravity="center"
         android:layout_below="@+id/tx_memory"
         android:layout_alignEnd="@+id/tx_memory"
-        android:layout_alignStart="@+id/tx_memory"
-        android:text="51%"/>
+        android:layout_alignStart="@+id/tx_memory"/>
     <GridView
         android:id="@+id/list_status"
         android:paddingLeft="0dp"
@@ -86,17 +83,17 @@
         android:id="@+id/tx_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="40dp"
-        android:layout_alignParentEnd="true"
-        android:text="12:00"/>
+        android:layout_alignParentEnd="true"/>
     <TextView
         android:textSize="20sp"
         android:id="@+id/tx_date"
         android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:layout_below="@+id/tx_time"
-        android:layout_alignEnd="@+id/tx_time"
-        android:text="Ср, 3 Апреля"/>
+        android:layout_alignEnd="@+id/tx_time"/>
 </RelativeLayout>

@@ -2,17 +2,13 @@ package com.droidlogic.tvlauncher;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,7 +86,7 @@ public class Launcher extends Activity{
 
     public static final int MODE_HOME                            = 0;
     public static final int MODE_APP                             = 1;
-    public static final int MODE_LOCAL                           = 2;
+    public static final int MODE_CUSTOM                          = 2;
 
     private static final int MSG_REFRESH_SHORTCUT                = 0;
     private static final int MSG_RECOVER_HOME                    = 1;
@@ -529,7 +525,7 @@ public class Launcher extends Activity{
     public void displayShortcuts() {
         this.mAppDataLoader.update();
         int i = this.current_screen_mode;
-        if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4 || i == 5) {
+        if (i == MODE_HOME  || i == MODE_CUSTOM || i == MODE_APP || i == 3 || i == 4 || i == 5) {
             setShortcutScreen(this.current_screen_mode);
         } else {
             setShortcutScreen(this.saveModeBeforeCustom);
@@ -584,7 +580,7 @@ public class Launcher extends Activity{
         return this.mAppDataLoader;
     }
 
-    public void switchSecondScreen(int animType){
+    public void switchSecondScren(int animType){
         int mode = -1;
         if (animType == AppLayout.ALIGN_LEFT) {
             mode = mChildScreens[(getChildModeIndex() + mChildScreens.length - 1) % mChildScreens.length];
@@ -598,10 +594,10 @@ public class Launcher extends Activity{
     public void setHomeViewVisible(boolean z) {
         if (z) {
             CustomView customView = this.mCustomView;
-            if (customView != null && this.current_screen_mode == 6) {
+            if (customView != null && this.current_screen_mode == MODE_CUSTOM) {
                 customView.recoverMainView();
             }
-            this.current_screen_mode = 0;
+            this.current_screen_mode = MODE_HOME;
             this.mSecondScreen.setVisibility(View.GONE);
             this.mHomeView.setVisibility(View.VISIBLE);
             return;
@@ -638,13 +634,13 @@ public class Launcher extends Activity{
     }
 
     public void startCustomScreen(View view) {
-        if (this.current_screen_mode == MODE_LOCAL) {
+        if (this.current_screen_mode == MODE_CUSTOM) {
             return;
         }
         this.mHoverView.clear();
         this.saveModeBeforeCustom = current_screen_mode;
         this.mCustomView = new CustomView(this, view, current_screen_mode);
-        this.current_screen_mode = MODE_LOCAL;
+        this.current_screen_mode = MODE_CUSTOM;
         Rect rect = new Rect();
         view.getGlobalVisibleRect(rect);
         if (rect.top > getResources().getDisplayMetrics().heightPixels / 2) {

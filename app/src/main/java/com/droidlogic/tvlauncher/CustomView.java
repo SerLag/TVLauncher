@@ -37,6 +37,7 @@ import android.widget.ListAdapter;
 
 public class CustomView extends FrameLayout implements AdapterView.OnItemClickListener, OnGlobalLayoutListener {
     private final static String TAG = "CustomView";
+    private final static int duration = 300;
     private static boolean allowAnimation = true;
     private ImageView img_screen_shot = null;
     private ImageView img_screen_shot_keep = null;
@@ -92,6 +93,11 @@ public class CustomView extends FrameLayout implements AdapterView.OnItemClickLi
         Rect rect = new Rect();
         gv.getGlobalVisibleRect(rect);
         gv.requestFocus();
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, -transY,  0.0f);
+        translateAnimation.setDuration(duration);
+        translateAnimation.setInterpolator(new AccelerateInterpolator());
+        gv.startAnimation(translateAnimation);
     }
 
 
